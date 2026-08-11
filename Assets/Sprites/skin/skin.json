@@ -1,0 +1,409 @@
+{
+	"radius": {
+		"common": "6",
+        "toast": "4",
+        "loading_dlg": "48"
+	},
+	"colors": {
+		"common": {
+			"text": {
+				"title": "FFFFFFFF",
+				"main": "FF181818",
+				"secondary": "FF181818",
+				"content": "FF5B544A",
+				"gray": "FFAAAAAA",
+				"link": "FFBB9F5E",
+				"button": "FFFFFFFF",
+				"button2": "FF181818",
+				"label": "FF6C665E",
+				"label2":"FFA3835C",
+				"label3":"FF6C665E",
+                "tip": "FF6C665E"
+			},
+            "divider": "FFE0D4C4",
+			"edit": {
+				"background": "FFF7F7F7"
+			}
+		},
+        "agreement": {
+            "normalText": "FF6C665E"
+        },
+		"phone_code_login": {
+            "prefix": "FFF7F7F7",
+			"get_code_btn": {
+				"normal": "FFFFFFFF",
+				"disable": "FFD1C1AE"
+			}
+		},
+		"login_success_welcome": {
+			"welcome_label": "FFFFFFFF",
+			"name_label": "FFBB9F5E",
+			"switch_account_btn": "FF181818"
+		},
+		"device_security": {
+			"get_code_btn": "FFFFFFFF",
+			"content_label": "FF6C665E"
+		},
+		"login_history": {
+			"combobox": {
+				"background": "FFCBCBCB",
+                "comboboxText": "FF5B544A",
+                "listTextNor": "FF6C665E",
+                "listTextHover": "FF181818"
+			}
+		},
+        "pay": {
+            "title": "FFFFFFFF",
+            "production": "FF6C665E",
+            "amount": "FF181818",
+            "problemLabel": "FF6C665E",
+            "payIconTip": "FF6C665E",
+            "content": "FF181818"
+        },
+        "pay_confirm": {
+            "content": "FF181818"
+        },
+		"pay_list": {
+			"listbox": {
+				"background": "FFD4D4D4"
+			},
+			"extra_label": {
+				"background": "FFBB9F5E"
+			},
+			"text": {
+				"pay_way_tips": "FF6C665E"
+			}
+		},
+		"real_name_auth_success" : {
+			"label_bg" : "FFF5F5F5"
+		},
+        "real_name_auth": {
+            "tip": "FF6C665E"
+        },
+		"bind_phone_confirm": {
+			"label_bg": "FFECEDED",
+			"emphasize_text": "FFA3835C",
+			"account_info": "FF5B544A"
+		},
+		"phone_bind": {
+			"label_faq": "FFA3835C"
+		}
+	},
+	"images": {
+		"common": {
+			"alert_bg_752": {
+				"file": "\\skin\\res_common\\alert_bg_752.png",
+				"scale9": "376,150,376,80"
+			},
+			"dlg_bg_752": {
+				"file": "\\skin\\res_common\\dlg_bg_752.png",
+				"scale9": "376,250,376,40"
+			},
+			"alert_bg_792": {
+				"file": "\\skin\\res_common\\alert_bg_792.png",
+				"scale9": "396,250,396,40"
+			},
+			"dlg_bg_840": {
+				"file": "\\skin\\res_common\\dlg_bg_840.png"
+			},
+			"kuro_game_logo_28": {
+				"file": "\\skin\\res_common\\kuro_game_logo_28.png"
+			},
+			"gray_btn_normal_80": {
+				"file": "\\skin\\res_common\\btn_gray_normal_80.png",
+				"scale9": "180,40,50,40"
+			},
+			"gray_btn_hover_80": {
+				"file": "\\skin\\res_common\\btn_gray_hover_80.png",
+				"scale9": "180,40,50,40"
+			},
+			"gray_btn_clicked_80": {
+				"file": "\\skin\\res_common\\btn_gray_clicked_80.png",
+				"scale9": "180,40,50,40"
+			},
+			"black_btn_normal_80": {
+				"file": "\\skin\\res_common\\btn_black_normal_80.png",
+				"scale9": "180,40,50,40"
+			},
+			"black_btn_hover_80": {
+				"file": "\\skin\\res_common\\btn_black_hover_80.png",
+				"scale9": "180,40,50,40"
+			},
+			"black_btn_clicked_80": {
+				"file": "\\skin\\res_common\\btn_black_clicked_80.png",
+				"scale9": "180,40,50,40"
+			},
+            "black_btn_normal_624_80": {
+				"file": "\\skin\\res_common\\btn_black_normal_624_80.png"
+			},
+			"black_btn_hover_624_80": {
+				"file": "\\skin\\res_common\\btn_black_hover_624_80.png"
+			},
+			"black_btn_clicked_624_80": {
+				"file": "\\skin\\res_common\\btn_black_clicked_624_80.png"
+			},
+			"red_btn_normal_80": {
+				"file": "\\skin\\res_common\\red_btn_normal_80.png",
+				"scale9": "180,40,50,40"
+			},
+			"red_btn_hover_80": {
+				"file": "\\skin\\res_common\\red_btn_hover_80.png",
+				"scale9": "180,40,50,40"
+			},
+			"red_btn_clicked_80": {
+				"file": "\\skin\\res_common\\red_btn_clicked_80.png",
+				"scale9": "180,40,50,40"
+			},
+			"black_btn_normal_88": {
+				"file": "\\skin\\res_common\\btn_black_normal_88.png",
+				"scale9": "200,44,60,44"
+			},
+			"black_btn_hover_88": {
+				"file": "\\skin\\res_common\\btn_black_hover_88.png",
+				"scale9": "200,44,60,44"
+			},
+			"black_btn_clicked_88": {
+				"file": "\\skin\\res_common\\btn_black_clicked_88.png",
+				"scale9": "200,44,60,44"
+			},
+			"btn_back_normal_72": {
+				"file": "\\skin\\res_common\\btn_back_normal_72.png"
+			},
+			"btn_back_hover_72": {
+				"file": "\\skin\\res_common\\btn_back_hover_72.png"
+			},
+			"btn_back_clicked_72": {
+				"file": "\\skin\\res_common\\btn_back_clicked_72.png"
+			},
+			"btn_webview_back_normal_72": {
+				"file": "\\skin\\res_common\\btn_webview_back_normal_72.png"
+			},
+			"btn_webview_back_hover_72": {
+				"file": "\\skin\\res_common\\btn_webview_back_hover_72.png"
+			},
+			"btn_webview_back_clicked_72": {
+				"file": "\\skin\\res_common\\btn_webview_back_clicked_72.png"
+			},
+			"btn_close_normal_72": {
+				"file": "\\skin\\res_common\\btn_close_normal_72.png"
+			},
+			"btn_close_hover_72": {
+				"file": "\\skin\\res_common\\btn_close_hover_72.png"
+			},
+			"btn_close_clicked_72": {
+				"file": "\\skin\\res_common\\btn_close_clicked_72.png"
+			},
+			"btn_webview_close_normal_72": {
+				"file": "\\skin\\res_common\\btn_webview_close_normal_72.png"
+			},
+			"btn_webview_close_hover_72": {
+				"file": "\\skin\\res_common\\btn_webview_close_hover_72.png"
+			},
+			"btn_webview_close_clicked_72": {
+				"file": "\\skin\\res_common\\btn_webview_close_clicked_72.png"
+			},
+            "btn_webview_refresh_normal_72": {
+                "file": "\\skin\\res_common\\btn_webview_refresh_normal_72.png"
+            },
+            "btn_webview_refresh_hover_72": {
+                "file": "\\skin\\res_common\\btn_webview_refresh_hover_72.png"
+            },
+            "btn_webview_refresh_clicked_72": {
+                "file": "\\skin\\res_common\\btn_webview_refresh_clicked_72.png"
+            },
+            "btn_transparent_webview_close_normal_48": {
+                "file": "\\skin\\res_common\\btn_transparent_webview_close_normal_48.png"
+            },
+            "btn_transparent_webview_close_hover_48": {
+                "file": "\\skin\\res_common\\btn_transparent_webview_close_hover_48.png"
+            },
+            "btn_transparent_webview_close_clicked_48": {
+                "file": "\\skin\\res_common\\btn_transparent_webview_close_clicked_48.png"
+            },
+			"btn_close_normal_48": {
+				"file": "\\skin\\res_common\\btn_close_normal_48.png"
+			},
+			"btn_close_hover_48": {
+				"file": "\\skin\\res_common\\btn_close_hover_48.png"
+			},
+			"btn_close_clicked_48": {
+				"file": "\\skin\\res_common\\btn_close_clicked_48.png"
+			},
+			"light_btn_normal_72": {
+				"file": "\\skin\\res_common\\light_btn_normal_72.png"
+			},
+			"light_btn_hover_72": {
+				"file": "\\skin\\res_common\\light_btn_hover_72.png"
+			},
+			"light_btn_clicked_72": {
+				"file": "\\skin\\res_common\\light_btn_clicked_72.png"
+			},
+			"light_btn_normal_64": {
+				"file": "\\skin\\res_common\\light_btn_normal_64.png"
+			},
+			"light_btn_hover_64": {
+				"file": "\\skin\\res_common\\light_btn_hover_64.png"
+			},
+			"light_btn_clicked_64": {
+				"file": "\\skin\\res_common\\light_btn_clicked_64.png"
+			},
+            "light_btn_disable_72": {
+				"file": "\\skin\\res_common\\light_btn_disable_72.png"
+			},
+			"icon_loading_88": {
+				"file": "\\skin\\res_common\\icon_loading_88.png"
+			},
+			"icon_warnning_88": {
+				"file": "\\skin\\res_common\\icon_warnning_88.png"
+			},
+			"btn_dark_normal_68": {
+				"file": "\\skin\\res_common\\btn_dark_normal_68.png"
+			},
+			"btn_dark_hover_68": {
+				"file": "\\skin\\res_common\\btn_dark_hover_68.png"
+			},
+			"btn_dark_clicked_68": {
+				"file": "\\skin\\res_common\\btn_dark_clicked_68.png"
+			},
+			"check_box_normal_36": {
+				"file": "\\skin\\res_common\\check_box_normal_36.png"
+			},
+			"check_box_checked_36": {
+				"file": "\\skin\\res_common\\check_box_checked_36.png"
+			},
+			"combobox_arrow_down_40": {
+				"file": "\\skin\\res_common\\combobox_arrow_down_40.png"
+			},
+			"combobox_arrow_up_40": {
+				"file": "\\skin\\res_common\\combobox_arrow_up_40.png"
+			},
+			"icon_zhedie_40": {
+				"file": "\\skin\\res_common\\icon_zhedie_40.png"
+			},
+            "login_success_dlg_bg_1148": {
+                "file": "\\skin\\res_common\\login_success_dlg_bg_1148.png"
+            },
+            "btn_close_jy_30":{
+                "file": "\\skin\\res_common\\btn_close_jy_30.png"
+            },
+            "icon_load_failed": {
+                "file": "\\skin\\res_common\\load_failed.png"
+            },
+            "loading_static": {
+                "file": "\\skin\\res_common\\icon_loading_static.png"
+            },
+            "loading_rotate": {
+                "file": "\\skin\\res_common\\icon_loading_rotate.png"
+            },
+            "btn_transparent_webview_close_normal_20": {
+                "file": "\\skin\\res_common\\btn_transparent_webview_close_normal_20.png"
+            }
+		},
+		"login": {
+			"btn_taptap_login_normal": {
+				"file": "\\skin\\res_login\\btn_taptap_login_normal.png"
+			},
+			"btn_taptap_login_hover": {
+				"file": "\\skin\\res_login\\btn_taptap_login_hover.png"
+			},
+			"btn_taptap_login_clicked": {
+				"file": "\\skin\\res_login\\btn_taptap_login_clicked.png"
+			},
+			"btn_acc_login_normal": {
+				"file": "\\skin\\res_login\\btn_acc_login_normal.png"
+			},
+			"btn_acc_login_hover": {
+				"file": "\\skin\\res_login\\btn_acc_login_hover.png"
+			},
+			"btn_acc_login_clicked": {
+				"file": "\\skin\\res_login\\btn_acc_login_clicked.png"
+			},
+			"btn_qrcode_login_normal": {
+				"file": "\\skin\\res_login\\btn_qrcode_login_normal.png"
+			},
+			"btn_qrcode_login_hover": {
+				"file": "\\skin\\res_login\\btn_qrcode_login_hover.png"
+			},
+			"btn_qrcode_login_clicked": {
+				"file": "\\skin\\res_login\\btn_qrcode_login_clicked.png"
+			},
+			"btn_view_password_48": {
+				"file": "\\skin\\res_login\\btn_view_password_48.png"
+			},
+			"btn_hide_password_48": {
+				"file": "\\skin\\res_login\\btn_hide_password_48.png"
+			},
+			"qrcode_scan_success_88": {
+				"file": "\\skin\\res_login\\qrcode_scan_success_88.png"
+			},
+			"ico_account_50": {
+				"file": "\\skin\\res_login\\ico_account_50.png"
+			},
+			"ico_phone_50": {
+				"file": "\\skin\\res_login\\ico_phone_50.png"
+			},
+			"ico_qrlogin_56": {
+				"file": "\\skin\\res_login\\ico_qrlogin_56.png"
+			},
+			"ico_scan_50": {
+				"file": "\\skin\\res_login\\ico_scan_50.png"
+			},
+			"ico_taptap_50": {
+				"file": "\\skin\\res_login\\ico_taptap_50.png"
+			},
+			"ico_wegame_50": {
+				"file": "\\skin\\res_login\\ico_wegame_50.png"
+			},
+			"ico_delete_40": {
+				"file": "\\skin\\res_login\\ico_delete_40.png"
+			},
+			"dot_rectangle_624": {
+				"file": "\\skin\\res_login\\dot_rectangle_624.png"
+			},
+			"icon_kuro_50": {
+				"file": "\\skin\\res_login\\icon_kuro_50.png"
+			},
+			"icon_bind": {
+				"file": "\\skin\\res_login\\icon_bind.png"
+			},
+			"icon_separator": {
+				"file": "\\skin\\res_login\\icon_separator.png"
+			}
+		},
+		"pay": {
+			"ico_pay_virtual_48": {
+				"file": "\\skin\\res_pay\\ico_pay_virtual_48.png"
+			},
+			"ico_weixin_48": {
+				"file": "\\skin\\res_pay\\ico_weixin_48.png"
+			},
+			"ico_zhifubao_48": {
+				"file": "\\skin\\res_pay\\ico_zhifubao_48.png"
+			},
+			"ico_pay_error_tips_176": {
+				"file": "\\skin\\res_pay\\ico_pay_error_tips_176.png"
+			},
+			"list_item_right_bg_36": {
+				"file": "\\skin\\res_pay\\list_item_right_bg_36.png"
+			},
+			"list_bg_normal_88": {
+				"file": "\\skin\\res_pay\\list_bg_normal_88.png"
+			},
+			"list_bg_sel_88": {
+				"file": "\\skin\\res_pay\\list_bg_sel_88.png"
+			},
+			"ico_pay_ali_44": {
+				"file": "\\skin\\res_pay\\ico_pay_ali_44.png"
+			},
+			"ico_pay_wechat_44": {
+				"file": "\\skin\\res_pay\\ico_pay_wechat_44.png"
+			},
+			"ico_pay_result_fail_88": {
+				"file": "\\skin\\res_pay\\ico_pay_result_fail_88.png"
+			},
+			"ico_pay_result_success_88": {
+				"file": "\\skin\\res_pay\\ico_pay_result_success_88.png"
+			}
+		}
+	}
+}

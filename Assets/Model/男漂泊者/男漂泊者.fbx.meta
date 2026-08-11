@@ -1,0 +1,342 @@
+fileFormatVersion: 2
+guid: Cykasi2uBy+zsOrkjY1t6XSy12gaQX8PF/mP8+KUWGwBqD6GVs8vK5Y=
+ModelImporter:
+  serializedVersion: 22361
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 0.Face_
+    second: {fileID: 2100000, guid: ce6c7b0ad3ca6aa40a530c1935462779, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 1.Face+
+    second: {fileID: 2100000, guid: c9a8834e93f31aa43a5e6dcb9b227e85, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 10.Hair
+    second: {fileID: 2100000, guid: c4b59bca0a75a1f4bb638863927929f4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 11.Hair+
+    second: {fileID: 2100000, guid: 1bafb8710840d424dbfb7dc748c79025, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 12.Up_
+    second: {fileID: 2100000, guid: ac86c73549ecadb43ab7056ec44fff47, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 13.Up_in
+    second: {fileID: 2100000, guid: 11f47bc652fa17a4c8b54874127fc1b3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 14.Up_Skin
+    second: {fileID: 2100000, guid: 11910f055e39e484bae1a66479773ff5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 15.Up_Metal
+    second: {fileID: 2100000, guid: a1275d98e369ef94586beffc3ab73467, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 16.Up_EarRing
+    second: {fileID: 2100000, guid: c62eb2e55d672384082f794b2b93a540, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 17.Up_Hairpin
+    second: {fileID: 2100000, guid: 44a4ed4e72b24d64c89c46ebe1fc5d46, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 18.Up_Emblem
+    second: {fileID: 2100000, guid: 3b92d2b28629927419d2e6ccd0964e98, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 19.Up_Tie
+    second: {fileID: 2100000, guid: 1b563660866c16548a568d7446bd6eb2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 2.Face_Mouthin
+    second: {fileID: 2100000, guid: e0f5adf8a16ce1641ab3d86bc54a38ea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 20.Up_Shirt
+    second: {fileID: 2100000, guid: 27dea57edc0ad124fb79eaa36b3de957, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 21.Up_Shirt_in
+    second: {fileID: 2100000, guid: 6258b01f655c40d489cca63ae08cff7d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 22.Down_
+    second: {fileID: 2100000, guid: d1c24e055ceff5e408452536a3cb2760, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 23.Down_Glove
+    second: {fileID: 2100000, guid: 967fc5e71e489354e87aa4e28c6e9dbe, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24.Down_Belt
+    second: {fileID: 2100000, guid: 20452f8c5cb4c744396328ad36868746, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 25.Down_Shoe
+    second: {fileID: 2100000, guid: b9daff9e24150934380f78023f94764e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26.Down_Metal
+    second: {fileID: 2100000, guid: 71bf053d1de33d54bad83162c7110e0f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27.Down_Skin
+    second: {fileID: 2100000, guid: cd6d61a075fab9a4498401cf8df9068d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 28.Star
+    second: {fileID: 2100000, guid: 40f4d90c36618ee42b6d9b8bd91d78cf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 29.Facial
+    second: {fileID: 2100000, guid: 93ef6c61d1a38b840bf21b58a915cf52, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 3.Face_Mouthtooth
+    second: {fileID: 2100000, guid: 56423314aa1520244be931623b4608be, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 4.Face_Noseline
+    second: {fileID: 2100000, guid: b26574ba2812fa2418ae198efa6ea792, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 5.Face_Eyebrow
+    second: {fileID: 2100000, guid: b86a1f68c0e5b9a4b8dca9b262640958, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 6.Face_Eyelash
+    second: {fileID: 2100000, guid: 2affce8bf731a30438aefd7cabd48f5b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 7.Face_Eyewhite
+    second: {fileID: 2100000, guid: 3d1cc174d29611f428d82dc575b80095, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 8.Eye_
+    second: {fileID: 2100000, guid: 7a5a17964b4078544bed3404ce5197bf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 9.Eye_Hi
+    second: {fileID: 2100000, guid: 162c1721e0d086943b7484d245ce1b68, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 0
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    aCLCompressionLevel: 3
+    aCLCurvePrecision: 0.01
+    aCLFastSampleMode: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+    tuanjieGIEnable: 0
+    tuanjieGIGenSDFFactor: 1
+    tuanjieGIGenSDFBias: 0.25
+    tuanjieGIDoubleSidedMode: 0
+    tuanjieGIGenFacetNums: 12
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    totalVerticesCount: 48605
+    totalTrianglesCount: 63808
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  virtualGeometry:
+    virtualGeometry: 0
+    hasBoneWeight: 0
+    useTransparent: 0
+    setVGForeachMesh: 0
+    isFirstUse: 1
+    virtualGeometrySettings:
+      generateGeometryBuffer: 0
+      surfaceCompensation: 0
+      allMeshUse: 1
+      ignoreSimpleMesh: 0
+      transformScaleState: 0
+      isPossibleOverflow: 0
+    virtualGeometryPlatformSettings:
+    - serializedVersion: 0
+      overridden: 0
+      ignorePlatformSupport: 0
+      buildTarget: DefaultVirtualGeometryPlatform
+      positionPrecision: -2147483648
+      normalPrecision: -2147483648
+      tangentPrecision: -2147483648
+      detailedTriangleCount: 0
+      detailedVertexCount: 0
+      rootPageSize: 0
+      streamablePageSize: 0
+      reserveTrianglePercent: 100
+      reserveDetailLevel: 0
+    - serializedVersion: 0
+      overridden: 0
+      ignorePlatformSupport: 0
+      buildTarget: Standalone
+      positionPrecision: -2147483648
+      normalPrecision: -2147483648
+      tangentPrecision: -2147483648
+      detailedTriangleCount: 0
+      detailedVertexCount: 0
+      rootPageSize: 0
+      streamablePageSize: 0
+      reserveTrianglePercent: 100
+      reserveDetailLevel: 0
+    - serializedVersion: 0
+      overridden: 0
+      ignorePlatformSupport: 0
+      buildTarget: iPhone
+      positionPrecision: -2147483648
+      normalPrecision: -2147483648
+      tangentPrecision: -2147483648
+      detailedTriangleCount: 0
+      detailedVertexCount: 0
+      rootPageSize: 0
+      streamablePageSize: 0
+      reserveTrianglePercent: 100
+      reserveDetailLevel: 0
+    - serializedVersion: 0
+      overridden: 0
+      ignorePlatformSupport: 0
+      buildTarget: Android
+      positionPrecision: -2147483648
+      normalPrecision: -2147483648
+      tangentPrecision: -2147483648
+      detailedTriangleCount: 0
+      detailedVertexCount: 0
+      rootPageSize: 0
+      streamablePageSize: 0
+      reserveTrianglePercent: 100
+      reserveDetailLevel: 0
+    selectedVGMeshes: []
+    supportVGMeshes: []
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  overrideDefaultPose: 0
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    namedPoseList:
+    - name: Default
+      skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    defaultPoseIndex: -1
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

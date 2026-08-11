@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eca48515a150b54ba9915e012ec5707, type: 3}
+  m_Name: Common
+  m_EditorClassIdentifier: 
+  tableType: 0
+  entries:
+  - key: ok
+    zhHans: "\u786E\u5B9A"
+    en: OK
+    ja: OK
+  - key: cancel
+    zhHans: "\u53D6\u6D88"
+    en: Cancel
+    ja: "\u30AD\u30E3\u30F3\u30BB\u30EB"
+  - key: confirm
+    zhHans: "\u786E\u8BA4"
+    en: Confirm
+    ja: "\u78BA\u8A8D"
+  - key: back
+    zhHans: "\u8FD4\u56DE"
+    en: Back
+    ja: "\u623B\u308B"

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: badfc5bc2d6b12443b20f7b7a0908728, type: 3}
+  m_Name: SpawnGroup_Wild
+  m_EditorClassIdentifier: 
+  slots:
+  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+    localOffset: {x: 0, y: 0, z: 0}
+    localEuler: {x: 0, y: 0, z: 0}
+  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+    localOffset: {x: 2, y: 0, z: 0}
+    localEuler: {x: 0, y: 0, z: 0}
+  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+    localOffset: {x: -2, y: 0, z: 1}
+    localEuler: {x: 0, y: 0, z: 0}
+  activateRadius: 35
+  hibernateRadius: 50
+  respawnDelay: 20
+  respawnOnlyWhenPlayerAway: 1

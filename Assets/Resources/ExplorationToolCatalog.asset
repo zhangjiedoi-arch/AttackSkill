@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e21a2b3c4d5e67890123456789abcdef, type: 3}
+  m_Name: ExplorationToolCatalog
+  m_EditorClassIdentifier: 
+  slots:
+  - {fileID: 11400000, guid: e7ac1207ae609df439f6d56d4c3fea32, type: 2}
+  - {fileID: 11400000, guid: 288d270367f19f949a29d82f41f71766, type: 2}
+  - {fileID: 11400000, guid: b8d00068cf52ae04b92af4e12fad8b62, type: 2}
+  - {fileID: 11400000, guid: 159cec1b31b99b44eb271566d7896c84, type: 2}
+  - {fileID: 11400000, guid: 61b2e5aae4cc2a5499ffc6fe3d2fcd39, type: 2}
+  - {fileID: 11400000, guid: bf254bb17702eb6468207edc35d450fa, type: 2}
+  - {fileID: 11400000, guid: e9eb71ab45571c248a2065ad7a31205d, type: 2}
+  - {fileID: 11400000, guid: 1d18501366dba844e9852d359999facb, type: 2}

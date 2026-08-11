@@ -1,0 +1,521 @@
+{
+  "tableType": "UI",
+  "entries": [
+    {
+      "key": "game_name_tide",
+      "zhHans": "雷鸣之潮",
+      "en": "Thundering Tide",
+      "ja": "Thundering Tide"
+    },
+    {
+      "key": "pre_game_help",
+      "zhHans": "分析资源补丁...",
+      "en": "Analyzing the resource patch...",
+      "ja": "Analyzing the resource patch..."
+    },
+    {
+      "key": "notice",
+      "zhHans": "公告",
+      "en": "Notice",
+      "ja": "Notice"
+    },
+    {
+      "key": "repair",
+      "zhHans": "修复",
+      "en": "Repair",
+      "ja": "Repair"
+    },
+    {
+      "key": "exit",
+      "zhHans": "退出",
+      "en": "Quit",
+      "ja": "終了"
+    },
+    {
+      "key": "tool",
+      "zhHans": "工具",
+      "en": "Tool",
+      "ja": "Tool"
+    },
+    {
+      "key": "account",
+      "zhHans": "账号",
+      "en": "Account",
+      "ja": "Account"
+    },
+    {
+      "key": "setting",
+      "zhHans": "设置",
+      "en": "Settings",
+      "ja": "設定"
+    },
+    {
+      "key": "age_appropriate_reminder",
+      "zhHans": "适龄提示",
+      "en": "Age-appropriate reminder",
+      "ja": "Age-appropriate reminder"
+    },
+    {
+      "key": "click_link",
+      "zhHans": "点击连接",
+      "en": "Click the link",
+      "ja": "Click the link"
+    },
+    {
+      "key": "sure",
+      "zhHans": "确认",
+      "en": "Sure",
+      "ja": "Sure"
+    },
+    {
+      "key": "remind",
+      "zhHans": "提示",
+      "en": "Remind",
+      "ja": "Remind"
+    },
+    {
+      "key": "confirm_to_logout",
+      "zhHans": "确认登出账号？",
+      "en": "Confirm to log out of the account?",
+      "ja": "Confirm to log out of the account?"
+    },
+    {
+      "key": "cancel",
+      "zhHans": "取消",
+      "en": "Cancel",
+      "ja": "Cancel"
+    },
+    {
+      "key": "confirm_logout",
+      "zhHans": "确认登出",
+      "en": "Confirm logout",
+      "ja": "Confirm logout"
+    },
+    {
+      "key": "remove_patch",
+      "zhHans": "清除补丁",
+      "en": "Remove the patch",
+      "ja": "Remove the patch"
+    },
+    {
+      "key": "upload_log",
+      "zhHans": "日志上传",
+      "en": "Log upload",
+      "ja": "Log upload"
+    },
+    {
+      "key": "network_testing",
+      "zhHans": "网络检测",
+      "en": "Network testing",
+      "ja": "Network testing"
+    },
+    {
+      "key": "volume",
+      "zhHans": "音量",
+      "en": "Volume",
+      "ja": "Volume"
+    },
+    {
+      "key": "master_volume",
+      "zhHans": "主音量",
+      "en": "Master volume",
+      "ja": "Master volume"
+    },
+    {
+      "key": "music_volume",
+      "zhHans": "音乐音量",
+      "en": "Music volume",
+      "ja": "Music volume"
+    },
+    {
+      "key": "voice_volume",
+      "zhHans": "语音音量",
+      "en": "Voice volume",
+      "ja": "Voice volume"
+    },
+    {
+      "key": "sound_effect_volume",
+      "zhHans": "音效音量",
+      "en": "Sound effect volume",
+      "ja": "Sound effect volume"
+    },
+    {
+      "key": "env_volume",
+      "zhHans": "环境音量",
+      "en": "Environmental volume",
+      "ja": "Environmental volume"
+    },
+    {
+      "key": "interface_volume",
+      "zhHans": "界面音量",
+      "en": "Interface volume",
+      "ja": "Interface volume"
+    },
+    {
+      "key": "run_background_mute",
+      "zhHans": "后台运行自动静音",
+      "en": "Run in the background and automatically mute.",
+      "ja": "Run in the background and automatically mute."
+    },
+    {
+      "key": "display_mode",
+      "zhHans": "显示模式",
+      "en": "Display mode",
+      "ja": "Display mode"
+    },
+    {
+      "key": "maximum_frame_rate",
+      "zhHans": "最高帧率",
+      "en": "Maximum frame rate",
+      "ja": "Maximum frame rate"
+    },
+    {
+      "key": "vertical_synchronization",
+      "zhHans": "垂直同步",
+      "en": "Vertical Synchronization",
+      "ja": "Vertical Synchronization"
+    },
+    {
+      "key": "quality_special_effects",
+      "zhHans": "特效质量",
+      "en": "Quality of special effects",
+      "ja": "Quality of special effects"
+    },
+    {
+      "key": "shadow_quality",
+      "zhHans": "阴影质量",
+      "en": "Shadow quality",
+      "ja": "Shadow quality"
+    },
+    {
+      "key": "picture_details",
+      "zhHans": "画面细节",
+      "en": "Picture details",
+      "ja": "Picture details"
+    },
+    {
+      "key": "AO",
+      "zhHans": "AO",
+      "en": "AO",
+      "ja": "AO"
+    },
+    {
+      "key": "volume_fog",
+      "zhHans": "体积雾",
+      "en": "Volume fog",
+      "ja": "Volume fog"
+    },
+    {
+      "key": "volume_light",
+      "zhHans": "体积光",
+      "en": "Volume Light",
+      "ja": "Volume Light"
+    },
+    {
+      "key": "motion_blur",
+      "zhHans": "运动模糊",
+      "en": "Motion blur",
+      "ja": "Motion blur"
+    },
+    {
+      "key": "anti_aliasing",
+      "zhHans": "抗锯齿",
+      "en": "Anti-aliasing",
+      "ja": "Anti-aliasing"
+    },
+    {
+      "key": "Bloom",
+      "zhHans": "Bloom",
+      "en": "Bloom",
+      "ja": "Bloom"
+    },
+    {
+      "key": "crowd_density",
+      "zhHans": "人群密度",
+      "en": "Crowd density",
+      "ja": "Crowd density"
+    },
+    {
+      "key": "monster_hit_material_effect",
+      "zhHans": "怪物受击材质效果",
+      "en": "Monster hit material effect",
+      "ja": "Monster hit material effect"
+    },
+    {
+      "key": "enable_setting",
+      "zhHans": "设置开启",
+      "en": "Enable setting",
+      "ja": "Enable setting"
+    },
+    {
+      "key": "set_to_off",
+      "zhHans": "设置关闭",
+      "en": "Set to Off",
+      "ja": "Set to Off"
+    },
+    {
+      "key": "injury_mark",
+      "zhHans": "伤害飘字",
+      "en": "Injury mark",
+      "ja": "Injury mark"
+    },
+    {
+      "key": "injury_manifestations",
+      "zhHans": "受伤表现",
+      "en": "Injury manifestations",
+      "ja": "Injury manifestations"
+    },
+    {
+      "key": "rendering_distance",
+      "zhHans": "渲染距离",
+      "en": "Rendering distance",
+      "ja": "Rendering distance"
+    },
+    {
+      "key": "text_selection",
+      "zhHans": "文字选择",
+      "en": "Text selection",
+      "ja": "Text selection"
+    },
+    {
+      "key": "sound",
+      "zhHans": "声音",
+      "en": "Sound",
+      "ja": "Sound"
+    },
+    {
+      "key": "portrait",
+      "zhHans": "画像",
+      "en": "Portrait",
+      "ja": "Portrait"
+    },
+    {
+      "key": "language",
+      "zhHans": "语言",
+      "en": "Language",
+      "ja": "Language"
+    },
+    {
+      "key": "open",
+      "zhHans": "开",
+      "en": "Open",
+      "ja": "Open"
+    },
+    {
+      "key": "close",
+      "zhHans": "关",
+      "en": "Close",
+      "ja": "Close"
+    },
+    {
+      "key": "login",
+      "zhHans": "登录",
+      "en": "LogIn",
+      "ja": "LogIn"
+    },
+    {
+      "key": "enter_account",
+      "zhHans": "输入账号...",
+      "en": "Enter the account number...",
+      "ja": "Enter the account number..."
+    },
+    {
+      "key": "enter_password",
+      "zhHans": "输入密码...",
+      "en": "Enter the password...",
+      "ja": "Enter the password..."
+    },
+    {
+      "key": "password",
+      "zhHans": "密码",
+      "en": "Password",
+      "ja": "Password"
+    },
+    {
+      "key": "confirm_login",
+      "zhHans": "确认登录",
+      "en": "Confirm login",
+      "ja": "Confirm login"
+    },
+    {
+      "key": "choose_gender",
+      "zhHans": "选择性别",
+      "en": "Choose gender",
+      "ja": "Choose gender"
+    },
+    {
+      "key": "gender",
+      "zhHans": "性别",
+      "en": "Gender",
+      "ja": "Gender"
+    },
+    {
+      "key": "male",
+      "zhHans": "男",
+      "en": "Male",
+      "ja": "男"
+    },
+    {
+      "key": "female",
+      "zhHans": "女",
+      "en": "Female",
+      "ja": "女"
+    },
+    {
+      "key": "login_tip_account_empty",
+      "zhHans": "请输入账号",
+      "en": "Please enter account",
+      "ja": "アカウントを入力してください"
+    },
+    {
+      "key": "login_tip_password_empty",
+      "zhHans": "请输入密码",
+      "en": "Please enter password",
+      "ja": "パスワードを入力してください"
+    },
+    {
+      "key": "login_tip_invalid",
+      "zhHans": "账号或密码不正确",
+      "en": "Incorrect account or password",
+      "ja": "アカウントまたはパスワードが正しくありません"
+    },
+    {
+      "key": "notice_wip",
+      "zhHans": "公告功能开发中",
+      "en": "Notices coming soon",
+      "ja": "お知らせ機能は準備中です"
+    },
+    {
+      "key": "confirm_quit_game",
+      "zhHans": "确定要退出游戏吗？",
+      "en": "Quit the game?",
+      "ja": "ゲームを終了しますか？"
+    },
+    {
+      "key": "tools_clear_patch",
+      "zhHans": "清除补丁（占位）",
+      "en": "Clear patch (placeholder)",
+      "ja": "パッチ削除（仮）"
+    },
+    {
+      "key": "tools_network_test",
+      "zhHans": "网络检测（占位）",
+      "en": "Network check (placeholder)",
+      "ja": "ネットワーク確認（仮）"
+    },
+    {
+      "key": "tools_log_upload",
+      "zhHans": "日志上传（占位）",
+      "en": "Upload logs (placeholder)",
+      "ja": "ログアップロード（仮）"
+    },
+    {
+      "key": "pause_menu_title",
+      "zhHans": "暂停",
+      "en": "Pause",
+      "ja": "一時停止"
+    },
+    {
+      "key": "pause_continue",
+      "zhHans": "继续",
+      "en": "Continue",
+      "ja": "続ける"
+    },
+    {
+      "key": "pause_quit_game",
+      "zhHans": "退出游戏",
+      "en": "Quit Game",
+      "ja": "ゲーム終了"
+    },
+    {
+      "key": "entering_game",
+      "zhHans": "正在进入游戏…",
+      "en": "Entering game…",
+      "ja": "ゲームに入っています…"
+    },
+    {
+      "key": "locale_zh",
+      "zhHans": "简体中文",
+      "en": "Chinese",
+      "ja": "中国語"
+    },
+    {
+      "key": "locale_en",
+      "zhHans": "英语",
+      "en": "English",
+      "ja": "英語"
+    },
+    {
+      "key": "locale_ja",
+      "zhHans": "日语",
+      "en": "Japanese",
+      "ja": "日本語"
+    },
+    {
+      "key": "release_switch",
+      "zhHans": "松开以切换",
+      "en": "Release to switch",
+      "ja": "離して切り替え"
+    },
+    {
+      "key": "feature_wip",
+      "zhHans": "该功能开发中",
+      "en": "Feature under development",
+      "ja": "この機能は開発中です"
+    },
+    {
+      "key": "skill_wheel_blocked_by_tool",
+      "zhHans": "当前状态无法打开探索工具轮盘",
+      "en": "Cannot open the exploration tool wheel in the current state",
+      "ja": "現在の状態では探索ツールホイールを開けません"
+    },
+    {
+      "key": "skill_wheel_1",
+      "zhHans": "侦察",
+      "en": "Recon",
+      "ja": "偵察"
+    },
+    {
+      "key": "skill_wheel_2",
+      "zhHans": "物品探测器",
+      "en": "Item Detector",
+      "ja": "アイテム探知"
+    },
+    {
+      "key": "skill_wheel_3",
+      "zhHans": "摩托",
+      "en": "Motorcycle",
+      "ja": "バイク"
+    },
+    {
+      "key": "skill_wheel_4",
+      "zhHans": "即时相机",
+      "en": "Instant Camera",
+      "ja": "インスタントカメラ"
+    },
+    {
+      "key": "skill_wheel_5",
+      "zhHans": "显像",
+      "en": "Imaging",
+      "ja": "顕像"
+    },
+    {
+      "key": "skill_wheel_6",
+      "zhHans": "相机",
+      "en": "Camera",
+      "ja": "カメラ"
+    },
+    {
+      "key": "skill_wheel_7",
+      "zhHans": "飞行",
+      "en": "Flight",
+      "ja": "飛行"
+    },
+    {
+      "key": "skill_wheel_8",
+      "zhHans": "御剑",
+      "en": "Sword Flight",
+      "ja": "御剣"
+    }
+  ]
+}

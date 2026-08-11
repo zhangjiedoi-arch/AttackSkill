@@ -1,0 +1,97 @@
+{
+  "Textures": {
+    "ID_Mask": "Client/Content/Aki/Character/Vehicle/Motor/Diy/Mat/Decal/Motorcycle/T_Motorcycle_3_ID.T_Motorcycle_3_ID",
+    "T_Motorcycle_3_ID": "Client/Content/Aki/Character/Vehicle/Motor/Diy/Mat/Decal/Motorcycle/T_Motorcycle_3_ID.T_Motorcycle_3_ID",
+    "MainTex": "Client/Content/Aki/Character/Vehicle/Motor/Diy/Mat/Decal/Motorcycle/T_Motorcycle_3_D.T_Motorcycle_3_D",
+    "PM_Diffuse": "Client/Content/Aki/Character/Role/CommonTexture/CharacterCubeMaps/T_Env_01_D.T_Env_01_D",
+    "T_Motorcycle_3_D": "Client/Content/Aki/Character/Vehicle/Motor/Diy/Mat/Decal/Motorcycle/T_Motorcycle_3_D.T_Motorcycle_3_D",
+    "PM_Normals": "Client/Content/Aki/Character/Vehicle/Motor/Diy/Mat/Decal/Motorcycle/T_Motorcycle_3_N.T_Motorcycle_3_N",
+    "Normal_Roughness_Metallic": "Client/Content/Aki/Character/Vehicle/Motor/Diy/Mat/Decal/Motorcycle/T_Motorcycle_3_N.T_Motorcycle_3_N",
+    "MatCapTex": "Client/Content/Aki/Character/Role/CommonTexture/CharacterCubeMaps/T_Env_01_D.T_Env_01_D",
+    "T_Env_01_D": "Client/Content/Aki/Character/Role/CommonTexture/CharacterCubeMaps/T_Env_01_D.T_Env_01_D",
+    "PBRCubeMap": "Client/Content/Aki/Character/Role/CommonTexture/CharacterCubeMaps/T_Env_03_CUBE.T_Env_03_CUBE",
+    "T_Env_03_CUBE": "Client/Content/Aki/Character/Role/CommonTexture/CharacterCubeMaps/T_Env_03_CUBE.T_Env_03_CUBE"
+  },
+  "Parameters": {
+    "BlendMode": 0,
+    "ShadingModel": 0,
+    "Colors": {
+      "ShadowColor": {
+        "R": 2.5,
+        "G": 2.5,
+        "B": 2.5,
+        "A": 0.0,
+        "Hex": "FFFFFF"
+      },
+      "EmissionColor": {
+        "R": 0.786458,
+        "G": 0.670602,
+        "B": 0.323033,
+        "A": 0.0,
+        "Hex": "E6D69A"
+      },
+      "PBRIndirectColor": {
+        "R": 0.5,
+        "G": 0.5,
+        "B": 0.5,
+        "A": 0.0,
+        "Hex": "BCBCBC"
+      },
+      "PBRSpecularColor_Test": {
+        "R": 3.0,
+        "G": 3.0,
+        "B": 3.0,
+        "A": 0.0,
+        "Hex": "FFFFFF"
+      }
+    },
+    "Scalars": {
+      "ShadowRange": 0.3,
+      "BreatheStrength": 2.0,
+      "BreatheFrequency": 2.0,
+      "BreathePropotion": 2.0,
+      "NormalStrength_Base": 1.0,
+      "MatCapInt": 1.0,
+      "MetalMatCapInt": 18.0,
+      "Roughness": 0.6,
+      "RoughnessIntensity": 1.0,
+      "MetalMatCapBack": 4.0,
+      "PBRCubeMap_Test": 1.0,
+      "PBRHardSpecWidth_Test": 0.9,
+      "PBRHardSpeSmooth_Test": 0.2,
+      "EdgeEnvBRDFIntensity": 0.45,
+      "UseSpecularMask": 0.0,
+      "PBRSpecularRangeDessolve_Intensity": -10.0,
+      "AOIntensity": 1.0,
+      "RefractionDepthBias": 0.0
+    },
+    "Switches": {
+      "UseBreathLight": true,
+      "UseNormalTexture_Base": true,
+      "UsePBR": true,
+      "UsePBRMask": true,
+      "UseMatCap": true,
+      "UseAOMAP": true
+    },
+    "Properties": {
+      "bHasStaticPermutationResource": true,
+      "BasePropertyOverrides": {
+        "bEnableSeparateTranslucency": true,
+        "ShadingModel": "MSM_ToonCommon",
+        "OpacityMaskClipValue": 0.3333,
+        "RenderQueue": 180,
+        "bCastRayTracedShadows": true,
+        "bIsOnlyForSkeletalMesh": true,
+        "bUsedWithSkeletalMesh": true,
+        "bUsedWithBakedBoneMesh": true,
+        "bUsedWithMorphTargets": true
+      }
+    },
+    "HasTopDiffuse": true,
+    "HasTopNormals": false,
+    "HasTopSpecularMasks": false,
+    "HasTopEmissive": false,
+    "IsTranslucent": false,
+    "IsNull": false
+  }
+}

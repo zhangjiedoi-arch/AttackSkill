@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4326a5e266b54ec2985dbf04d7270ed0, type: 3}
+  m_Name: SkillHit_Enemy_Basic
+  m_EditorClassIdentifier: 
+  segments:
+  - id: enemy_chest_r
+    socket: 6
+    shape: 0
+    radius: 1.5
+    height: 0.5
+    fanAngle: 90
+    minHitDistance: 0.15
+    hitHeight: 0.9
+    damage: 12
+    knockback: 1.2
+    vfxPrefab: {fileID: 4021103657954561961, guid: d50024aef0af9724c8c18172f722d1fc,
+      type: 3}
+    vfxLife: 2.5
+    parentVfxToSocket: 0

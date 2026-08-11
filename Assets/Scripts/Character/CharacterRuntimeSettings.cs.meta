@@ -1,0 +1,42 @@
+fileFormatVersion: 2
+guid: C30asSj7AC9QuOYq3rsqSK0AxUiztH1B6KeJ5Vf3o62pMdpoUkQR8B4=
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - skillTimelinePrefab: {instanceID: 0}
+  - skillCameraPrefab: {instanceID: 0}
+  - circleVfxPrefab: {instanceID: 0}
+  - slashVfxPrefab: {instanceID: 0}
+  - snowHitVfxPrefab: {instanceID: 0}
+  - groundAoeExplosionVfxPrefab: {instanceID: 0}
+  - maleWandererPrefab: {instanceID: 0}
+  - femaleWandererPrefab: {instanceID: 0}
+  - qianxiaoPrefab: {instanceID: 0}
+  - colettaPrefab: {instanceID: 0}
+  - motorcyclePrefab: {instanceID: 0}
+  - swordPrefab: {instanceID: 0}
+  - wingsPrefab: {instanceID: 0}
+  - explorationToolCatalog: {instanceID: 0}
+  - jumpLand: {instanceID: 0}
+  - jumpLoop: {instanceID: 0}
+  - flyingLoop: {instanceID: 0}
+  - flyingTakeOff: {instanceID: 0}
+  - flyingGoUp: {instanceID: 0}
+  - flyingDown: {instanceID: 0}
+  - swordFlyingLoop: {instanceID: 0}
+  - swordFlyingGoOn: {instanceID: 0}
+  - motorcycleLoop: {instanceID: 0}
+  - motorcycleDownSpeed: {instanceID: 0}
+  - motorcycleGoOn: {instanceID: 0}
+  - motorcycleJump: {instanceID: 0}
+  - seaBgm: {instanceID: 0}
+  - iconPlayerFemale: {instanceID: 0}
+  - iconPlayerMale: {instanceID: 0}
+  - iconQianxiao: {instanceID: 0}
+  - iconKelaita: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

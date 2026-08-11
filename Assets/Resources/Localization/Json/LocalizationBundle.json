@@ -1,0 +1,650 @@
+{
+  "version": 1,
+  "tables": [
+    {
+      "tableType": "Common",
+      "entries": [
+        {
+          "key": "game_rem1",
+          "zhHans": "抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。\n审批文号：国新出审【2026】0803号ISBN666-6-888-66888-8出版单位：红温少年科技有限公司\n著作权人：红温少年科技有限公司",
+          "en": "Resist bad games and refuse pirated games. Pay attention to self-protection and beware of being deceived. Playing games in moderation is beneficial to the brain, while excessive gaming is harmful to the body.Arrange your time reasonably and enjoy a healthy life.\nApproval Number: State Administration of Press, Publication, Radio， Film and Television [2026] 0803\nISBN： 666-6-888-66888-8\nPublishing House： Hongwen Youth Science and Technology Co.， Ltd.\nCopyright Holder： Hongwen Youth Science and Technology Co.， Ltd.",
+          "ja": "Resist bad games and refuse pirated games. Pay attention to self-protection and beware of being deceived. Playing games in moderation is beneficial to the brain, while excessive gaming is harmful to the body.Arrange your time reasonably and enjoy a healthy life.\nApproval Number: State Administration of Press, Publication, Radio， Film and Television [2026] 0803\nISBN： 666-6-888-66888-8\nPublishing House： Hongwen Youth Science and Technology Co.， Ltd.\nCopyright Holder： Hongwen Youth Science and Technology Co.， Ltd."
+        },
+        {
+          "key": "pregame_warning",
+          "zhHans": "警告：请在游戏前阅读",
+          "en": "Warning: Please read this before playing the game.",
+          "ja": "Warning: Please read this before playing the game."
+        },
+        {
+          "key": "pregame_warning_detail",
+          "zhHans": "当接触到特定光像图案或频闪闪光刺激时，有极少部分人（如癫痫症患者，甚至部分未确诊人员）会出现“光敏性癫痫”症状，包括眩晕、面色发紫、眼部或面部抽搐、口吐白沫、意识混乱或失去意识、全身强直等。如果您、您的家人或您的其他家庭成员曾经有过类似症状，请在游戏前听从医生的专业意见。若您在游戏过程中出现上述症状，请立即停止游戏并尽快就医，并在继续游戏前听从医生的专业意见。",
+          "en": "When exposed to specific light patterns or strobe flashes, a small number of people (such as those with epilepsy, and even some undiagnosed individuals) may experience \"photosensitive epilepsy\" symptoms, including dizziness, bluish complexion, eye or facial twitching, foaming at the mouth, confusion or loss of consciousness, and generalized stiffness. If you, your family members, or other family members have ever had similar symptoms, please follow the professional advice of your doctor before playing the game. If you experience the above symptoms during the game, stop playing immediately and seek medical attention as soon as possible. And follow the professional advice of your doctor before resuming the game.",
+          "ja": "When exposed to specific light patterns or strobe flashes, a small number of people (such as those with epilepsy, and even some undiagnosed individuals) may experience \"photosensitive epilepsy\" symptoms, including dizziness, bluish complexion, eye or facial twitching, foaming at the mouth, confusion or loss of consciousness, and generalized stiffness. If you, your family members, or other family members have ever had similar symptoms, please follow the professional advice of your doctor before playing the game. If you experience the above symptoms during the game, stop playing immediately and seek medical attention as soon as possible. And follow the professional advice of your doctor before resuming the game."
+        },
+        {
+          "key": "age_appropriate_reminder",
+          "zhHans": "1.本游戏是一款开放世界动作类游戏，适用于年满16周岁及以上的用户，建议未成年人在家长监护下使用游戏产品。\n\n2.本游戏基于架空的故事背景和世界观，与真实历史和现实世界均无任何关联。\n\n3.根据国家相关要求，本游戏中有用户实名认证系统，未通过实名认证的用户不可进入游戏；\n游戏中部分玩法和道具需要付费。认证为未成年的用户将接受以下管理：未满8周岁的用户不得进行充值；8周岁以上但未满16周\n岁的未成年人用户，单次充值金额不得超过50元人民币，每月充值金额累计不得超过200元人民币；16周岁以上的未成年人用\n户，单次充值金额不得超过100元人民币，每月充值金额累计不得超过400元人民币。\n游戏仅会在周五、周六、周日及法定节假日的20时至21时，向未成年人提供1小时游戏服务。\n\n4.游戏中设置了主线及丰富的支线剧情，并且提供了开放世界探索玩法。游戏内有丰富多彩的剧情，精美的游戏画面，优质的游戏",
+          "en": "\n398/5000\nThis game is an open-world action game suitable for users aged 16 and above. It is recommended that minors use the game product under the supervision of their parents. \n2. This game is based on an imaginary story background and world view, and has no connection whatsoever with real history or the real world. \n3. In accordance with the relevant requirements of the country, this game has a user real-name authentication system. Users who have not passed the real-name authentication cannot enter the game.\nSome gameplay and items in the game require payment. For users who have not reached the age of majority, the following management will be implemented: Users under the age of 8 are not allowed to make any recharge; for minors aged between 8 and 16, the single recharge amount shall not exceed 50 RMB, and the cumulative recharge amount per month shall not exceed 200 RMB; for minors over 16 years old, the single recharge amount shall not exceed 100 RMB, and the cumulative recharge amount per month shall not exceed 400 RMB.\nThe game will only provide 1 hour of game service for minors from 20:00 to 21:00 on Fridays, Saturdays, Sundays, and during legal holidays. \n4. The game features a main storyline along with numerous side quests, and offers an open-world exploration mode. The game contains a rich variety of storylines, stunning graphics, and high-quality gameplay.",
+          "ja": "\n398/5000\nThis game is an open-world action game suitable for users aged 16 and above. It is recommended that minors use the game product under the supervision of their parents. \n2. This game is based on an imaginary story background and world view, and has no connection whatsoever with real history or the real world. \n3. In accordance with the relevant requirements of the country, this game has a user real-name authentication system. Users who have not passed the real-name authentication cannot enter the game.\nSome gameplay and items in the game require payment. For users who have not reached the age of majority, the following management will be implemented: Users under the age of 8 are not allowed to make any recharge; for minors aged between 8 and 16, the single recharge amount shall not exceed 50 RMB, and the cumulative recharge amount per month shall not exceed 200 RMB; for minors over 16 years old, the single recharge amount shall not exceed 100 RMB, and the cumulative recharge amount per month shall not exceed 400 RMB.\nThe game will only provide 1 hour of game service for minors from 20:00 to 21:00 on Fridays, Saturdays, Sundays, and during legal holidays. \n4. The game features a main storyline along with numerous side quests, and offers an open-world exploration mode. The game contains a rich variety of storylines, stunning graphics, and high-quality gameplay."
+        },
+        {
+          "key": "progress_new_game",
+          "zhHans": "新开局（不加载进度档）",
+          "en": "New game (no save loaded)",
+          "ja": "新規開始（セーブ未読込）"
+        },
+        {
+          "key": "progress_load_save",
+          "zhHans": "读档：{0}",
+          "en": "Load: {0}",
+          "ja": "読込：{0}"
+        },
+        {
+          "key": "progress_load_scene",
+          "zhHans": "加载场景：{0}",
+          "en": "Loading scene: {0}",
+          "ja": "シーン読込：{0}"
+        },
+        {
+          "key": "progress_load_scene_fail",
+          "zhHans": "读档失败：场景不在 Build Settings",
+          "en": "Load failed: scene not in Build Settings",
+          "ja": "読込失敗：Build Settings にシーンがありません"
+        },
+        {
+          "key": "progress_ready_default",
+          "zhHans": "就绪（默认出生点）",
+          "en": "Ready (default spawn)",
+          "ja": "準備完了（デフォルト出現）"
+        },
+        {
+          "key": "progress_ready_at",
+          "zhHans": "就绪 @ {0}",
+          "en": "Ready @ {0}",
+          "ja": "準備完了 @ {0}"
+        },
+        {
+          "key": "progress_no_party",
+          "zhHans": "未找到 PartyController",
+          "en": "PartyController not found",
+          "ja": "PartyController が見つかりません"
+        },
+        {
+          "key": "progress_deleted",
+          "zhHans": "已删档",
+          "en": "Save deleted",
+          "ja": "セーブ削除済み"
+        },
+        {
+          "key": "progress_saved_at",
+          "zhHans": "已存档 {0}",
+          "en": "Saved {0}",
+          "ja": "セーブ済み {0}"
+        },
+        {
+          "key": "progress_hud",
+          "zhHans": "Save: {0} | F5存档 F6删档 | {1}",
+          "en": "Save: {0} | F5 save F6 delete | {1}",
+          "ja": "Save: {0} | F5セーブ F6削除 | {1}"
+        },
+        {
+          "key": "party_respawning",
+          "zhHans": "重生中...",
+          "en": "Respawning...",
+          "ja": "復活中..."
+        },
+        {
+          "key": "party_hud",
+          "zhHans": "Party: slot={0}/{1} active={2} residual={3}{4} | Tab下一员 / 1-3切人",
+          "en": "Party: slot={0}/{1} active={2} residual={3}{4} | Tab next / 1-3 switch",
+          "ja": "Party: slot={0}/{1} active={2} residual={3}{4} | Tab次 / 1-3切替"
+        },
+        {
+          "key": "locale_hud",
+          "zhHans": "Locale: {0} ({1}) | {2} 切换",
+          "en": "Locale: {0} ({1}) | {2} cycle",
+          "ja": "Locale: {0} ({1}) | {2} 切替"
+        }
+      ]
+    },
+    {
+      "tableType": "UI",
+      "entries": [
+        {
+          "key": "game_name_tide",
+          "zhHans": "雷鸣之潮",
+          "en": "Thundering Tide",
+          "ja": "Thundering Tide"
+        },
+        {
+          "key": "pre_game_help",
+          "zhHans": "分析资源补丁...",
+          "en": "Analyzing the resource patch...",
+          "ja": "Analyzing the resource patch..."
+        },
+        {
+          "key": "notice",
+          "zhHans": "公告",
+          "en": "Notice",
+          "ja": "Notice"
+        },
+        {
+          "key": "repair",
+          "zhHans": "修复",
+          "en": "Repair",
+          "ja": "Repair"
+        },
+        {
+          "key": "exit",
+          "zhHans": "退出",
+          "en": "Quit",
+          "ja": "終了"
+        },
+        {
+          "key": "tool",
+          "zhHans": "工具",
+          "en": "Tool",
+          "ja": "Tool"
+        },
+        {
+          "key": "account",
+          "zhHans": "账号",
+          "en": "Account",
+          "ja": "Account"
+        },
+        {
+          "key": "setting",
+          "zhHans": "设置",
+          "en": "Settings",
+          "ja": "設定"
+        },
+        {
+          "key": "age_appropriate_reminder",
+          "zhHans": "适龄提示",
+          "en": "Age-appropriate reminder",
+          "ja": "Age-appropriate reminder"
+        },
+        {
+          "key": "click_link",
+          "zhHans": "点击连接",
+          "en": "Click the link",
+          "ja": "Click the link"
+        },
+        {
+          "key": "sure",
+          "zhHans": "确认",
+          "en": "Sure",
+          "ja": "Sure"
+        },
+        {
+          "key": "remind",
+          "zhHans": "提示",
+          "en": "Remind",
+          "ja": "Remind"
+        },
+        {
+          "key": "confirm_to_logout",
+          "zhHans": "确认登出账号？",
+          "en": "Confirm to log out of the account?",
+          "ja": "Confirm to log out of the account?"
+        },
+        {
+          "key": "cancel",
+          "zhHans": "取消",
+          "en": "Cancel",
+          "ja": "Cancel"
+        },
+        {
+          "key": "confirm_logout",
+          "zhHans": "确认登出",
+          "en": "Confirm logout",
+          "ja": "Confirm logout"
+        },
+        {
+          "key": "remove_patch",
+          "zhHans": "清除补丁",
+          "en": "Remove the patch",
+          "ja": "Remove the patch"
+        },
+        {
+          "key": "upload_log",
+          "zhHans": "日志上传",
+          "en": "Log upload",
+          "ja": "Log upload"
+        },
+        {
+          "key": "network_testing",
+          "zhHans": "网络检测",
+          "en": "Network testing",
+          "ja": "Network testing"
+        },
+        {
+          "key": "volume",
+          "zhHans": "音量",
+          "en": "Volume",
+          "ja": "Volume"
+        },
+        {
+          "key": "master_volume",
+          "zhHans": "主音量",
+          "en": "Master volume",
+          "ja": "Master volume"
+        },
+        {
+          "key": "music_volume",
+          "zhHans": "音乐音量",
+          "en": "Music volume",
+          "ja": "Music volume"
+        },
+        {
+          "key": "voice_volume",
+          "zhHans": "语音音量",
+          "en": "Voice volume",
+          "ja": "Voice volume"
+        },
+        {
+          "key": "sound_effect_volume",
+          "zhHans": "音效音量",
+          "en": "Sound effect volume",
+          "ja": "Sound effect volume"
+        },
+        {
+          "key": "env_volume",
+          "zhHans": "环境音量",
+          "en": "Environmental volume",
+          "ja": "Environmental volume"
+        },
+        {
+          "key": "interface_volume",
+          "zhHans": "界面音量",
+          "en": "Interface volume",
+          "ja": "Interface volume"
+        },
+        {
+          "key": "run_background_mute",
+          "zhHans": "后台运行自动静音",
+          "en": "Run in the background and automatically mute.",
+          "ja": "Run in the background and automatically mute."
+        },
+        {
+          "key": "display_mode",
+          "zhHans": "显示模式",
+          "en": "Display mode",
+          "ja": "Display mode"
+        },
+        {
+          "key": "maximum_frame_rate",
+          "zhHans": "最高帧率",
+          "en": "Maximum frame rate",
+          "ja": "Maximum frame rate"
+        },
+        {
+          "key": "vertical_synchronization",
+          "zhHans": "垂直同步",
+          "en": "Vertical Synchronization",
+          "ja": "Vertical Synchronization"
+        },
+        {
+          "key": "quality_special_effects",
+          "zhHans": "特效质量",
+          "en": "Quality of special effects",
+          "ja": "Quality of special effects"
+        },
+        {
+          "key": "shadow_quality",
+          "zhHans": "阴影质量",
+          "en": "Shadow quality",
+          "ja": "Shadow quality"
+        },
+        {
+          "key": "picture_details",
+          "zhHans": "画面细节",
+          "en": "Picture details",
+          "ja": "Picture details"
+        },
+        {
+          "key": "AO",
+          "zhHans": "AO",
+          "en": "AO",
+          "ja": "AO"
+        },
+        {
+          "key": "volume_fog",
+          "zhHans": "体积雾",
+          "en": "Volume fog",
+          "ja": "Volume fog"
+        },
+        {
+          "key": "volume_light",
+          "zhHans": "体积光",
+          "en": "Volume Light",
+          "ja": "Volume Light"
+        },
+        {
+          "key": "motion_blur",
+          "zhHans": "运动模糊",
+          "en": "Motion blur",
+          "ja": "Motion blur"
+        },
+        {
+          "key": "anti_aliasing",
+          "zhHans": "抗锯齿",
+          "en": "Anti-aliasing",
+          "ja": "Anti-aliasing"
+        },
+        {
+          "key": "Bloom",
+          "zhHans": "Bloom",
+          "en": "Bloom",
+          "ja": "Bloom"
+        },
+        {
+          "key": "crowd_density",
+          "zhHans": "人群密度",
+          "en": "Crowd density",
+          "ja": "Crowd density"
+        },
+        {
+          "key": "monster_hit_material_effect",
+          "zhHans": "怪物受击材质效果",
+          "en": "Monster hit material effect",
+          "ja": "Monster hit material effect"
+        },
+        {
+          "key": "enable_setting",
+          "zhHans": "设置开启",
+          "en": "Enable setting",
+          "ja": "Enable setting"
+        },
+        {
+          "key": "set_to_off",
+          "zhHans": "设置关闭",
+          "en": "Set to Off",
+          "ja": "Set to Off"
+        },
+        {
+          "key": "injury_mark",
+          "zhHans": "伤害飘字",
+          "en": "Injury mark",
+          "ja": "Injury mark"
+        },
+        {
+          "key": "injury_manifestations",
+          "zhHans": "受伤表现",
+          "en": "Injury manifestations",
+          "ja": "Injury manifestations"
+        },
+        {
+          "key": "rendering_distance",
+          "zhHans": "渲染距离",
+          "en": "Rendering distance",
+          "ja": "Rendering distance"
+        },
+        {
+          "key": "text_selection",
+          "zhHans": "文字选择",
+          "en": "Text selection",
+          "ja": "Text selection"
+        },
+        {
+          "key": "sound",
+          "zhHans": "声音",
+          "en": "Sound",
+          "ja": "Sound"
+        },
+        {
+          "key": "portrait",
+          "zhHans": "画像",
+          "en": "Portrait",
+          "ja": "Portrait"
+        },
+        {
+          "key": "language",
+          "zhHans": "语言",
+          "en": "Language",
+          "ja": "Language"
+        },
+        {
+          "key": "open",
+          "zhHans": "开",
+          "en": "Open",
+          "ja": "Open"
+        },
+        {
+          "key": "close",
+          "zhHans": "关",
+          "en": "Close",
+          "ja": "Close"
+        },
+        {
+          "key": "login",
+          "zhHans": "登录",
+          "en": "LogIn",
+          "ja": "LogIn"
+        },
+        {
+          "key": "enter_account",
+          "zhHans": "输入账号...",
+          "en": "Enter the account number...",
+          "ja": "Enter the account number..."
+        },
+        {
+          "key": "enter_password",
+          "zhHans": "输入密码...",
+          "en": "Enter the password...",
+          "ja": "Enter the password..."
+        },
+        {
+          "key": "password",
+          "zhHans": "密码",
+          "en": "Password",
+          "ja": "Password"
+        },
+        {
+          "key": "confirm_login",
+          "zhHans": "确认登录",
+          "en": "Confirm login",
+          "ja": "Confirm login"
+        },
+        {
+          "key": "choose_gender",
+          "zhHans": "选择性别",
+          "en": "Choose gender",
+          "ja": "Choose gender"
+        },
+        {
+          "key": "gender",
+          "zhHans": "性别",
+          "en": "Gender",
+          "ja": "Gender"
+        },
+        {
+          "key": "male",
+          "zhHans": "男",
+          "en": "Male",
+          "ja": "男"
+        },
+        {
+          "key": "female",
+          "zhHans": "女",
+          "en": "Female",
+          "ja": "女"
+        },
+        {
+          "key": "login_tip_account_empty",
+          "zhHans": "请输入账号",
+          "en": "Please enter account",
+          "ja": "アカウントを入力してください"
+        },
+        {
+          "key": "login_tip_password_empty",
+          "zhHans": "请输入密码",
+          "en": "Please enter password",
+          "ja": "パスワードを入力してください"
+        },
+        {
+          "key": "login_tip_invalid",
+          "zhHans": "账号或密码不正确",
+          "en": "Incorrect account or password",
+          "ja": "アカウントまたはパスワードが正しくありません"
+        },
+        {
+          "key": "notice_wip",
+          "zhHans": "公告功能开发中",
+          "en": "Notices coming soon",
+          "ja": "お知らせ機能は準備中です"
+        },
+        {
+          "key": "confirm_quit_game",
+          "zhHans": "确定要退出游戏吗？",
+          "en": "Quit the game?",
+          "ja": "ゲームを終了しますか？"
+        },
+        {
+          "key": "tools_clear_patch",
+          "zhHans": "清除补丁（占位）",
+          "en": "Clear patch (placeholder)",
+          "ja": "パッチ削除（仮）"
+        },
+        {
+          "key": "tools_network_test",
+          "zhHans": "网络检测（占位）",
+          "en": "Network check (placeholder)",
+          "ja": "ネットワーク確認（仮）"
+        },
+        {
+          "key": "tools_log_upload",
+          "zhHans": "日志上传（占位）",
+          "en": "Upload logs (placeholder)",
+          "ja": "ログアップロード（仮）"
+        },
+        {
+          "key": "pause_menu_title",
+          "zhHans": "暂停",
+          "en": "Pause",
+          "ja": "一時停止"
+        },
+        {
+          "key": "pause_continue",
+          "zhHans": "继续",
+          "en": "Continue",
+          "ja": "続ける"
+        },
+        {
+          "key": "pause_quit_game",
+          "zhHans": "退出游戏",
+          "en": "Quit Game",
+          "ja": "ゲーム終了"
+        },
+        {
+          "key": "entering_game",
+          "zhHans": "正在进入游戏…",
+          "en": "Entering game…",
+          "ja": "ゲームに入っています…"
+        },
+        {
+          "key": "locale_zh",
+          "zhHans": "简体中文",
+          "en": "Chinese",
+          "ja": "中国語"
+        },
+        {
+          "key": "locale_en",
+          "zhHans": "英语",
+          "en": "English",
+          "ja": "英語"
+        },
+        {
+          "key": "locale_ja",
+          "zhHans": "日语",
+          "en": "Japanese",
+          "ja": "日本語"
+        },
+        {
+          "key": "release_switch",
+          "zhHans": "松开以切换",
+          "en": "Release to switch",
+          "ja": "離して切り替え"
+        },
+        {
+          "key": "feature_wip",
+          "zhHans": "该功能开发中",
+          "en": "Feature under development",
+          "ja": "この機能は開発中です"
+        },
+        {
+          "key": "skill_wheel_blocked_by_tool",
+          "zhHans": "当前状态无法打开探索工具轮盘",
+          "en": "Cannot open the exploration tool wheel in the current state",
+          "ja": "現在の状態では探索ツールホイールを開けません"
+        },
+        {
+          "key": "skill_wheel_1",
+          "zhHans": "侦察",
+          "en": "Recon",
+          "ja": "偵察"
+        },
+        {
+          "key": "skill_wheel_2",
+          "zhHans": "物品探测器",
+          "en": "Item Detector",
+          "ja": "アイテム探知"
+        },
+        {
+          "key": "skill_wheel_3",
+          "zhHans": "摩托",
+          "en": "Motorcycle",
+          "ja": "バイク"
+        },
+        {
+          "key": "skill_wheel_4",
+          "zhHans": "即时相机",
+          "en": "Instant Camera",
+          "ja": "インスタントカメラ"
+        },
+        {
+          "key": "skill_wheel_5",
+          "zhHans": "显像",
+          "en": "Imaging",
+          "ja": "顕像"
+        },
+        {
+          "key": "skill_wheel_6",
+          "zhHans": "相机",
+          "en": "Camera",
+          "ja": "カメラ"
+        },
+        {
+          "key": "skill_wheel_7",
+          "zhHans": "飞行",
+          "en": "Flight",
+          "ja": "飛行"
+        },
+        {
+          "key": "skill_wheel_8",
+          "zhHans": "御剑",
+          "en": "Sword Flight",
+          "ja": "御剣"
+        }
+      ]
+    },
+    {
+      "tableType": "Story",
+      "entries": [
+        {
+          "key": "change_scene_story_title_1",
+          "zhHans": "遗音扶剑，荡梦而歌",
+          "en": "Leaving behind the lingering sound, holding the sword, dancing in the dream and singing.",
+          "ja": "Leaving behind the lingering sound, holding the sword, dancing in the dream and singing."
+        },
+        {
+          "key": "change_scene_story_1",
+          "zhHans": "机关变转之刻，余音回响不绝。风带来了新的讯息，也带来了久违的重逢。\n神机锋刃挥下，云雀褪去初羽。少女随歌而行，于梦中所见的，是她那不再停滞的命运。",
+          "en": "When the gears shifted, the echoes of the music continued to reverberate. The wind brought new messages and also long-awaited reunions.\nWith the swift motion of the divine blade, the lark shed its initial feathers. The young girl followed the melody, and what she saw in her dream was her destiny that no longer stood still.",
+          "ja": "When the gears shifted, the echoes of the music continued to reverberate. The wind brought new messages and also long-awaited reunions.\nWith the swift motion of the divine blade, the lark shed its initial feathers. The young girl followed the melody, and what she saw in her dream was her destiny that no longer stood still."
+        }
+      ]
+    }
+  ]
+}

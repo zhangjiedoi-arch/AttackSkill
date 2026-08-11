@@ -1,0 +1,45 @@
+using AttackSkill.Combat;
+using UnityEngine;
+
+namespace AttackSkill.Enemy
+{
+    [CreateAssetMenu(menuName = "AttackSkill/Enemy/Enemy Definition", fileName = "EnemyDefinition")]
+    public class EnemyDefinition : ScriptableObject
+    {
+        public string displayName = "Wild Enemy";
+        public GameObject prefab;
+
+        [Header("Stats")]
+        public float maxHp = 80f;
+        public float moveSpeed = 3.5f;
+        public float turnSpeed = 8f;
+
+        [Header("Sense")]
+        public float sightRange = 12f;
+        [Range(10f, 180f)] public float sightAngle = 90f;
+        public float hearRange = 6f;
+        [Tooltip("视线遮挡检测层；默认 Everything")]
+        public LayerMask losMask = ~0;
+
+        [Header("Combat")]
+        public float attackRange = 1.8f;
+        [Tooltip("与目标距离超过此值则脱战回家")]
+        public float disengageRange = 22f;
+        [Tooltip("离出生点超过此值则强制勒回（leash）。建议 ≥ disengageRange，否则会先被出生点拉开")]
+        public float returnHomeRange = 28f;
+        public float attackDamage = 12f;
+        public float attackKnockback = 1.2f;
+        public float attackWindup = 0.35f;
+        public float attackActive = 0.15f;
+        public float attackRecovery = 0.45f;
+        public float attackCooldown = 1.1f;
+        public float hitRadius = 1.1f;
+        public float hitForwardOffset = 0.9f;
+        [Tooltip("动画 Event 出伤表；空则用运行时默认（Enemy_Hit_Chest_R 球）")]
+        public SkillHitProfile skillHitProfile;
+
+        [Header("AI")]
+        public float alertDuration = 0.4f;
+        public float loseTargetTime = 2.5f;
+    }
+}

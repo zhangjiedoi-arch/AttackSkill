@@ -1,0 +1,273 @@
+using UnityEngine;
+using AttackSkill.CameraSystem;
+using AttackSkill.Character.HSM;
+using AttackSkill.Combat;
+using AttackSkill.Core;
+
+namespace AttackSkill.Character
+{
+    /// <summary>
+    /// 运行时把 Avatar（表现）装配成可操控 Actor（逻辑根 + 玩法组件）。
+    /// 兼容：已绑齐组件的旧 Prefab；仅挂 CharacterAvatar 的新 Prefab。
+    /// </summary>
+    public static class CharacterRuntimeAssembler
+    {
+        static GameObject _cachedTimeline;
+        static GameObject _cachedCamera;
+        static GameObject _cachedCircle;
+        static GameObject _cachedSlash;
+        static GameObject _cachedSnowHit;
+        static GameObject _cachedGroundAoe;
+
+        /// <summary>
+        /// 生成角色：Avatar-only → 建 Actor 壳再挂玩法；旧完整 Prefab → 就地补齐并接线。
+        /// </summary>
+        public static GenshinLikeCharacter Spawn(GameObject prefab, Vector3 position, Quaternion rotation, string instanceName = null)
+        {
+            if (prefab == null)
+            {
+                Debug.LogError("[CharacterRuntimeAssembler] prefab 为空。");
+                return null;
+            }
+
+            bool avatarOnly = prefab.GetComponent<GenshinLikeCharacter>() == null &&
+                              prefab.GetComponentInChildren<GenshinLikeCharacter>(true) == null;
+
+            GameObject actorRoot;
+            CharacterAvatar avatar;
+
+            if (avatarOnly)
+            {
+                actorRoot = new GameObject(string.IsNullOrEmpty(instanceName) ? prefab.name + "_Actor" : instanceName);
+                actorRoot.transform.SetPositionAndRotation(position, rotation);
+                actorRoot.transform.localScale = Vector3.one;
+
+                var avatarGo = Object.Instantiate(prefab, actorRoot.transform, false);
+                avatarGo.name = prefab.name;
+                avatarGo.transform.localPosition = Vector3.zero;
+                avatarGo.transform.localRotation = Quaternion.identity;
+
+                avatar = avatarGo.GetComponent<CharacterAvatar>();
+                if (avatar == null)
+                {
+                    avatar = avatarGo.AddComponent<CharacterAvatar>();
+                }
+
+                avatar.AutoBind();
+            }
+            else
+            {
+                actorRoot = Object.Instantiate(prefab, position, rotation);
+                if (!string.IsNullOrEmpty(instanceName))
+                {
+                    actorRoot.name = instanceName;
+                }
+
+                avatar = actorRoot.GetComponent<CharacterAvatar>();
+                if (avatar == null)
+                {
+                    avatar = actorRoot.GetComponentInChildren<CharacterAvatar>(true);
+                }
+
+                if (avatar == null)
+                {
+                    avatar = actorRoot.AddComponent<CharacterAvatar>();
+                }
+
+                avatar.AutoBind();
+            }
+
+            var character = EnsureGameplay(actorRoot, avatar);
+            if (character != null)
+            {
+                // 装配过程中启用/添加 CharacterController 可能冲掉 Instantiate 坐标
+                character.TeleportTo(position, rotation);
+            }
+
+            return character;
+        }
+
+        public static GenshinLikeCharacter EnsureGameplay(GameObject actorRoot, CharacterAvatar avatar)
+        {
+            if (actorRoot == null)
+            {
+                return null;
+            }
+
+            if (avatar == null)
+            {
+                avatar = actorRoot.GetComponentInChildren<CharacterAvatar>(true);
+            }
+
+            avatar?.AutoBind();
+
+            int playerLayer = CombatLayers.PlayerLayer;
+            if (playerLayer >= 0)
+            {
+                CombatLayers.ApplyLayerRecursively(actorRoot, playerLayer);
+            }
+
+            var cc = actorRoot.GetComponent<CharacterController>();
+            if (cc == null)
+            {
+                cc = actorRoot.AddComponent<CharacterController>();
+                FitCharacterController(cc);
+            }
+
+            if (playerLayer >= 0)
+            {
+                cc.excludeLayers = 1 << playerLayer;
+            }
+
+            if (actorRoot.GetComponent<AudioSource>() == null)
+            {
+                var src = actorRoot.AddComponent<AudioSource>();
+                src.playOnAwake = false;
+                src.spatialBlend = 1f;
+            }
+
+            if (actorRoot.GetComponent<CharacterAudio>() == null)
+            {
+                actorRoot.AddComponent<CharacterAudio>();
+            }
+
+            var health = actorRoot.GetComponent<Health>();
+            if (health == null)
+            {
+                health = actorRoot.AddComponent<Health>();
+            }
+
+            health.Configure(20000f, destroyWhenDead: false);
+            health.ConfigureDefense(enableIFrames: true, iFrames: 0.5f, stun: 0.18f, enableHitStun: true);
+
+            Animator animator = avatar != null ? avatar.Animator : actorRoot.GetComponentInChildren<Animator>(true);
+            if (animator != null)
+            {
+                animator.applyRootMotion = false;
+            }
+
+            GameObject hitHost = animator != null ? animator.gameObject : actorRoot;
+            var hitRelay = hitHost.GetComponent<AttackHitRelay>();
+            if (hitRelay == null)
+            {
+                hitRelay = hitHost.AddComponent<AttackHitRelay>();
+            }
+
+            WireHitRelay(hitRelay, actorRoot.transform, avatar);
+
+            var skill = actorRoot.GetComponent<CharacterSkillPlayer>();
+            if (skill == null)
+            {
+                skill = actorRoot.AddComponent<CharacterSkillPlayer>();
+            }
+
+            skill.ConfigureRuntime(
+                animator,
+                LoadFromSettings(ref _cachedTimeline, "skillTimelinePrefab", s => s.GetSkillTimeline()),
+                LoadFromSettings(ref _cachedCamera, "skillCameraPrefab", s => s.GetSkillCamera()),
+                LoadFromSettings(ref _cachedCircle, "circleVfxPrefab", s => s.GetCircleVfx()),
+                GameServices.ResolveCamera());
+
+            var character = actorRoot.GetComponent<GenshinLikeCharacter>();
+            if (character == null)
+            {
+                character = actorRoot.AddComponent<GenshinLikeCharacter>();
+            }
+
+            character.BindPresentation(avatar, animator);
+            return character;
+        }
+
+        static void WireHitRelay(AttackHitRelay relay, Transform ownerRoot, CharacterAvatar avatar)
+        {
+            if (relay == null)
+            {
+                return;
+            }
+
+            Transform weapon = avatar != null ? avatar.Weapon : null;
+            Transform vfx = avatar != null ? avatar.VfxSocket : weapon;
+            Transform hit = avatar != null ? avatar.HitOrigin : weapon;
+            GameObject slash = LoadFromSettings(ref _cachedSlash, "slashVfxPrefab", s => s.GetSlashVfx());
+            GameObject snow = LoadFromSettings(ref _cachedSnowHit, "snowHitVfxPrefab", s => s.GetSnowHitVfx());
+            GameObject aoe = LoadFromSettings(
+                ref _cachedGroundAoe,
+                "groundAoeExplosionVfxPrefab",
+                s => s.GetGroundAoeExplosionVfx());
+
+            Transform chestR = avatar != null ? avatar.Hits?.ChestR : null;
+            Transform chestL = avatar != null ? avatar.Hits?.ChestL : null;
+            Transform hitRoot = avatar != null ? avatar.Hits?.Root : null;
+            SkillHitProfile profile = null;
+            var settings = CharacterRuntimeSettings.Get();
+            if (settings != null)
+            {
+                profile = settings.GetPlayerSkillHitProfile();
+            }
+
+            relay.ConfigurePresentation(
+                ownerRoot,
+                weapon,
+                vfx,
+                hit,
+                slash,
+                chestR,
+                chestL,
+                hitRoot,
+                snow,
+                aoe,
+                profile);
+        }
+
+        static void FitCharacterController(CharacterController cc)
+        {
+            const float worldHeight = 1.8f;
+            const float worldRadius = 0.35f;
+            const float worldStep = 0.3f;
+
+            Vector3 lossy = cc.transform.lossyScale;
+            float sx = Mathf.Max(0.0001f, Mathf.Abs(lossy.x));
+            float sy = Mathf.Max(0.0001f, Mathf.Abs(lossy.y));
+            float sz = Mathf.Max(0.0001f, Mathf.Abs(lossy.z));
+            float sRadius = Mathf.Max(sx, sz);
+
+            cc.height = worldHeight / sy;
+            cc.radius = worldRadius / sRadius;
+            cc.center = new Vector3(0f, (worldHeight * 0.5f) / sy, 0f);
+            cc.slopeLimit = 45f;
+            cc.skinWidth = 0.08f;
+            cc.minMoveDistance = 0f;
+
+            float maxStep = worldHeight + worldRadius * 2f;
+            cc.stepOffset = Mathf.Min(worldStep, maxStep - 0.01f);
+        }
+
+        static GameObject LoadFromSettings(
+            ref GameObject cache,
+            string fieldName,
+            System.Func<CharacterRuntimeSettings, GameObject> getter)
+        {
+            if (cache != null)
+            {
+                return cache;
+            }
+
+            var settings = CharacterRuntimeSettings.Get();
+            if (settings == null)
+            {
+                Debug.LogError(
+                    "[CharacterRuntimeAssembler] 缺少 Resources/CharacterRuntimeSettings。请运行「工具/角色/生成 CharacterRuntimeSettings」。");
+                return null;
+            }
+
+            cache = getter != null ? getter(settings) : null;
+            if (cache == null)
+            {
+                Debug.LogError(
+                    $"[CharacterRuntimeAssembler] CharacterRuntimeSettings.{fieldName} 未配置。");
+            }
+
+            return cache;
+        }
+    }
+}

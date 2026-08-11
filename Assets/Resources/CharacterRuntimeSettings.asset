@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47542fcd0e2500046a9d925b1a40522b, type: 3}
+  m_Name: CharacterRuntimeSettings
+  m_EditorClassIdentifier: 
+  skillTimelinePrefab: {fileID: 6451633949038658642, guid: 83d2b2251d431a8408bc08c53921c2a4,
+    type: 3}
+  skillCameraPrefab: {fileID: 4808676006161809306, guid: dadd435b812323841bcad55c1247cc67,
+    type: 3}
+  circleVfxPrefab: {fileID: 4932088507883938021, guid: 0ec7429d990fbd24f9df6140e36a7120,
+    type: 3}
+  slashVfxPrefab: {fileID: 7768097912728832399, guid: 4b62373dae0a28145b0eea1f5b61af97,
+    type: 3}
+  snowHitVfxPrefab: {fileID: 4924508274929071776, guid: Wi4avHusAXMhuqSathcu3pUlIVqVyz1tgbuxCrYvSE/fvUr/bJovss0=,
+    type: 3}
+  groundAoeExplosionVfxPrefab: {fileID: 4994997792314849709, guid: XHIesCj7UHKnyN8A+/Mf0py36UO0N99FQE1ir7WvQAy6fExRtAiRaik=,
+    type: 3}
+  playerSkillHitProfile: {fileID: 11400000, guid: 9b6e48e8716840b6801bd5ba0819544a,
+    type: 2}
+  skillHitFatKickR: {fileID: 8300000, guid: CXhN5COpAi2aWgcN5j5KBHYwTOMz5Y73O9TjaEqtXtPuwipg3cu40ow=,
+    type: 3}
+  skillHitFatKickL: {fileID: 8300000, guid: DHIftC/+VXhvXXzuHCQSMOlsR8UKubufHlHexD26JNZbhQs7EAD8Afo=,
+    type: 3}
+  skillHitRootLand: {fileID: 8300000, guid: Wi8XvXv+VHN0m+IcXx2wnLhveB3PFZQ6PK57UXexWmc7KEiSx7GYipw=,
+    type: 3}
+  maleWandererPrefab: {fileID: 7639974735270619696, guid: 1bbfbf904b0d73c40871f648dfd8a942,
+    type: 3}
+  femaleWandererPrefab: {fileID: 3366788020637224096, guid: 160f0cc8b612538458ac93ed24dabefe,
+    type: 3}
+  qianxiaoPrefab: {fileID: 1332845871414013803, guid: 2f7f71b399e5a4e48bf9cbb4f8ff93bb,
+    type: 3}
+  colettaPrefab: {fileID: 4477234719233625950, guid: 340f655e995d4b84a8d76e6dbe925ef6,
+    type: 3}
+  motorcyclePrefab: {fileID: 2653738889506666462, guid: bc9e6f8dd51018845a9ebe6789e7c5df,
+    type: 3}
+  swordPrefab: {fileID: 3308759044084556827, guid: 4027efd4216cbac48a6f915799fde5bf,
+    type: 3}
+  wingsPrefab: {fileID: 7399971807165125139, guid: 84ea7250336d3694499d8dccd978b12f,
+    type: 3}
+  flightAirflowVfxPrefab: {fileID: 7045889733438899885, guid: B3NNtSqpW3jt5Bk1g7ZUOqMsazvtHJGjNhr0Q/XsIs+yd7+k/11XCVk=,
+    type: 3}
+  flightAirflowLocalOffset: {x: 0, y: 0, z: -0.5}
+  flightAirflowFallbackLocalY: 1.05
+  explorationToolCatalog: {fileID: 11400000, guid: 1ca45b917c94f524caa2695f796b985f,
+    type: 2}
+  flyingLoop: {fileID: 8300000, guid: 3587edb2413a24e47828413c3673683a, type: 3}
+  flyingTakeOff: {fileID: 8300000, guid: fc0955ec87c194e4095b812e6027ba37, type: 3}
+  flyingGoUp: {fileID: 8300000, guid: 7d5ede633af782340ba0b3d7ef65e914, type: 3}
+  flyingDown: {fileID: 8300000, guid: 563bccdc51dba0e4d92c790ceb4673e6, type: 3}
+  swordFlyingLoop: {fileID: 8300000, guid: 6f54f8bde817ca54688600bd57ee2062, type: 3}
+  swordFlyingGoOn: {fileID: 8300000, guid: dc32e5bb5b2e5ee4dbee7d7ba12c94a3, type: 3}
+  motorcycleLoop: {fileID: 8300000, guid: d5a36fe025f73b9438cf6e2121a8096f, type: 3}
+  motorcycleDownSpeed: {fileID: 8300000, guid: faae9f2030a68e743a950edea063d1d1, type: 3}
+  motorcycleGoOn: {fileID: 8300000, guid: 93dd9bb2a9843d94db7a15013df3269f, type: 3}
+  motorcycleJump: {fileID: 8300000, guid: 3dad4c5dfa6f31643818fd8a251c3b4e, type: 3}
+  seaBgm: {fileID: 8300000, guid: c853e282f048a054f8bf20c7b9164744, type: 3}
+  iconPlayerFemale: {fileID: 21300000, guid: eb014200e43cb28468b762a4e2be3feb, type: 3}
+  iconPlayerMale: {fileID: 21300000, guid: c683f4a40b91c7e4ba559b5209624e4d, type: 3}
+  iconQianxiao: {fileID: 21300000, guid: 07d2d0dc861f657429af1e4b4f2766ff, type: 3}
+  iconKelaita: {fileID: 21300000, guid: 02117b92ceef9e74186aa8b559ae8931, type: 3}
