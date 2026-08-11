@@ -91,7 +91,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Revision: 2
-    - _ShadowLum: 1.1
+    - _ShadowLum: 1.5
     - _Shininess: 11.89908
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
