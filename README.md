@@ -149,6 +149,8 @@ AttackSkill/
 
 本地 PC 构建产物默认输出到 `Output/`（已在 `.gitignore` 中忽略）。
 
+仓库已按 **PC Demo 必需资源** 精简历史：不含 `The Courtyard` 示例包、MagicaCloth 示例、MMD 非 Windows 原生库 / PMX 导入工具、KCC Walkthrough 等。本地若自行拷回这些目录，请勿再提交（见 `.gitignore`）。
+
 ## 参考素材
 
 本 Demo 使用或参考了以下公开资源站点（请遵守各站授权与署名要求）：
