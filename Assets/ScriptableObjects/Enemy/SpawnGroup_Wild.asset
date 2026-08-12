@@ -22,6 +22,15 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
     localOffset: {x: -2, y: 0, z: 1}
     localEuler: {x: 0, y: 0, z: 0}
+  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+    localOffset: {x: -2, y: 0, z: 1}
+    localEuler: {x: 0, y: 0, z: 0}
+  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+    localOffset: {x: -2, y: 0, z: 1}
+    localEuler: {x: 0, y: 0, z: 0}
+  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+    localOffset: {x: -2, y: 0, z: 1}
+    localEuler: {x: 0, y: 0, z: 0}
   activateRadius: 35
   hibernateRadius: 50
   respawnDelay: 20

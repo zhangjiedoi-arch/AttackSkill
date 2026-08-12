@@ -23,6 +23,9 @@ namespace AttackSkill.Enemy
         EnemyAggro _aggro;
         EnemyCombat _combat;
         EnemyBrain _brain;
+        EnemyDeathGoldVisual _deathGold;
+        EnemyDeathDissolveVisual _deathDissolve;
+        EnemyDeathDirector _deathDirector;
         bool _hibernating;
         bool _deadNotified;
 
@@ -34,6 +37,9 @@ namespace AttackSkill.Enemy
         public EnemyBrain Brain => _brain;
         public Health Health => _health;
         public CharacterController Controller => _controller;
+        public EnemyDeathDirector DeathDirector => _deathDirector;
+        public EnemyDeathOutcome DeathOutcome =>
+            _deathDirector != null ? _deathDirector.LastOutcome : EnemyDeathOutcome.Echo;
         public Vector3 HomePosition { get; private set; }
         public Quaternion HomeRotation { get; private set; }
         public EnemySpawnPoint OwnerPoint { get; private set; }
@@ -89,6 +95,7 @@ namespace AttackSkill.Enemy
             EnsureHitbox();
             EnsureHurtboxCollider();
             EnsureAttackHitRelay();
+            EnsureDeathVisuals();
             _motor = new EnemyMotor(_controller, transform);
             _sensor = new EnemySensor(sensorOrigin, transform);
             _aggro = new EnemyAggro();
@@ -113,6 +120,7 @@ namespace AttackSkill.Enemy
             HomePosition = home;
             HomeRotation = homeRot;
             _deadNotified = false;
+            _deathDirector?.ResetForReuse();
 
             if (_def == null)
             {
@@ -217,6 +225,7 @@ namespace AttackSkill.Enemy
             _combat.Interrupt();
             _aggro.Clear();
             _brain.SetState(_brain.Dead);
+            _deathDirector?.Begin();
             Died?.Invoke(this);
         }
 
@@ -347,6 +356,29 @@ namespace AttackSkill.Enemy
             {
                 relay.SetSkillHitProfile(_def.skillHitProfile);
             }
+        }
+
+        void EnsureDeathVisuals()
+        {
+            _deathGold = GetComponent<EnemyDeathGoldVisual>();
+            if (_deathGold == null)
+            {
+                _deathGold = gameObject.AddComponent<EnemyDeathGoldVisual>();
+            }
+
+            _deathDissolve = GetComponent<EnemyDeathDissolveVisual>();
+            if (_deathDissolve == null)
+            {
+                _deathDissolve = gameObject.AddComponent<EnemyDeathDissolveVisual>();
+            }
+
+            _deathDirector = GetComponent<EnemyDeathDirector>();
+            if (_deathDirector == null)
+            {
+                _deathDirector = gameObject.AddComponent<EnemyDeathDirector>();
+            }
+
+            _deathDirector.Bind(this, _deathGold, _deathDissolve);
         }
 
 #if UNITY_EDITOR

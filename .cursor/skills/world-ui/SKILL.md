@@ -19,7 +19,8 @@ description: >-
 - `Assets/Scripts/UI/World/WorldUiService.cs`
 - `WorldUiScreen.cs` — 相机解析、投影、遮挡、挂点
 - `EnemyBloodHud.cs` / `DamageNumberView.cs` / `DamageNumberPool.cs`
-- Prefab：`Resources/UI/WorldUI/` 或 `CharacterRuntimeSettings` 引用
+- Prefab：`Resources/UI/WorldUI/` 或 `CharacterRuntimeSettings` 引用（含 `ObtainRemains`）
+- 声骸：`EchoRemainInteract.cs` / `ObtainRemainsHud.cs`
 
 ## 数据流
 
@@ -51,3 +52,4 @@ HitResolver.Applied → DamageNumberPool 跳字（播放中再判遮挡）
 - ExecutionOrder：Service -80；Hud/跳字 1000（相机之后投影）。
 - 不要再引入 World Space Billboard / pivot 180° 方案。
 - 只对成功 `Applied` 的命中跳字。
+- **声骸获取提示**：死亡 Echo 后挂 `EchoRemainInteract` + `ObtainRemains` Overlay；玩家 ≤1m 显示；F 弹 Tip（loc key `echo_obtain_wip`），并压制滑翔（`ShouldPreferInteract`）。

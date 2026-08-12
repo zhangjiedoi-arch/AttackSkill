@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4104faf9f5730fc46bf21725f7eeb098, type: 3}
+  m_Name: EnemyDeathShaderRefs
+  m_EditorClassIdentifier: 
+  gold: {fileID: 4800000, guid: 30113be3943d8964c9d7890d5b822574, type: 3}
+  dissolve: {fileID: 4800000, guid: 53818011967220c4a91bd16820c25e0f, type: 3}

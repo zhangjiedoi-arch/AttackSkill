@@ -38,6 +38,8 @@ namespace AttackSkill.Character
         public GameObject damageNumberPrefab;
         [Tooltip("Assets/Prefabs/UI/WorldUI/Enemy_blood.prefab")]
         public GameObject enemyBloodPrefab;
+        [Tooltip("Assets/Prefabs/UI/WorldUI/ObtainRemains.prefab — 声骸 F 提示")]
+        public GameObject obtainRemainsPrefab;
         [Tooltip("怪物血条相对玩家的显示距离（米）")]
         public float enemyBloodVisibleRange = 20f;
 
@@ -123,6 +125,7 @@ namespace AttackSkill.Character
         public AudioClip GetSkillHitRootLand() => skillHitRootLand;
         public GameObject GetDamageNumberPrefab() => damageNumberPrefab;
         public GameObject GetEnemyBloodPrefab() => enemyBloodPrefab;
+        public GameObject GetObtainRemainsPrefab() => obtainRemainsPrefab;
 
         public SkillHitProfile GetPlayerSkillHitProfile()
         {
@@ -279,6 +282,12 @@ namespace AttackSkill.Character
             {
                 enemyBloodPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
                     "Assets/Prefabs/UI/WorldUI/Enemy_blood.prefab");
+            }
+
+            if (obtainRemainsPrefab == null)
+            {
+                obtainRemainsPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/UI/WorldUI/ObtainRemains.prefab");
             }
 
             if (playerSkillHitProfile != null)

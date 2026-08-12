@@ -16,6 +16,7 @@ namespace AttackSkill.UI.World
 
         [SerializeField] GameObject damageNumberPrefab;
         [SerializeField] GameObject enemyBloodPrefab;
+        [SerializeField] GameObject obtainRemainsPrefab;
         [SerializeField] float bloodVisibleRange = 20f;
         [SerializeField] Vector3 bloodWorldOffset = new Vector3(0f, 2.6f, 0f);
         [SerializeField] float damageNumberLifetime = 0.9f;
@@ -117,6 +118,11 @@ namespace AttackSkill.UI.World
                     enemyBloodPrefab = settings.GetEnemyBloodPrefab();
                 }
 
+                if (obtainRemainsPrefab == null)
+                {
+                    obtainRemainsPrefab = settings.GetObtainRemainsPrefab();
+                }
+
                 if (bloodVisibleRange <= 0.01f)
                 {
                     bloodVisibleRange = settings.enemyBloodVisibleRange;
@@ -131,6 +137,11 @@ namespace AttackSkill.UI.World
             if (enemyBloodPrefab == null)
             {
                 enemyBloodPrefab = Resources.Load<GameObject>("UI/WorldUI/Enemy_blood");
+            }
+
+            if (obtainRemainsPrefab == null)
+            {
+                obtainRemainsPrefab = Resources.Load<GameObject>("UI/WorldUI/ObtainRemains");
             }
         }
 
@@ -245,11 +256,71 @@ namespace AttackSkill.UI.World
             host.Hud = hud;
             return hud;
         }
+
+        public ObtainRemainsHud AttachObtainRemains(EnemyAgent agent)
+        {
+            if (agent == null)
+            {
+                return null;
+            }
+
+            ResolvePrefabs();
+            if (obtainRemainsPrefab == null)
+            {
+                Debug.LogWarning(
+                    "[WorldUi] 缺少 ObtainRemains Prefab。请放到 Resources/UI/WorldUI/ObtainRemains，或在 CharacterRuntimeSettings 指定。",
+                    this);
+                return null;
+            }
+
+            EnsurePoolRoot();
+            var existing = agent.GetComponent<ObtainRemainsHudHost>();
+            if (existing != null && existing.Hud != null)
+            {
+                existing.Hud.Bind(agent, this);
+                return existing.Hud;
+            }
+
+            var go = Instantiate(obtainRemainsPrefab, _poolRoot, false);
+            go.name = $"ObtainRemains_{agent.GetInstanceID()}";
+            WorldUiScreen.PrepareOverlayItem(go);
+
+            var hud = go.GetComponent<ObtainRemainsHud>();
+            if (hud == null)
+            {
+                hud = go.AddComponent<ObtainRemainsHud>();
+            }
+
+            hud.Bind(agent, this);
+
+            var host = agent.gameObject.GetComponent<ObtainRemainsHudHost>();
+            if (host == null)
+            {
+                host = agent.gameObject.AddComponent<ObtainRemainsHudHost>();
+            }
+
+            host.Hud = hud;
+            return hud;
+        }
     }
 
     public sealed class EnemyBloodHudHost : MonoBehaviour
     {
         public EnemyBloodHud Hud;
+
+        void OnDestroy()
+        {
+            if (Hud != null)
+            {
+                Destroy(Hud.gameObject);
+                Hud = null;
+            }
+        }
+    }
+
+    public sealed class ObtainRemainsHudHost : MonoBehaviour
+    {
+        public ObtainRemainsHud Hud;
 
         void OnDestroy()
         {

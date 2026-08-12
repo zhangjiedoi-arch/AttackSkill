@@ -14,7 +14,8 @@ description: >-
 ## 关键文件
 
 - `Assets/Scripts/Enemy/Data/EnemyDefinition.cs` / `SpawnGroupDefinition.cs`
-- Runtime：`EnemyAgent` / `EnemySensor` / `EnemyAggro` / `EnemyCombat` / `EnemyMotor` / `EnemyHitbox` / `EnemyAttackHitRelay`
+- Runtime：`EnemyAgent` / `EnemySensor` / `EnemyAggro` / `EnemyCombat` / `EnemyMotor` / `EnemyHitbox` / `EnemyAttackHitRelay` / `EnemyDeathDirector` / `EnemyDeathGoldVisual` / `EnemyDeathDissolveVisual`
+- Shader：`EnemyDeathGold.shader`、`EnemyDeathDissolve.shader`
 - AI：`EnemyBrain.cs`
 - Spawn：`EnemySpawnGroup.cs` / `EnemySpawnPoint.cs`
 - 索敌：`IPlayerTargetProvider` / `PlayerTargetLocator`
@@ -47,4 +48,11 @@ SpawnGroup 距玩家激活 → SpawnPoint 生成
 - Agent 会递归设 Enemy 层。
 - 本帧感知结果缓存，Brain 内勿重复 Raycast。
 - Profile 空则运行时默认球形出伤。
+- **死亡表现分流**：`EnemyDeathDirector` 按 `EnemyDefinition.echoChance` 掷骰  
+  - **Echo**：`EnemyDeathGoldVisual` 金色透明残留（后续 F 吸收）  
+  - **Dissolve**：`EnemyDeathDissolveVisual` 噪声溶解 + 上浮后隐藏网格  
+  - 调试：`deathForceMode` 强制 Echo / Dissolve  
+  - 材质：`Resources/Enemy/Mat_EnemyDeathGold|Dissolve` + Always Included Shaders；贴图兼容 `_MainTex/_BaseMap`  
+  - 死亡立即关碰撞；金透 `Play()` 失败不挂 F 交互，改溶解/短销毁  
 - 初始化后挂 `WorldUiService.AttachEnemyBlood`。
+- 尸体销毁由 `EnemyDeathDirector`：声骸 `echoCorpseLifetime`（默认 20s）；飘散结束立刻 `Destroy`。

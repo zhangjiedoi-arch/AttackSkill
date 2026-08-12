@@ -574,6 +574,12 @@
           "ja": "この機能は開発中です"
         },
         {
+          "key": "echo_obtain_wip",
+          "zhHans": "获取功能尚未实现",
+          "en": "Obtain feature not yet implemented",
+          "ja": "取得機能は未実装です"
+        },
+        {
           "key": "skill_wheel_blocked_by_tool",
           "zhHans": "当前状态无法打开探索工具轮盘",
           "en": "Cannot open the exploration tool wheel in the current state",

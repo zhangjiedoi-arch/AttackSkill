@@ -43,5 +43,19 @@ namespace AttackSkill.Enemy
         [Header("AI")]
         public float alertDuration = 0.4f;
         public float loseTargetTime = 2.5f;
+
+        [Header("Death Visual")]
+        [Tooltip("死亡后变成金色声骸的概率；其余走飘散溶解")]
+        [Range(0f, 1f)] public float echoChance = 0.35f;
+        [Tooltip("调试强制结局；正式玩法用 Random")]
+        public EnemyDeathForceMode deathForceMode = EnemyDeathForceMode.Random;
+        [Tooltip("飘散溶解时长（秒）")]
+        public float dissolveDuration = 1.55f;
+        [Tooltip("溶解过程上浮高度")]
+        public float dissolveRiseDistance = 0.55f;
+        [Tooltip("可选金尘粒子；空则只做 Shader 溶解")]
+        public GameObject dissolveDustVfx;
+        [Tooltip("声骸（金透）残留多久后销毁（秒）")]
+        public float echoCorpseLifetime = 20f;
     }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using AttackSkill.Core;
 using AttackSkill.Game;
+using AttackSkill.UI.World;
 
 namespace AttackSkill.Character.HSM
 {
@@ -52,7 +53,7 @@ namespace AttackSkill.Character.HSM
                 JumpPressed = GameInput.GetButtonDown("Jump"),
                 JumpHeld = GameInput.GetButton("Jump"),
                 SprintHeld = GameInput.GetKey(KeyCode.LeftShift),
-                GlidePressed = GameInput.GetKeyDown(KeyCode.F),
+                GlidePressed = GameInput.GetKeyDown(KeyCode.F) && !EchoRemainInteract.ShouldPreferInteract,
                 AttackPressed = GameInput.GetMouseButtonDown(0),
                 SkillPressed = SkillInputEnabled &&
                                (GameInput.GetKeyDown(KeyCode.E) || CombatSkillInput.TakePending()),

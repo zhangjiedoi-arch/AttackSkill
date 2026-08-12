@@ -164,12 +164,7 @@ namespace AttackSkill.Enemy
             _waitingRespawn = true;
             float delay = _groupDef != null ? _groupDef.respawnDelay : 20f;
             _respawnAt = Time.time + Mathf.Max(1f, delay);
-
-            // 尸体延迟销毁
-            if (agent != null)
-            {
-                Destroy(agent.gameObject, 2.5f);
-            }
+            // 尸体销毁由 EnemyDeathDirector 负责：声骸 echoCorpseLifetime，飘散结束立刻 Destroy
         }
 
 #if UNITY_EDITOR

@@ -38,3 +38,9 @@ MonoBehaviour:
   skillHitProfile: {fileID: 11400000, guid: 523d59a483ae4b67a141ed5d62dbdc88, type: 2}
   alertDuration: 0.4
   loseTargetTime: 2.5
+  echoChance: 0.35
+  deathForceMode: 0
+  dissolveDuration: 1.55
+  dissolveRiseDistance: 0.55
+  dissolveDustVfx: {fileID: 0}
+  echoCorpseLifetime: 20

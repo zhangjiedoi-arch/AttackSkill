@@ -223,6 +223,10 @@ namespace AttackSkill.Localization
             Add(LocalizationTableType.UI, "locale_zh", "简体中文", "Chinese", "中国語");
             Add(LocalizationTableType.UI, "locale_en", "英语", "English", "英語");
             Add(LocalizationTableType.UI, "locale_ja", "日语", "Japanese", "日本語");
+            Add(LocalizationTableType.UI, "echo_obtain_wip",
+                "获取功能尚未实现",
+                "Obtain feature not yet implemented",
+                "取得機能は未実装です");
             Add(LocalizationTableType.Common, "ok", "确定", "OK", "OK");
             Add(LocalizationTableType.Common, "cancel", "取消", "Cancel", "キャンセル");
             Add(LocalizationTableType.Common, "confirm", "确认", "Confirm", "確認");

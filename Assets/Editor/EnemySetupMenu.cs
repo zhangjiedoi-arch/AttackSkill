@@ -108,6 +108,88 @@ namespace AttackSkill.Editor
             AssetDatabase.SaveAssets();
         }
 
+        [MenuItem("工具/敌人/重建死亡特效材质", false, 40)]
+        static void RebuildDeathFxMaterials()
+        {
+            EnsureFolder("Assets/Resources");
+            EnsureFolder("Assets/Resources/Enemy");
+
+            var goldShader = Shader.Find(EnemyDeathVisualUtil.GoldShaderName);
+            var dissolveShader = Shader.Find(EnemyDeathVisualUtil.DissolveShaderName);
+            if (goldShader == null || dissolveShader == null)
+            {
+                Debug.LogError(
+                    $"死亡 Shader 未编译成功。Gold={goldShader != null}, Dissolve={dissolveShader != null}。" +
+                    "请打开 Console 看 Shader 报错，修好后再点本菜单。");
+                return;
+            }
+
+            WriteOrReplaceMaterial(
+                "Assets/Resources/Enemy/Mat_EnemyDeathGold.mat",
+                goldShader,
+                mat =>
+                {
+                    mat.SetColor("_Color", new Color(0.92f, 0.72f, 0.28f, 1f));
+                    mat.SetColor("_RimColor", new Color(1f, 0.88f, 0.5f, 1f));
+                    mat.SetFloat("_RimPower", 3.2f);
+                    mat.SetFloat("_RimIntensity", 0.85f);
+                    mat.SetFloat("_Emission", 0.28f);
+                    mat.SetFloat("_Alpha", 0.26f);
+                    mat.renderQueue = 3000;
+                });
+
+            WriteOrReplaceMaterial(
+                "Assets/Resources/Enemy/Mat_EnemyDeathDissolve.mat",
+                dissolveShader,
+                mat =>
+                {
+                    mat.SetColor("_Color", new Color(1f, 0.82f, 0.35f, 1f));
+                    mat.SetColor("_EdgeColor", new Color(1f, 0.9f, 0.4f, 1f));
+                    mat.SetFloat("_Dissolve", 0f);
+                    mat.SetFloat("_EdgeWidth", 0.08f);
+                    mat.SetFloat("_NoiseScale", 3.5f);
+                    mat.SetFloat("_HeightBias", 0.35f);
+                    mat.SetFloat("_Emission", 2.5f);
+                    mat.renderQueue = 2450;
+                });
+
+            const string refsPath = "Assets/Resources/Enemy/EnemyDeathShaderRefs.asset";
+            var refs = AssetDatabase.LoadAssetAtPath<EnemyDeathShaderRefs>(refsPath);
+            if (refs == null)
+            {
+                refs = ScriptableObject.CreateInstance<EnemyDeathShaderRefs>();
+                AssetDatabase.CreateAsset(refs, refsPath);
+            }
+
+            refs.gold = goldShader;
+            refs.dissolve = dissolveShader;
+            EditorUtility.SetDirty(refs);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Selection.activeObject = refs;
+            Debug.Log(
+                "已重建死亡金透/飘散材质与 EnemyDeathShaderRefs。" +
+                "若打包后仍粉红，请确认 Project Settings → Graphics → Always Included Shaders 含 DeathGold / DeathDissolve。");
+        }
+
+        static void WriteOrReplaceMaterial(string path, Shader shader, System.Action<Material> configure)
+        {
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (mat == null)
+            {
+                mat = new Material(shader);
+                AssetDatabase.CreateAsset(mat, path);
+            }
+            else
+            {
+                mat.shader = shader;
+            }
+
+            configure?.Invoke(mat);
+            EditorUtility.SetDirty(mat);
+        }
+
         static void EnsureFolder(string path)
         {
             if (AssetDatabase.IsValidFolder(path))
