@@ -103,3 +103,22 @@ $RECYCLE.BIN/
 *.swp
 *~
 .cache/
+
+# Demo 仓库不纳入的大体积/非 PC 必需资源（本地若仍有可留着，但勿再提交）
+/[Aa]ssets/Unity Technologies/
+/[Aa]ssets/TJGenerators/
+/[Aa]ssets/Sketchfab For Unity/
+/[Aa]ssets/MagicaCloth2/Example (Can be deleted)/
+/[Aa]ssets/TextMesh Pro/Examples & Extras/
+/[Aa]ssets/KinematicCharacterController/Examples/
+/[Aa]ssets/MMD4Mecanim/Editor/PMX2FBX/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics/iOS/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics/Android/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics/x86/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics/WSA/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics/MMD4MecanimBulletPhysics.bundle/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics 2.75/iOS/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics 2.75/Android/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics 2.75/x86/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics 2.75/WSA/
+/[Aa]ssets/MMD4Mecanim/Plugins/MMD4MecanimBulletPhysics 2.75/MMD4MecanimBulletPhysics.bundle/
