@@ -54,6 +54,7 @@ sysinfo.txt
 mono_crash.*
 
 # 构建产物
+/[Oo]utput/
 *.apk
 *.aab
 *.unitypackage
