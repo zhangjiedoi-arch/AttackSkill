@@ -8,15 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/OpenScene.scene
     guid: 9aee8bb458852dc488c8a8aa1a59436e
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.scene
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 0
-    path: Assets/Unity Technologies/The Courtyard/Scene/Courtyard.unity
-    guid: b1d986588d8f0704bba2a88f864e88b3
-  - enabled: 0
-    path: Assets/Unity Technologies/The Courtyard/Standard Assets/Effects/TessellationShaders/Scenes/TessellationSample.unity
-    guid: 31f6763de0920574092c8a69a66c717e
   - enabled: 1
     path: Assets/Scenes/GameScene.scene
     guid: 919ed9e91df818745b1b066990221797
