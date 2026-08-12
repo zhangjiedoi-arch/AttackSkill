@@ -15,6 +15,7 @@ MonoBehaviour:
   displayName: Wild Grunt
   prefab: {fileID: 3275355846398871117, guid: 84bdc135eeaf5924abdcf5cdbc83c427, type: 3}
   maxHp: 80
+  level: 12
   moveSpeed: 3.5
   turnSpeed: 8
   sightRange: 12

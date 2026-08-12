@@ -33,6 +33,14 @@ namespace AttackSkill.Character
         [Tooltip("Assets/Audio/Hit_Root_Land.wav — Hit_Root")]
         public AudioClip skillHitRootLand;
 
+        [Header("World UI")]
+        [Tooltip("Assets/Prefabs/UI/WorldUI/DamageNumber.prefab")]
+        public GameObject damageNumberPrefab;
+        [Tooltip("Assets/Prefabs/UI/WorldUI/Enemy_blood.prefab")]
+        public GameObject enemyBloodPrefab;
+        [Tooltip("怪物血条相对玩家的显示距离（米）")]
+        public float enemyBloodVisibleRange = 20f;
+
         [Header("Party Roster")]
         public GameObject maleWandererPrefab;
         public GameObject femaleWandererPrefab;
@@ -113,6 +121,8 @@ namespace AttackSkill.Character
         public AudioClip GetSkillHitFatKickR() => skillHitFatKickR;
         public AudioClip GetSkillHitFatKickL() => skillHitFatKickL;
         public AudioClip GetSkillHitRootLand() => skillHitRootLand;
+        public GameObject GetDamageNumberPrefab() => damageNumberPrefab;
+        public GameObject GetEnemyBloodPrefab() => enemyBloodPrefab;
 
         public SkillHitProfile GetPlayerSkillHitProfile()
         {
@@ -257,6 +267,18 @@ namespace AttackSkill.Character
             {
                 skillHitRootLand = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(
                     "Assets/Audio/Hit_Root_Land.wav");
+            }
+
+            if (damageNumberPrefab == null)
+            {
+                damageNumberPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/UI/WorldUI/DamageNumber.prefab");
+            }
+
+            if (enemyBloodPrefab == null)
+            {
+                enemyBloodPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/UI/WorldUI/Enemy_blood.prefab");
             }
 
             if (playerSkillHitProfile != null)

@@ -201,6 +201,7 @@ namespace AttackSkill.Character
 
             Instance = this;
             PlayerTargetLocator.Register(this);
+            AttackSkill.UI.World.WorldUiService.EnsureExists();
 
             if (autoFindCamera && thirdPersonCamera == null)
             {

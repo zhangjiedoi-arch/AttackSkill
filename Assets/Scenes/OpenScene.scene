@@ -9205,6 +9205,16 @@ PrefabInstance:
       propertyPath: m_UpdateWhenOffscreen
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9128207215404129817, guid: 4c5773dd89afb7443b1ca7d6514735b8,
+        type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[0]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128207215404129817, guid: 4c5773dd89afb7443b1ca7d6514735b8,
+        type: 3}
+      propertyPath: m_BlendShapeWeights.Array.data[105]
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -32088,7 +32098,7 @@ MonoBehaviour:
     restitution: -1
     friction: -1
   animList: []
-  editorViewPage: 0
+  editorViewPage: 3
   editorViewMorphBits: 15
   editorViewRigidBodies: 0
   editorViewMorphNameType: 0

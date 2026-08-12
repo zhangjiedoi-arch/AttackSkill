@@ -11,6 +11,8 @@ namespace AttackSkill.Enemy
 
         [Header("Stats")]
         public float maxHp = 80f;
+        [Tooltip("头顶血条显示等级")]
+        public int level = 1;
         public float moveSpeed = 3.5f;
         public float turnSpeed = 8f;
 

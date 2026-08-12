@@ -141,6 +141,8 @@ namespace AttackSkill.Enemy
             _hibernating = false;
             enabled = true;
             _brain.Start();
+
+            AttackSkill.UI.World.WorldUiService.EnsureExists()?.AttachEnemyBlood(this);
         }
 
         public void Hibernate()

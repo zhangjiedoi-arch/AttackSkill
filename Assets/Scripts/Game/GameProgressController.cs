@@ -51,6 +51,7 @@ namespace AttackSkill.Game
             Instance = this;
             SceneSingleton.ApplyDontDestroyOnLoad(this, dontDestroyOnLoad);
             SceneBgmPlayer.EnsureExists();
+            AttackSkill.UI.World.WorldUiService.EnsureExists();
         }
 
         void OnDestroy()

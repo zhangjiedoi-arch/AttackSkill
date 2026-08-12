@@ -20,18 +20,15 @@ MonoBehaviour:
     type: 3}
   slashVfxPrefab: {fileID: 7768097912728832399, guid: 4b62373dae0a28145b0eea1f5b61af97,
     type: 3}
-  snowHitVfxPrefab: {fileID: 4924508274929071776, guid: Wi4avHusAXMhuqSathcu3pUlIVqVyz1tgbuxCrYvSE/fvUr/bJovss0=,
+  snowHitVfxPrefab: {fileID: 4924508274929071776, guid: ed59a1b8e787cf14985f1ce0b32dec69,
     type: 3}
-  groundAoeExplosionVfxPrefab: {fileID: 4994997792314849709, guid: XHIesCj7UHKnyN8A+/Mf0py36UO0N99FQE1ir7WvQAy6fExRtAiRaik=,
+  groundAoeExplosionVfxPrefab: {fileID: 4994997792314849709, guid: c8152f3900dc6be4099842f7444720a6,
     type: 3}
   playerSkillHitProfile: {fileID: 11400000, guid: 9b6e48e8716840b6801bd5ba0819544a,
     type: 2}
-  skillHitFatKickR: {fileID: 8300000, guid: CXhN5COpAi2aWgcN5j5KBHYwTOMz5Y73O9TjaEqtXtPuwipg3cu40ow=,
-    type: 3}
-  skillHitFatKickL: {fileID: 8300000, guid: DHIftC/+VXhvXXzuHCQSMOlsR8UKubufHlHexD26JNZbhQs7EAD8Afo=,
-    type: 3}
-  skillHitRootLand: {fileID: 8300000, guid: Wi8XvXv+VHN0m+IcXx2wnLhveB3PFZQ6PK57UXexWmc7KEiSx7GYipw=,
-    type: 3}
+  skillHitFatKickR: {fileID: 8300000, guid: 62ba94affe7a32742a764d31e61d68b7, type: 3}
+  skillHitFatKickL: {fileID: 8300000, guid: 38015c63fc212a642bcc0d4ac492107e, type: 3}
+  skillHitRootLand: {fileID: 8300000, guid: ee88ac78e641f5d47904a38324f2b78c, type: 3}
   maleWandererPrefab: {fileID: 7639974735270619696, guid: 1bbfbf904b0d73c40871f648dfd8a942,
     type: 3}
   femaleWandererPrefab: {fileID: 3366788020637224096, guid: 160f0cc8b612538458ac93ed24dabefe,
@@ -46,12 +43,14 @@ MonoBehaviour:
     type: 3}
   wingsPrefab: {fileID: 7399971807165125139, guid: 84ea7250336d3694499d8dccd978b12f,
     type: 3}
-  flightAirflowVfxPrefab: {fileID: 7045889733438899885, guid: B3NNtSqpW3jt5Bk1g7ZUOqMsazvtHJGjNhr0Q/XsIs+yd7+k/11XCVk=,
+  flightAirflowVfxPrefab: {fileID: 7045889733438899885, guid: 89b00483afac5f541be3373c7b436aba,
     type: 3}
   flightAirflowLocalOffset: {x: 0, y: 0, z: -0.5}
   flightAirflowFallbackLocalY: 1.05
   explorationToolCatalog: {fileID: 11400000, guid: 1ca45b917c94f524caa2695f796b985f,
     type: 2}
+  jumpLand: {fileID: 0}
+  jumpLoop: {fileID: 0}
   flyingLoop: {fileID: 8300000, guid: 3587edb2413a24e47828413c3673683a, type: 3}
   flyingTakeOff: {fileID: 8300000, guid: fc0955ec87c194e4095b812e6027ba37, type: 3}
   flyingGoUp: {fileID: 8300000, guid: 7d5ede633af782340ba0b3d7ef65e914, type: 3}
