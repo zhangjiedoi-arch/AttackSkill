@@ -9,7 +9,7 @@ namespace AttackSkill.Character.Exploration
         public Vector3 Velocity;
         public Vector3 PlanarVelocity;
         public float MotorcycleRideSpeed;
-        public int MotorcycleAirJumpsUsed;
+        public float MotorcycleJumpCooldownRemaining;
 
         public bool HasTool =>
             Kind == ExplorationToolKind.WingFlight ||

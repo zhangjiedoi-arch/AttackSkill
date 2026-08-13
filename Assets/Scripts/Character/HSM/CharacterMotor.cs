@@ -39,18 +39,30 @@ namespace AttackSkill.Character.HSM
         public float DodgeCooldown = 0.55f;
 
         [Header("Wing Flight")]
-        [Tooltip("翅膀飞行水平速度。")]
+        [Tooltip("翅膀/御剑基础飞行速度。")]
         public float WingFlightSpeed = 14f;
-        [Tooltip("按住跳跃上升速度。")]
-        public float WingAscendSpeed = 8f;
-        [Tooltip("未上升时的弱重力（接近悬浮）。")]
+        [Tooltip("Shift 加速上升时的参考上升速度。")]
+        public float WingAscendSpeed = 10f;
+        [Tooltip("Shift 加速倍率（叠在基础速度上）。")]
+        public float WingFlightBoostMultiplier = 1.35f;
+        [Tooltip("无输入时的弱重力（接近悬浮）。")]
         public float WingFlightGravity = -1.5f;
         [Tooltip("飞行最低下落速度钳制。")]
         public float WingMinFallSpeed = -6f;
         [Tooltip("地面起飞初速度。")]
         public float WingTakeoffSpeed = 9f;
-        [Tooltip("飞行气流：该水平速度以下按比例减弱。")]
-        public float WingAirflowFullSpeed = 14f;
+        [Tooltip("飞行气流：该速度以下按比例减弱。")]
+        public float WingAirflowFullSpeed = 30f;
+        [Tooltip("W 上升最大抬头角（度）。")]
+        public float FlightPitchAscendDegrees = 45f;
+        [Tooltip("S 下降最大低头角（度）。")]
+        public float FlightPitchDescendDegrees = 45f;
+        [Tooltip("A/D 最大侧倾角（度）。")]
+        public float FlightBankDegrees = 45f;
+        [Tooltip("侧倾参考转向速率（度/秒），越大越不易满倾。")]
+        public float FlightBankTurnRateRef = 140f;
+        [Tooltip("飞行俯仰/侧倾平滑速度。")]
+        public float FlightTiltSmooth = 8f;
 
         [Header("Motorcycle")]
         [Tooltip("摩托最高前进速度。")]
@@ -64,9 +76,19 @@ namespace AttackSkill.Character.HSM
         [Tooltip("低速时每秒转向角度。")]
         public float BikeSteerDegrees = 110f;
         [Tooltip("高速转向系数（0~1，越小弯越慢）。")]
-        public float BikeHighSpeedSteerFactor = 0.35f;
+        public float BikeHighSpeedSteerFactor = 2f;
         [Tooltip("摩托跳跃高度。")]
         public float BikeJumpHeight = 2f;
+        [Tooltip("摩托跳跃冷却（秒），不限次数。")]
+        public float BikeJumpCooldown = 1f;
+        [Tooltip("骑乘时 CharacterController 世界高度（底贴地）。")]
+        public float BikeControllerWorldHeight = 1.68f;
+        [Tooltip("骑乘时 CharacterController 世界半径。")]
+        public float BikeControllerWorldRadius = 0.6f;
+        [Tooltip("骑乘时台阶高度（世界单位）。")]
+        public float BikeControllerWorldStep = 0.25f;
+        [Tooltip("骑乘时 CharacterController.center.y（本地）。")]
+        public float BikeControllerCenterY = 0.5f;
     }
 
     /// <summary>

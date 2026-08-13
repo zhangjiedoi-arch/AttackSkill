@@ -246,6 +246,12 @@ namespace AttackSkill.Character.HSM
 
         public override void OnUpdate(float deltaTime)
         {
+            if (AerialExplorationFlightMotion.WantsExitByAttack(ToolCtx))
+            {
+                Ctx.Owner?.TryToggleExplorationTool(Tool, null);
+                return;
+            }
+
             Tool?.OnUpdate(ToolCtx, deltaTime);
         }
 
@@ -295,6 +301,12 @@ namespace AttackSkill.Character.HSM
 
         public override void OnUpdate(float deltaTime)
         {
+            if (AerialExplorationFlightMotion.WantsExitByAttack(ToolCtx))
+            {
+                Ctx.Owner?.TryToggleExplorationTool(Tool, null);
+                return;
+            }
+
             Tool?.OnUpdate(ToolCtx, deltaTime);
         }
 

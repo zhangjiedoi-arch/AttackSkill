@@ -19,6 +19,10 @@ namespace AttackSkill.Character
         public static void HideMotorcycle(Transform characterRoot) =>
             Hide(ResolveSockets(characterRoot)?.Motorcycle, InstanceMotorcycle);
 
+        /// <summary>摩托挂点（Motorcycle_pos）。</summary>
+        public static Transform GetMotorcycleSocket(Transform characterRoot) =>
+            ResolveSockets(characterRoot)?.Motorcycle;
+
         public static void ShowSword(Transform characterRoot) =>
             Show(ResolveSwordSocket(characterRoot), ResolveSwordPrefab(), InstanceSword, "Sword");
 

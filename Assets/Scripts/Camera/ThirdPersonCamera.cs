@@ -1,4 +1,5 @@
 using UnityEngine;
+using AttackSkill.Character;
 using AttackSkill.Combat;
 using AttackSkill.Core;
 using AttackSkill.Game;
@@ -40,9 +41,12 @@ namespace AttackSkill.CameraSystem
         [SerializeField] KeyCode unlockCursorKey = KeyCode.LeftAlt;
 
         [Header("Smoothing")]
-        [SerializeField] float positionSmoothTime = 0.08f;
+        [Tooltip("已废弃：跟拍改为硬跟随（避免 FixedUpdate 移动 + LateUpdate SmoothDamp 抖动）。保留字段仅兼容旧序列化。")]
+        [SerializeField] float positionSmoothTime = 0f;
         [SerializeField] float rotationSmoothTime = 0.06f;
         [SerializeField] float zoomSmoothTime = 0.12f;
+        [Tooltip("防穿拉近后的回弹平滑；被墙挡住时仍立即拉近。")]
+        [SerializeField] float collisionSmoothTime = 0.08f;
 
         [Header("Collision")]
         [SerializeField] bool enableCollision = true;
@@ -51,9 +55,19 @@ namespace AttackSkill.CameraSystem
         [Tooltip("留空/Everything 时运行时排除 UI/特效/玩家")]
         [SerializeField] LayerMask collisionMask = ~0;
 
+        [Header("Near Fade")]
+        [Tooltip("相机过近时淡出跟随角色（避免贴脸挡画面）。")]
+        [SerializeField] bool enableNearCharacterFade = true;
+        [Tooltip("开始淡出的相机距离（世界单位）。")]
+        [SerializeField] float fadeStartDistance = 1.55f;
+        [Tooltip("完全隐藏的相机距离（世界单位）。")]
+        [SerializeField] float fadeEndDistance = 0.55f;
+
         Vector3 _pivotVelocity;
         float _targetDistance;
         float _distanceVelocity;
+        float _collisionDistance = -1f;
+        float _collisionDistanceVelocity;
         float _targetYaw;
         float _targetPitch;
         float _yawVelocity;
@@ -61,6 +75,8 @@ namespace AttackSkill.CameraSystem
         bool _cursorLocked;
         /// <summary>玩法期望的锁鼠状态；组件禁用/UI 临时解锁后可据此恢复。</summary>
         bool _desireCursorLock;
+        CharacterCameraProximityFade _nearFade;
+        Transform _nearFadeTarget;
 
         /// <summary>角色移动应参考的水平朝向（仅 Y 轴旋转）。</summary>
         public Transform YawTransform => yawPivot;
@@ -108,6 +124,7 @@ namespace AttackSkill.CameraSystem
         void OnDestroy()
         {
             GameplayInputGate.SoftBlockChanged -= OnSoftBlockChanged;
+            ClearNearFade();
             GameServices.Unregister(this);
         }
 
@@ -130,6 +147,7 @@ namespace AttackSkill.CameraSystem
         void OnDisable()
         {
             ApplyCursorState(locked: false);
+            ClearNearFade();
         }
 
         void OnSoftBlockChanged(bool softBlocked)
@@ -155,8 +173,14 @@ namespace AttackSkill.CameraSystem
 
         void LateUpdate()
         {
-            if (followTarget == null || controlledCamera == null || GamePause.IsPaused)
+            if (controlledCamera == null || GamePause.IsPaused)
             {
+                return;
+            }
+
+            if (followTarget == null)
+            {
+                ClearNearFade();
                 return;
             }
 
@@ -231,15 +255,10 @@ namespace AttackSkill.CameraSystem
 
         void UpdatePivotAndCamera()
         {
+            // 角色位移在 FixedUpdate：pivot 必须 LateUpdate 硬跟随，禁止 SmoothDamp 滞后追赶
             Vector3 desiredPivot = followTarget.position + pivotOffset;
-            transform.position = Vector3.SmoothDamp(
-                transform.position,
-                desiredPivot,
-                ref _pivotVelocity,
-                positionSmoothTime,
-                Mathf.Infinity,
-                Time.unscaledDeltaTime);
-
+            _pivotVelocity = Vector3.zero;
+            transform.position = desiredPivot;
             ApplyRigTransforms();
         }
 
@@ -261,15 +280,50 @@ namespace AttackSkill.CameraSystem
                 return;
             }
 
-            float finalDistance = distance;
-            if (enableCollision)
-            {
-                finalDistance = ResolveCollisionDistance(finalDistance);
-            }
-
+            float finalDistance = ResolveSmoothedCameraDistance(distance);
             Transform camTransform = controlledCamera.transform;
             camTransform.localPosition = new Vector3(0f, 0f, -finalDistance);
             camTransform.localRotation = Quaternion.identity;
+            UpdateNearCharacterFade(finalDistance);
+        }
+
+        float ResolveSmoothedCameraDistance(float desiredDistance)
+        {
+            float resolved = desiredDistance;
+            if (enableCollision)
+            {
+                resolved = ResolveCollisionDistance(desiredDistance);
+            }
+
+            if (_collisionDistance < 0f)
+            {
+                _collisionDistance = resolved;
+                _collisionDistanceVelocity = 0f;
+                return resolved;
+            }
+
+            // 被墙挡住：立刻拉近，避免穿模；离开障碍：平滑推回，避免距离每帧跳变
+            if (resolved < _collisionDistance - 0.001f)
+            {
+                _collisionDistance = resolved;
+                _collisionDistanceVelocity = 0f;
+                return resolved;
+            }
+
+            if (collisionSmoothTime <= 0.0001f)
+            {
+                _collisionDistance = resolved;
+                return resolved;
+            }
+
+            _collisionDistance = Mathf.SmoothDamp(
+                _collisionDistance,
+                resolved,
+                ref _collisionDistanceVelocity,
+                collisionSmoothTime,
+                Mathf.Infinity,
+                Time.deltaTime);
+            return _collisionDistance;
         }
 
         /// <summary>切人/读档后立刻贴齐目标，避免相机还在旧出生点。</summary>
@@ -284,11 +338,49 @@ namespace AttackSkill.CameraSystem
             _yawVelocity = 0f;
             _pitchVelocity = 0f;
             _distanceVelocity = 0f;
+            _collisionDistanceVelocity = 0f;
+            _collisionDistance = -1f;
             yaw = _targetYaw;
             pitch = _targetPitch;
             distance = _targetDistance;
             transform.position = followTarget.position + pivotOffset;
             ApplyRigTransforms();
+        }
+
+        void UpdateNearCharacterFade(float cameraDistance)
+        {
+            if (!enableNearCharacterFade || followTarget == null)
+            {
+                ClearNearFade();
+                return;
+            }
+
+            if (_nearFadeTarget != followTarget)
+            {
+                ClearNearFade();
+                _nearFadeTarget = followTarget;
+                _nearFade = followTarget.GetComponent<CharacterCameraProximityFade>();
+                if (_nearFade == null)
+                {
+                    _nearFade = followTarget.gameObject.AddComponent<CharacterCameraProximityFade>();
+                }
+            }
+
+            float start = Mathf.Max(fadeEndDistance + 0.05f, fadeStartDistance);
+            float end = Mathf.Max(0.05f, fadeEndDistance);
+            float visibility = Mathf.InverseLerp(end, start, cameraDistance);
+            _nearFade.SetVisibility(visibility);
+        }
+
+        void ClearNearFade()
+        {
+            if (_nearFade != null)
+            {
+                _nearFade.RestoreFullVisibility();
+            }
+
+            _nearFade = null;
+            _nearFadeTarget = null;
         }
 
         float ResolveCollisionDistance(float desiredDistance)

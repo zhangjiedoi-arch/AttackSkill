@@ -39,5 +39,8 @@ Party 设 FollowTarget
 ## 约定与坑
 
 - `ControlledCamera` 的 `localRotation` 保持 identity，世界旋转来自父级 pivot。
+- **跟拍 pivot 必须硬跟随**（勿对角色位置做 SmoothDamp）：角色在 `FixedUpdate` 位移、相机在 `LateUpdate`，滞后追赶会造成移动/飞升抖动。
+- 防穿距离：撞墙立刻拉近，离开后可平滑回弹，避免 `SphereCast` 距离每帧跳变。
+- 过近淡出：`enableNearCharacterFade` + `fadeStartDistance` / `fadeEndDistance`，驱动 `CharacterCameraProximityFade`（MMD 切 Transparent 调 alpha，再近则 `forceRenderingOff`）。
 - 期望锁鼠状态与 `OnEnable` 恢复：避免大招 `enabled=false` 后丢锁。
 - 世界 UI / 出伤解析渲染相机时优先 `ControlledCamera`。

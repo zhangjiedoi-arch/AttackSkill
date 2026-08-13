@@ -46,6 +46,10 @@ T → ExplorationToolService.TryToggleEquipped
 ## 约定与坑
 
 - 已实现：翅膀、御剑、摩托；其余 Stub。
+- 翅膀 / 御剑操作：W/S 俯仰飞升俯冲、A/D 左右斜飞、Shift 加速上升；空格不再上升。
+- 退出飞行：T 或鼠标左键；姿态倾斜最大 45°（`FlightVisualTilt`）。
+- 摩托跳跃：鼠标左键，2 秒冷却，不限次数；空格不跳跃。
+- 摩托穿地：骑乘切换 CC 体型，`center.y` 设为 `BikeControllerCenterY`（默认 0.5），退出还原（`MotorcycleColliderFit`）。
 - 轮盘软阻塞冻 `timeScale`，不是 `GamePause`。
 - 互斥工具同时开时 `TryToggle` 失败。
 - F = 滑翔；翅膀起飞是 T，不要混。

@@ -1177,6 +1177,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u6D77\u5C9B"
       objectReference: {fileID: 0}
+    - target: {fileID: 4332324810809907256, guid: 5acf9e820949163498360774571ff958,
+        type: 3}
+      propertyPath: m_Layer
+      value: 18
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1307,18 +1312,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   followTarget: {fileID: 0}
-  pivotOffset: {x: 0, y: 1.46, z: 0}
+  pivotOffset: {x: 0, y: 1, z: 0}
   yawPivot: {fileID: 535543938}
   pitchPivot: {fileID: 1309986107}
   controlledCamera: {fileID: 1461066373}
-  defaultDistance: 6.27
-  minDistance: 1.8
+  defaultDistance: 6
+  minDistance: 0.4
   maxDistance: 12
   minPitch: -25
   maxPitch: 70
   yaw: 0
   pitch: 18
-  distance: 3
+  distance: 6
   lockCursorOnPlay: 1
   rotateOnlyWhenRightMouse: 0
   mouseSensitivity: 2.5
@@ -1327,12 +1332,13 @@ MonoBehaviour:
   positionSmoothTime: 0.08
   rotationSmoothTime: 0.06
   zoomSmoothTime: 0.12
+  collisionSmoothTime: 0.08
   enableCollision: 1
   collisionRadius: 0.25
   collisionPadding: 0.15
   collisionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 474934
 --- !u!4 &1994461887
 Transform:
   m_ObjectHideFlags: 0

@@ -6,30 +6,31 @@ namespace AttackSkill.Character.Exploration
     /// <summary>摩托骑行逻辑（从 HSM MotorcycleState 迁出）。</summary>
     public sealed class MotorcycleTool : IExplorationTool
     {
-        const int MaxAirJumps = 2;
-
         float _speed;
         bool _jumpQueued;
-        int _jumpsUsed;
+        float _nextJumpTime;
         bool _active;
+        MotorcycleColliderFit.StandSnapshot _standCollider;
 
         public ExplorationToolKind Kind => ExplorationToolKind.Motorcycle;
         public bool IsActive => _active;
         public bool BlocksSkillWheelWhenActive => true;
         public float RideSpeed => _speed;
-        public int AirJumpsUsed => _jumpsUsed;
-        public int MaxAirJumpsAllowed => MaxAirJumps;
+
+        /// <summary>切人用：距离下次可跳还有多少秒。</summary>
+        public float JumpCooldownRemaining =>
+            Mathf.Max(0f, _nextJumpTime - Time.time);
 
         public void SetRideSpeed(float speed)
         {
             _speed = speed;
         }
 
-        /// <summary>切人续态：恢复车速与空中已用跳跃次数。</summary>
-        public void RestoreRideState(float rideSpeed, int airJumpsUsed)
+        /// <summary>切人续态：恢复车速与跳跃冷却。</summary>
+        public void RestoreRideState(float rideSpeed, float jumpCooldownRemaining)
         {
             _speed = rideSpeed;
-            _jumpsUsed = Mathf.Clamp(airJumpsUsed, 0, MaxAirJumps);
+            _nextJumpTime = Time.time + Mathf.Max(0f, jumpCooldownRemaining);
             _jumpQueued = false;
         }
 
@@ -55,7 +56,7 @@ namespace AttackSkill.Character.Exploration
                 ? Mathf.Max(0f, ctx.Motor.PlanarVelocity.magnitude)
                 : 0f;
             _jumpQueued = false;
-            _jumpsUsed = 0;
+            _nextJumpTime = 0f;
 
             ctx.SetAnimBool(CharacterAnimParams.IsSprinting, false);
             ctx.SetAnimBool(CharacterAnimParams.IsGliding, false);
@@ -68,6 +69,8 @@ namespace AttackSkill.Character.Exploration
                 CharacterToolAttach.ShowMotorcycle(ctx.Transform);
             }
 
+            ApplyRideCollider(ctx);
+
             ctx.Audio?.BeginMotorcycle();
         }
 
@@ -76,7 +79,7 @@ namespace AttackSkill.Character.Exploration
             _active = false;
             _speed = 0f;
             _jumpQueued = false;
-            _jumpsUsed = 0;
+            _nextJumpTime = 0f;
 
             if (ctx.Motor != null)
             {
@@ -84,6 +87,8 @@ namespace AttackSkill.Character.Exploration
             }
 
             ctx.SetAnimBool(CharacterAnimParams.IsRidingMotorcycle, false);
+
+            RestoreStandCollider(ctx);
 
             if (ctx.Transform != null)
             {
@@ -93,6 +98,24 @@ namespace AttackSkill.Character.Exploration
             ctx.Audio?.EndMotorcycle();
         }
 
+        void ApplyRideCollider(in ExplorationToolContext ctx)
+        {
+            CharacterController cc = ctx.Motor != null ? ctx.Motor.Controller : null;
+            if (cc == null || ctx.Settings == null)
+            {
+                return;
+            }
+
+            _standCollider = MotorcycleColliderFit.Capture(cc);
+            MotorcycleColliderFit.ApplyBikeShape(cc, ctx.Settings, ref _standCollider);
+        }
+
+        void RestoreStandCollider(in ExplorationToolContext ctx)
+        {
+            CharacterController cc = ctx.Motor != null ? ctx.Motor.Controller : null;
+            MotorcycleColliderFit.RestoreStandShape(cc, ref _standCollider);
+        }
+
         public void OnUpdate(in ExplorationToolContext ctx, float deltaTime)
         {
             if (!_active || ctx.Character == null)
@@ -100,7 +123,8 @@ namespace AttackSkill.Character.Exploration
                 return;
             }
 
-            if (ctx.Input.JumpPressed && _jumpsUsed < MaxAirJumps)
+            // 鼠标左键跳跃（不用空格）；冷却内忽略
+            if (ctx.Input.AttackPressed && Time.time >= _nextJumpTime)
             {
                 _jumpQueued = true;
             }
@@ -117,11 +141,12 @@ namespace AttackSkill.Character.Exploration
 
             var settings = ctx.Settings;
             var motor = ctx.Motor;
+            float jumpCooldown = Mathf.Max(0.05f, settings.BikeJumpCooldown);
 
-            if (_jumpQueued && _jumpsUsed < MaxAirJumps)
+            if (_jumpQueued && Time.time >= _nextJumpTime)
             {
                 _jumpQueued = false;
-                _jumpsUsed++;
+                _nextJumpTime = Time.time + jumpCooldown;
                 motor.Jump(settings.BikeJumpHeight, 0.35f);
                 ctx.SetAnimTrigger(CharacterAnimParams.Jump);
                 ctx.SetAnimBool(CharacterAnimParams.IsGrounded, false);
@@ -133,11 +158,6 @@ namespace AttackSkill.Character.Exploration
             }
 
             bool airborne = !motor.IsGroundedRaw;
-            if (!airborne)
-            {
-                _jumpsUsed = 0;
-            }
-
             float throttle = ctx.Input.Move.y;
             float steer = ctx.Input.Move.x;
             float control = airborne ? settings.AirControl : 1f;

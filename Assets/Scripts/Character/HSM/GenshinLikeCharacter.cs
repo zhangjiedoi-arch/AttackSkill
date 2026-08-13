@@ -216,7 +216,7 @@ namespace AttackSkill.Character.HSM
                 if (tools != null)
                 {
                     snap.MotorcycleRideSpeed = tools.Motorcycle.RideSpeed;
-                    snap.MotorcycleAirJumpsUsed = tools.Motorcycle.AirJumpsUsed;
+                    snap.MotorcycleJumpCooldownRemaining = tools.Motorcycle.JumpCooldownRemaining;
                 }
                 else
                 {
@@ -271,7 +271,7 @@ namespace AttackSkill.Character.HSM
             {
                 _explorationTools.Motorcycle.RestoreRideState(
                     snap.MotorcycleRideSpeed,
-                    snap.MotorcycleAirJumpsUsed);
+                    snap.MotorcycleJumpCooldownRemaining);
                 _ctx?.SetAnimFloat(CharacterAnimParams.Speed, Mathf.Abs(snap.MotorcycleRideSpeed));
             }
         }
