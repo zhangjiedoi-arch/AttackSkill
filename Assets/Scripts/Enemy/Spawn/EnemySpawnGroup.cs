@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace AttackSkill.Enemy
@@ -11,9 +12,16 @@ namespace AttackSkill.Enemy
 
         EnemySpawnPoint[] _points;
         bool _activated;
+        int _deathCount;
+        bool _initialWaveCleared;
 
         public bool IsActivated => _activated;
         public SpawnGroupDefinition Definition => definition;
+        public int PointCount => _points != null ? _points.Length : 0;
+        public bool InitialWaveCleared => _initialWaveCleared;
+
+        /// <summary>初始波次全部死亡一次后触发（之后若关闭刷新则不再刷）。</summary>
+        public event Action InitialWaveClearedEvent;
 
         void Awake()
         {
@@ -39,7 +47,98 @@ namespace AttackSkill.Enemy
                 }
 
                 _points[i].Configure(slotDef, definition);
+                _points[i].Died -= OnPointDied;
+                _points[i].Died += OnPointDied;
             }
+        }
+
+        void OnDestroy()
+        {
+            if (_points == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _points.Length; i++)
+            {
+                if (_points[i] != null)
+                {
+                    _points[i].Died -= OnPointDied;
+                }
+            }
+        }
+
+        void OnPointDied(EnemyAgent _)
+        {
+            if (_initialWaveCleared)
+            {
+                return;
+            }
+
+            _deathCount++;
+            if (_deathCount < PointCount)
+            {
+                return;
+            }
+
+            _initialWaveCleared = true;
+            DisableRespawn();
+            InitialWaveClearedEvent?.Invoke();
+        }
+
+        public void DisableRespawn()
+        {
+            if (_points == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _points.Length; i++)
+            {
+                if (_points[i] != null)
+                {
+                    _points[i].AllowRespawn = false;
+                }
+            }
+        }
+
+        public int CountAlive()
+        {
+            if (_points == null)
+            {
+                return 0;
+            }
+
+            int n = 0;
+            for (int i = 0; i < _points.Length; i++)
+            {
+                if (_points[i] != null && _points[i].HasAlive)
+                {
+                    n++;
+                }
+            }
+
+            return n;
+        }
+
+        public EnemyDefinition[] CollectDefinitions()
+        {
+            if (_points == null || _points.Length == 0)
+            {
+                return Array.Empty<EnemyDefinition>();
+            }
+
+            var list = new System.Collections.Generic.List<EnemyDefinition>(_points.Length);
+            for (int i = 0; i < _points.Length; i++)
+            {
+                var def = _points[i] != null ? _points[i].Definition : null;
+                if (def != null && !list.Contains(def))
+                {
+                    list.Add(def);
+                }
+            }
+
+            return list.ToArray();
         }
 
         void Update()
@@ -120,14 +219,12 @@ namespace AttackSkill.Enemy
 
             for (int i = 0; i < _points.Length; i++)
             {
-                // 战斗中的个体由 AnyAliveInCombat 挡住整组休眠；此处再兜底跳过
                 _points[i].HibernateAlive();
             }
         }
 
         void BuildPointsFromDefinition()
         {
-            // 清掉旧的自动点
             var existing = GetComponentsInChildren<EnemySpawnPoint>(true);
             for (int i = 0; i < existing.Length; i++)
             {

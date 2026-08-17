@@ -52,5 +52,6 @@ T → ExplorationToolService.TryToggleEquipped
 - 摩托穿地：骑乘切换 CC 体型，`center.y` 设为 `BikeControllerCenterY`（默认 0.5），退出还原（`MotorcycleColliderFit`）。
 - 轮盘软阻塞冻 `timeScale`，不是 `GamePause`。
 - 互斥工具同时开时 `TryToggle` 失败。
+- T 冷却仅在**进入**工具时开始；飞行/御剑/摩托中按 T 可随时退出，不受 CD 限制。
 - F = 滑翔；翅膀起飞是 T，不要混。
 - 气流：翅膀左右各一；御剑居中（`WingFlightAirflowVfx` + Sparks blue Prefab）。

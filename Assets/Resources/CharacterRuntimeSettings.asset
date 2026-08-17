@@ -12,29 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47542fcd0e2500046a9d925b1a40522b, type: 3}
   m_Name: CharacterRuntimeSettings
   m_EditorClassIdentifier: 
-  skillTimelinePrefab: {fileID: 6451633949038658642, guid: 83d2b2251d431a8408bc08c53921c2a4,
-    type: 3}
-  skillCameraPrefab: {fileID: 4808676006161809306, guid: dadd435b812323841bcad55c1247cc67,
-    type: 3}
-  circleVfxPrefab: {fileID: 4932088507883938021, guid: 0ec7429d990fbd24f9df6140e36a7120,
-    type: 3}
-  slashVfxPrefab: {fileID: 7768097912728832399, guid: 4b62373dae0a28145b0eea1f5b61af97,
-    type: 3}
-  snowHitVfxPrefab: {fileID: 4924508274929071776, guid: ed59a1b8e787cf14985f1ce0b32dec69,
-    type: 3}
-  groundAoeExplosionVfxPrefab: {fileID: 4994997792314849709, guid: c8152f3900dc6be4099842f7444720a6,
-    type: 3}
-  playerSkillHitProfile: {fileID: 11400000, guid: 9b6e48e8716840b6801bd5ba0819544a,
-    type: 2}
-  timedHitWanderer: {fileID: 11400000, guid: CHJN5CioACpSM+Nml82ZZeebEKqL5em6mfiLGJ0GMTANdTDWgmyPdc0=,
-    type: 2}
-  timedHitQianxiao: {fileID: 11400000, guid: XX8c43urAHmIcT8uO6okTNF2wt2W3PgBcLn3Sd1DqJMRkgHNlW4oRSQ=,
-    type: 2}
-  timedHitColetta: {fileID: 11400000, guid: XH9Jty2sBSiPWtJt/DC+7SWYLsLhRadYfhrNwCRes9q2KdwZ5WA5pac=,
-    type: 2}
-  skillHitFatKickR: {fileID: 8300000, guid: 62ba94affe7a32742a764d31e61d68b7, type: 3}
-  skillHitFatKickL: {fileID: 8300000, guid: 38015c63fc212a642bcc0d4ac492107e, type: 3}
-  skillHitRootLand: {fileID: 8300000, guid: ee88ac78e641f5d47904a38324f2b78c, type: 3}
+  timedHitWanderer: {fileID: 11400000, guid: 78ba25ca72310c144bc1896df866f186, type: 2}
+  timedHitQianxiao: {fileID: 11400000, guid: b53fa6c273e2eb040bf2d45969bdfc82, type: 2}
+  timedHitColetta: {fileID: 11400000, guid: c5f271fc32479fd44b554a85a06f1b93, type: 2}
   damageNumberPrefab: {fileID: 4973724643811855906, guid: a176988c80c3dac46ac96bdb418696a3,
     type: 3}
   enemyBloodPrefab: {fileID: 1648314220535259565, guid: af35d3ddaaa28004dbdc140a4cfa4860,
@@ -56,10 +36,7 @@ MonoBehaviour:
     type: 3}
   wingsPrefab: {fileID: 7399971807165125139, guid: 84ea7250336d3694499d8dccd978b12f,
     type: 3}
-  skillRAoeVfxPrefab: {fileID: 689667626583958020, guid: e063914682f20e549bbd9b0f779c0b2d,
-    type: 3}
-  flightAirflowVfxPrefab: {fileID: 7045889733438899885, guid: 89b00483afac5f541be3373c7b436aba,
-    type: 3}
+  flightAirflowVfxPrefab: {fileID: 0}
   flightAirflowLocalOffset: {x: 0, y: 0, z: -0.5}
   flightAirflowFallbackLocalY: 1.05
   explorationToolCatalog: {fileID: 11400000, guid: 1ca45b917c94f524caa2695f796b985f,
@@ -77,6 +54,16 @@ MonoBehaviour:
   motorcycleGoOn: {fileID: 8300000, guid: 93dd9bb2a9843d94db7a15013df3269f, type: 3}
   motorcycleJump: {fileID: 8300000, guid: 3dad4c5dfa6f31643818fd8a251c3b4e, type: 3}
   seaBgm: {fileID: 8300000, guid: c853e282f048a054f8bf20c7b9164744, type: 3}
+  healingCirclePrefab: {fileID: 4725640929471047566, guid: ea025e38db27a9c4a919fdbee358bf3b,
+    type: 3}
+  healingAuraPrefab: {fileID: 6208152671289787366, guid: cc1598632b395c94f955c6d0772923b6,
+    type: 3}
+  enemyHealDropChance: 0.3
+  healingCircleRadius: 3
+  healingCircleHealPerSecond: 100
+  healingCircleLifetime: 4
+  expOrbPrefab: {fileID: 2090106336891284076, guid: 9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b,
+    type: 3}
   iconPlayerFemale: {fileID: 21300000, guid: eb014200e43cb28468b762a4e2be3feb, type: 3}
   iconPlayerMale: {fileID: 21300000, guid: c683f4a40b91c7e4ba559b5209624e4d, type: 3}
   iconQianxiao: {fileID: 21300000, guid: 07d2d0dc861f657429af1e4b4f2766ff, type: 3}

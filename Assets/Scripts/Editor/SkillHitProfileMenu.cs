@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using AttackSkill.Character;
 using AttackSkill.Combat;
 using AttackSkill.Enemy;
 using UnityEditor;
@@ -12,7 +11,6 @@ namespace AttackSkill.EditorTools
         const string CombatFolder = "Assets/Resources/Combat";
         const string PlayerEPath = CombatFolder + "/SkillHit_Player_E.asset";
         const string EnemyBasicPath = CombatFolder + "/SkillHit_Enemy_Basic.asset";
-        const string SettingsPath = "Assets/Resources/CharacterRuntimeSettings.asset";
         const string EnemyDefPath = "Assets/ScriptableObjects/Enemy/EnemyDefinition_Wild.asset";
         const string SnowPath = "Assets/Prefabs/VFX/Snow hit.prefab";
         const string AoePath = "Assets/Prefabs/VFX/Ground AOE explosion.prefab";
@@ -48,26 +46,6 @@ namespace AttackSkill.EditorTools
             };
             EditorUtility.SetDirty(enemy);
 
-            var settings = AssetDatabase.LoadAssetAtPath<CharacterRuntimeSettings>(SettingsPath);
-            if (settings != null)
-            {
-                settings.playerSkillHitProfile = player;
-                if (settings.snowHitVfxPrefab == null)
-                {
-                    settings.snowHitVfxPrefab = snow;
-                }
-
-                if (settings.groundAoeExplosionVfxPrefab == null)
-                {
-                    settings.groundAoeExplosionVfxPrefab = aoe;
-                }
-
-                settings.skillHitFatKickR = kickR;
-                settings.skillHitFatKickL = kickL;
-                settings.skillHitRootLand = rootLand;
-                EditorUtility.SetDirty(settings);
-            }
-
             var enemyDef = AssetDatabase.LoadAssetAtPath<EnemyDefinition>(EnemyDefPath);
             if (enemyDef != null)
             {
@@ -79,7 +57,7 @@ namespace AttackSkill.EditorTools
             AssetDatabase.Refresh();
             Selection.activeObject = player;
             Debug.Log(
-                $"[SkillHitProfile] 已生成/更新：\n- {PlayerEPath}\n- {EnemyBasicPath}\n并写入 RuntimeSettings / EnemyDefinition_Wild。");
+                $"[SkillHitProfile] 已生成/更新：\n- {PlayerEPath}\n- {EnemyBasicPath}\n并写入 EnemyDefinition_Wild。");
         }
 
         static SkillHitProfile LoadOrCreateProfile(string path)

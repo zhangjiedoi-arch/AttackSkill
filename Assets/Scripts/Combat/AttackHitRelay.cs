@@ -84,6 +84,7 @@ namespace AttackSkill.Combat
         bool _timedActive;
         int _timedCombo = -1;
         string _timedPhaseId;
+        bool _isBasicAttackPhase;
         float _prevNormalized;
         bool _hasTimedSample;
         Animator _animator;
@@ -101,6 +102,9 @@ namespace AttackSkill.Combat
         SocketGizmoFlash _socketFlash;
 
         public Transform OwnerRoot => ownerRoot != null ? ownerRoot : transform.root;
+
+        /// <summary>当前是否处于普攻连段出伤（锋刃等被动用）。</summary>
+        public bool IsBasicAttackActive => _isBasicAttackPhase;
 
         /// <summary>大招由 SkillHitWindow 出伤时打开，避免动画 Event 重复结算。</summary>
         public bool SuppressAnimHits
@@ -407,12 +411,6 @@ namespace AttackSkill.Combat
 
         SkillHitProfile EnsureSkillHitProfile()
         {
-            var settings = CharacterRuntimeSettings.Get();
-            if (skillHitProfile == null && settings != null)
-            {
-                skillHitProfile = settings.GetPlayerSkillHitProfile();
-            }
-
             if (skillHitProfile == null)
             {
                 skillHitProfile = SkillHitProfileDefaults.PlayerE(
@@ -420,27 +418,7 @@ namespace AttackSkill.Combat
                     groundAoeExplosionVfxPrefab);
             }
 
-            if (snowHitVfxPrefab == null || groundAoeExplosionVfxPrefab == null)
-            {
-                if (settings != null)
-                {
-                    if (snowHitVfxPrefab == null)
-                    {
-                        snowHitVfxPrefab = settings.GetSnowHitVfx();
-                    }
-
-                    if (groundAoeExplosionVfxPrefab == null)
-                    {
-                        groundAoeExplosionVfxPrefab = settings.GetGroundAoeExplosionVfx();
-                    }
-                }
-            }
-
             FillSegmentVfxFromLegacy(skillHitProfile);
-            if (settings != null)
-            {
-                settings.FillSkillHitSfxIfEmpty(skillHitProfile);
-            }
 
             if (!_socketVfxPrewarmed)
             {
@@ -782,6 +760,7 @@ namespace AttackSkill.Combat
             _hitSession.Begin();
             _timedPhaseId = phaseId;
             _timedCombo = comboIndex;
+            _isBasicAttackPhase = phaseId.StartsWith("attack", System.StringComparison.OrdinalIgnoreCase);
             _prevNormalized = 0f;
             _hasTimedSample = false;
             _timedFiredKeys.Clear();
@@ -797,6 +776,7 @@ namespace AttackSkill.Combat
             _timedActive = false;
             _timedPhaseId = null;
             _timedCombo = -1;
+            _isBasicAttackPhase = false;
             _hasTimedSample = false;
             _prevNormalized = 0f;
             _timedFiredKeys.Clear();

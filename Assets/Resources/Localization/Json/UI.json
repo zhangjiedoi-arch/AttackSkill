@@ -464,6 +464,12 @@
       "ja": "この機能は開発中です"
     },
     {
+      "key": "rouge_like_teleport_tip",
+      "zhHans": "激怒了深渊，被带到了未知之地...",
+      "en": "The Abyss is enraged — you are taken to an unknown land...",
+      "ja": "深淵を怒らせ、未知の地へ連れ去られた..."
+    },
+    {
       "key": "echo_obtain_wip",
       "zhHans": "获取功能尚未实现",
       "en": "Obtain feature not yet implemented",

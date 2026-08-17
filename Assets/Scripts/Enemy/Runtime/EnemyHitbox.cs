@@ -14,6 +14,7 @@ namespace AttackSkill.Enemy
         float _expireAt = -1f;
         GameObject _attacker;
         readonly HitSession _session = new HitSession();
+        readonly Collider[] _overlapBuffer = new Collider[24];
 
         void Awake()
         {
@@ -37,6 +38,9 @@ namespace AttackSkill.Enemy
             transform.localPosition = new Vector3(0f, 1f, forwardOffset);
             sphere.radius = Mathf.Max(0.2f, radius);
             gameObject.SetActive(true);
+
+            // 开启当帧立刻扫一次：已重叠时不一定立刻收到 OnTriggerEnter
+            SweepOnce();
         }
 
         public void DisableHit()
@@ -61,6 +65,30 @@ namespace AttackSkill.Enemy
         void OnTriggerStay(Collider other)
         {
             TryHit(other);
+        }
+
+        void SweepOnce()
+        {
+            if (sphere == null)
+            {
+                return;
+            }
+
+            Vector3 center = transform.TransformPoint(sphere.center);
+            float radius = sphere.radius * Mathf.Max(
+                transform.lossyScale.x,
+                Mathf.Max(transform.lossyScale.y, transform.lossyScale.z));
+            LayerMask mask = CombatLayers.DefaultPlayerHurtboxMask;
+            int count = Physics.OverlapSphereNonAlloc(
+                center,
+                radius,
+                _overlapBuffer,
+                mask,
+                QueryTriggerInteraction.Collide);
+            for (int i = 0; i < count; i++)
+            {
+                TryHit(_overlapBuffer[i]);
+            }
         }
 
         void TryHit(Collider other)

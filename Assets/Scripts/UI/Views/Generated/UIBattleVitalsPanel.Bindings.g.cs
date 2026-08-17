@@ -12,8 +12,9 @@ namespace AttackSkill.UI
         [SerializeField] Image imgHpBg;
         [SerializeField] Image imgHpFill;
         [SerializeField] Text txtHpValue;
-        [SerializeField] Image imgEnergyBg;
-        [SerializeField] Image imgEnergyFill;
+        [SerializeField] Image imgExpBg;
+        [SerializeField] Image imgExpFill;
+        [SerializeField] Text txtExpValue;
         [SerializeField] Text txtLv;
         [SerializeField] Text txtLvText;
     }

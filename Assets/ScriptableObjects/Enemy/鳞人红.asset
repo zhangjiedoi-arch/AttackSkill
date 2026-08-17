@@ -1,0 +1,47 @@
+﻿%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67a13cc59b46bbf4d9b1c2611b57011b, type: 3}
+  m_Name: "\u9CDE\u4EBA\u7EA2"
+  m_EditorClassIdentifier: 
+  displayName: "\u9CDE\u4EBA\u7EA2"
+  prefab: {fileID: 6203924826781124634, guid: 47929121f3c16604490ebb315002c619, type: 3}
+  combatStats: {fileID: 0}
+  maxHp: 2800
+  level: 80
+  moveSpeed: 3.5
+  turnSpeed: 8
+  sightRange: 20
+  sightAngle: 90
+  hearRange: 6
+  losMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  attackRange: 1.8
+  disengageRange: 22
+  returnHomeRange: 28
+  attackDamage: 360
+  attackKnockback: 1.2
+  attackWindup: 0.35
+  attackActive: 0.15
+  attackRecovery: 0.45
+  attackCooldown: 1.1
+  hitRadius: 2
+  hitForwardOffset: 0.9
+  skillHitProfile: {fileID: 11400000, guid: 523d59a483ae4b67a141ed5d62dbdc88, type: 2}
+  alertDuration: 0.4
+  loseTargetTime: 2.5
+  echoChance: 0.35
+  deathForceMode: 0
+  dissolveDuration: 1.55
+  dissolveRiseDistance: 0.55
+  dissolveDustVfx: {fileID: 0}
+  echoCorpseLifetime: 20

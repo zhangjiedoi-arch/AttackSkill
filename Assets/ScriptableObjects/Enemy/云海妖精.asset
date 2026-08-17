@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:yousandi.cn,2023:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67a13cc59b46bbf4d9b1c2611b57011b, type: 3}
-  m_Name: EnemyDefinition_Wild
+  m_Name: "\u4E91\u6D77\u5996\u7CBE"
   m_EditorClassIdentifier: 
-  displayName: Wild Grunt
-  prefab: {fileID: 3275355846398871117, guid: 84bdc135eeaf5924abdcf5cdbc83c427, type: 3}
-  maxHp: 80
-  level: 12
+  displayName: "\u4E91\u6D77\u5996\u7CBE"
+  prefab: {fileID: 2790419543999585648, guid: 688748231444055419c996d3b3be45df, type: 3}
+  combatStats: {fileID: 0}
+  maxHp: 200
+  level: 80
   moveSpeed: 3.5
   turnSpeed: 8
-  sightRange: 12
+  sightRange: 20
   sightAngle: 90
   hearRange: 6
   losMask:
@@ -27,13 +28,13 @@ MonoBehaviour:
   attackRange: 1.8
   disengageRange: 22
   returnHomeRange: 28
-  attackDamage: 12
+  attackDamage: 50
   attackKnockback: 1.2
   attackWindup: 0.35
   attackActive: 0.15
   attackRecovery: 0.45
   attackCooldown: 1.1
-  hitRadius: 1.1
+  hitRadius: 2
   hitForwardOffset: 0.9
   skillHitProfile: {fileID: 11400000, guid: 523d59a483ae4b67a141ed5d62dbdc88, type: 2}
   alertDuration: 0.4

@@ -23,7 +23,9 @@ MonoBehaviour:
     hitHeight: 0.9
     damage: 12
     knockback: 1.2
-    vfxPrefab: {fileID: 4021103657954561961, guid: d50024aef0af9724c8c18172f722d1fc,
+    vfxPrefab: {fileID: 5404219115285414677, guid: 661e171d301b8f64cacdb0ad47a5d92e,
       type: 3}
-    vfxLife: 2.5
+    vfxLife: 1
     parentVfxToSocket: 0
+    sfxClip: {fileID: 0}
+    sfxVolume: 1

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace AttackSkill.Combat
 {
     /// <summary>
-    /// 单次挥砍 / 命中窗口内的去重表（按目标 root InstanceId）。
+    /// 单次挥砍 / 命中窗口内的去重表（按战斗单位 InstanceId，见 HitResolver.ResolveDedupId）。
     /// </summary>
     public sealed class HitSession
     {
@@ -18,11 +18,11 @@ namespace AttackSkill.Combat
 
         public void Clear() => Begin();
 
-        public bool TryRegister(int targetRootId)
+        public bool TryRegister(int targetUnitId)
         {
-            return _hitIds.Add(targetRootId);
+            return _hitIds.Add(targetUnitId);
         }
 
-        public bool Contains(int targetRootId) => _hitIds.Contains(targetRootId);
+        public bool Contains(int targetUnitId) => _hitIds.Contains(targetUnitId);
     }
 }

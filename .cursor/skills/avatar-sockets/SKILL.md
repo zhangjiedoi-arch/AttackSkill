@@ -16,7 +16,7 @@ description: >-
 - `Assets/Scripts/Character/CharacterAvatar.cs`
 - `Assets/Scripts/Character/CharacterToolAttach.cs`
 - `Assets/Scripts/Editor/CharacterToolWiringMenu.cs`
-- Prefab 引用：`CharacterRuntimeSettings` 的 `motorcyclePrefab` / `swordPrefab` / `wingsPrefab` / `skillRAoeVfxPrefab`
+- Prefab 引用：`CharacterRuntimeSettings` 的 `motorcyclePrefab` / `swordPrefab` / `wingsPrefab`
 
 ## 挂点命名（敏感）
 

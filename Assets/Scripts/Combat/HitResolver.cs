@@ -1,6 +1,7 @@
 using System;
 using AttackSkill.Character.HSM;
 using AttackSkill.Enemy;
+using AttackSkill.Rouge;
 using UnityEngine;
 
 namespace AttackSkill.Combat
@@ -91,10 +92,51 @@ namespace AttackSkill.Combat
             }
 
             DamageInfo resolved = ResolveDamage(request);
+            ApplyIncomingRougeMods(ref resolved, request);
             request.Target.TakeDamage(resolved);
+            TryApplyLifesteal(resolved);
             SpawnHitVfx(request);
             Applied?.Invoke(resolved, request.Target);
             return true;
+        }
+
+        static void ApplyIncomingRougeMods(ref DamageInfo resolved, in HitRequest request)
+        {
+            if (!IsPlayerTarget(request))
+            {
+                return;
+            }
+
+            resolved.Amount = Mathf.Max(1f, resolved.Amount * RougePassiveEffects.DamageTakenMul);
+        }
+
+        static void TryApplyLifesteal(in DamageInfo resolved)
+        {
+            float ratio = RougePassiveEffects.LifestealRatio;
+            if (ratio <= 0f || resolved.Amount <= 0f || resolved.Attacker == null)
+            {
+                return;
+            }
+
+            var character = resolved.Attacker.GetComponentInParent<GenshinLikeCharacter>();
+            if (character == null || character.Health == null || !character.Health.IsAlive)
+            {
+                return;
+            }
+
+            character.Health.Heal(resolved.Amount * ratio);
+        }
+
+        static bool IsPlayerTarget(in HitRequest request)
+        {
+            Component hint = request.TargetHint;
+            if (hint != null && hint.GetComponentInParent<GenshinLikeCharacter>() != null)
+            {
+                return true;
+            }
+
+            return request.Target is Component c &&
+                   c.GetComponentInParent<GenshinLikeCharacter>() != null;
         }
 
         static DamageInfo ResolveDamage(in HitRequest request)
@@ -114,19 +156,61 @@ namespace AttackSkill.Combat
             return DamageCalculator.Resolve(request.Damage, attackerStats, defenderStats);
         }
 
+        /// <summary>
+        /// 同段去重键：按「战斗单位」身份，而不是 Transform.root。
+        /// 肉鸽怪常挂在 EnemyGroup 下，若用 root 会导致一刀只能打中一只。
+        /// </summary>
         public static int ResolveDedupId(Transform hintTf, IDamageable target)
         {
             if (hintTf != null)
             {
-                return hintTf.root.GetInstanceID();
+                int fromHint = ResolveUnitId(hintTf);
+                if (fromHint != 0)
+                {
+                    return fromHint;
+                }
             }
 
             if (target is Component c && c != null)
             {
-                return c.transform.root.GetInstanceID();
+                int fromTarget = ResolveUnitId(c.transform);
+                if (fromTarget != 0)
+                {
+                    return fromTarget;
+                }
+
+                return c.GetInstanceID();
             }
 
-            return target.GetHashCode();
+            return target != null ? target.GetHashCode() : 0;
+        }
+
+        static int ResolveUnitId(Transform tf)
+        {
+            if (tf == null)
+            {
+                return 0;
+            }
+
+            var enemy = tf.GetComponentInParent<EnemyAgent>();
+            if (enemy != null)
+            {
+                return enemy.GetInstanceID();
+            }
+
+            var player = tf.GetComponentInParent<GenshinLikeCharacter>();
+            if (player != null)
+            {
+                return player.GetInstanceID();
+            }
+
+            var health = tf.GetComponentInParent<Health>();
+            if (health != null)
+            {
+                return health.GetInstanceID();
+            }
+
+            return 0;
         }
 
         static bool IsDeadPlayerAttacker(GameObject attacker)

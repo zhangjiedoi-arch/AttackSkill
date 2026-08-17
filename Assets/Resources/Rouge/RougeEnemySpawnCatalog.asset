@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f2a3b4c5d6478890a1b2c3d4e5f607, type: 3}
+  m_Name: RougeEnemySpawnCatalog
+  m_EditorClassIdentifier: 
+  entries:
+  - definition: {fileID: 11400000, guid: 2ef29ff703901bf48800317bcc9b2537, type: 2}
+    minLevel: 1
+  - definition: {fileID: 11400000, guid: d14a57a48dc7200418bd3329e63f5a45, type: 2}
+    minLevel: 1
+  - definition: {fileID: 11400000, guid: 96628969bd335ca4e875dacdb1cbd3ad, type: 2}
+    minLevel: 1
+  - definition: {fileID: 11400000, guid: 4ce05a63d99e8394791c1817ecd79ddb, type: 2}
+    minLevel: 1
+  - definition: {fileID: 11400000, guid: 776794a484cf7c34c904fc0ccc3f264b, type: 2}
+    minLevel: 4
+  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+    minLevel: 5
+  - definition: {fileID: 11400000, guid: 0026d81b2a04c9a489804f6eca63f4d1, type: 2}
+    minLevel: 6
+  - definition: {fileID: 11400000, guid: 52ad6d4bbe039404cadc1497e7526b74, type: 2}
+    minLevel: 7
+  - definition: {fileID: 11400000, guid: f20446f77cfb56441ace4d7a53be72b7, type: 2}
+    minLevel: 8

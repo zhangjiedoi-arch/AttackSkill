@@ -13,22 +13,16 @@ MonoBehaviour:
   m_Name: SpawnGroup_Wild
   m_EditorClassIdentifier: 
   slots:
-  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+  - definition: {fileID: 11400000, guid: 2ef29ff703901bf48800317bcc9b2537, type: 2}
     localOffset: {x: 0, y: 0, z: 0}
     localEuler: {x: 0, y: 0, z: 0}
-  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+  - definition: {fileID: 11400000, guid: d14a57a48dc7200418bd3329e63f5a45, type: 2}
     localOffset: {x: 2, y: 0, z: 0}
     localEuler: {x: 0, y: 0, z: 0}
-  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+  - definition: {fileID: 11400000, guid: 96628969bd335ca4e875dacdb1cbd3ad, type: 2}
     localOffset: {x: -2, y: 0, z: 1}
     localEuler: {x: 0, y: 0, z: 0}
-  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
-    localOffset: {x: -2, y: 0, z: 1}
-    localEuler: {x: 0, y: 0, z: 0}
-  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
-    localOffset: {x: -2, y: 0, z: 1}
-    localEuler: {x: 0, y: 0, z: 0}
-  - definition: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
+  - definition: {fileID: 11400000, guid: 4ce05a63d99e8394791c1817ecd79ddb, type: 2}
     localOffset: {x: -2, y: 0, z: 1}
     localEuler: {x: 0, y: 0, z: 0}
   activateRadius: 35

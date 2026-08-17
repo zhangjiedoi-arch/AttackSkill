@@ -8,6 +8,7 @@ namespace AttackSkill.Enemy
     {
         [SerializeField] EnemyDefinition definition;
         [SerializeField] bool spawnOnGroupActivate = true;
+        [SerializeField] bool allowRespawn = true;
 
         EnemyAgent _alive;
         float _respawnAt = -1f;
@@ -15,9 +16,14 @@ namespace AttackSkill.Enemy
         bool _waitingRespawn;
 
         public EnemyDefinition Definition => definition;
-        public bool HasAlive => _alive != null;
+        public bool HasAlive => _alive != null && !_alive.IsDead;
         public bool IsWaitingRespawn => _waitingRespawn;
         public bool IsAliveInCombat => _alive != null && !_alive.IsDead && _alive.IsInCombat;
+        public bool AllowRespawn
+        {
+            get => allowRespawn;
+            set => allowRespawn = value;
+        }
 
         public event Action<EnemyAgent> Spawned;
         public event Action<EnemyAgent> Died;
@@ -54,6 +60,11 @@ namespace AttackSkill.Enemy
                 return;
             }
 
+            if (!allowRespawn)
+            {
+                return;
+            }
+
             if (_respawnAt < 0f || Time.time < _respawnAt)
             {
                 return;
@@ -85,7 +96,7 @@ namespace AttackSkill.Enemy
                 return null;
             }
 
-            if (_alive != null)
+            if (_alive != null && !_alive.IsDead)
             {
                 return _alive;
             }
@@ -98,7 +109,6 @@ namespace AttackSkill.Enemy
                 agent = go.AddComponent<EnemyAgent>();
             }
 
-            // 确保有 Health / CC
             if (go.GetComponent<CharacterController>() == null)
             {
                 var cc = go.AddComponent<CharacterController>();
@@ -118,6 +128,43 @@ namespace AttackSkill.Enemy
             _waitingRespawn = false;
             _respawnAt = -1f;
             Spawned?.Invoke(agent);
+            return agent;
+        }
+
+        /// <summary>在指定世界坐标生成（肉鸽随机点）。</summary>
+        public static EnemyAgent SpawnAt(
+            EnemyDefinition definition,
+            Vector3 position,
+            Quaternion rotation,
+            Transform parent = null)
+        {
+            if (definition == null || definition.prefab == null)
+            {
+                return null;
+            }
+
+            var go = Instantiate(definition.prefab, position, rotation, parent);
+            go.name = $"{definition.name}_Rouge";
+            var agent = go.GetComponent<EnemyAgent>();
+            if (agent == null)
+            {
+                agent = go.AddComponent<EnemyAgent>();
+            }
+
+            if (go.GetComponent<CharacterController>() == null)
+            {
+                var cc = go.AddComponent<CharacterController>();
+                cc.center = new Vector3(0f, 1f, 0f);
+                cc.height = 2f;
+                cc.radius = 0.4f;
+            }
+
+            if (go.GetComponent<Combat.Health>() == null)
+            {
+                go.AddComponent<Combat.Health>();
+            }
+
+            agent.Initialize(definition, position, rotation, owner: null);
             return agent;
         }
 
@@ -161,10 +208,17 @@ namespace AttackSkill.Enemy
             agent.Died -= OnAgentDied;
             Died?.Invoke(agent);
             _alive = null;
+            if (!allowRespawn)
+            {
+                // 保持 waiting，避免 Tick 里 spawnOnGroupActivate 再次刷出
+                _waitingRespawn = true;
+                _respawnAt = -1f;
+                return;
+            }
+
             _waitingRespawn = true;
             float delay = _groupDef != null ? _groupDef.respawnDelay : 20f;
             _respawnAt = Time.time + Mathf.Max(1f, delay);
-            // 尸体销毁由 EnemyDeathDirector 负责：声骸 echoCorpseLifetime，飘散结束立刻 Destroy
         }
 
 #if UNITY_EDITOR

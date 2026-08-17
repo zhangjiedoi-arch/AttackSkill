@@ -4,12 +4,12 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - skillTimelinePrefab: {instanceID: 0}
-  - skillCameraPrefab: {instanceID: 0}
-  - circleVfxPrefab: {instanceID: 0}
-  - slashVfxPrefab: {instanceID: 0}
-  - snowHitVfxPrefab: {instanceID: 0}
-  - groundAoeExplosionVfxPrefab: {instanceID: 0}
+  - timedHitWanderer: {instanceID: 0}
+  - timedHitQianxiao: {instanceID: 0}
+  - timedHitColetta: {instanceID: 0}
+  - damageNumberPrefab: {instanceID: 0}
+  - enemyBloodPrefab: {instanceID: 0}
+  - obtainRemainsPrefab: {instanceID: 0}
   - maleWandererPrefab: {instanceID: 0}
   - femaleWandererPrefab: {instanceID: 0}
   - qianxiaoPrefab: {instanceID: 0}
@@ -17,6 +17,7 @@ MonoImporter:
   - motorcyclePrefab: {instanceID: 0}
   - swordPrefab: {instanceID: 0}
   - wingsPrefab: {instanceID: 0}
+  - flightAirflowVfxPrefab: {instanceID: 0}
   - explorationToolCatalog: {instanceID: 0}
   - jumpLand: {instanceID: 0}
   - jumpLoop: {instanceID: 0}

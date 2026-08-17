@@ -59,6 +59,7 @@ namespace AttackSkill.UI
             EnsureEntry(UIId.ChooseGender, UILayer.Dialog, "UI_ChooseGender_Dialog");
             EnsureEntry(UIId.PauseMenu, UILayer.Dialog, "UI_PauseMenu_Dialog");
             EnsureEntry(UIId.SkillWheel, UILayer.Dialog, "BattleHUD/UI_SkillWheel_Dialog");
+            EnsureEntry(UIId.SkillSelect, UILayer.Dialog, "BattleHUD/UI_SkillSelect_Panel");
             EnsureBattleHudEntries();
 #endif
         }
@@ -469,6 +470,7 @@ namespace AttackSkill.UI
                 case UIId.ChooseGender: return typeof(UIChooseGenderDialog);
                 case UIId.PauseMenu: return typeof(UIPauseMenuDialog);
                 case UIId.SkillWheel: return typeof(UISkillWheelDialog);
+                case UIId.SkillSelect: return typeof(UISkillSelectPanel);
                 case UIId.BattleParty: return typeof(UIBattlePartyPanel);
                 case UIId.BattleSystem: return typeof(UIBattleSystemPanel);
                 case UIId.BattleCombat: return typeof(UIBattleCombatPanel);

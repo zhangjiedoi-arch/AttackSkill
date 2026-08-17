@@ -18,6 +18,7 @@ namespace AttackSkill.UI
         ChooseGender = 17,
         PauseMenu = 18,
         SkillWheel = 19,
+        SkillSelect = 20,
         BattleParty = 30,
         BattleSystem = 31,
         BattleCombat = 32,

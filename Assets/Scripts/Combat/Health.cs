@@ -82,6 +82,25 @@ namespace AttackSkill.Combat
             HpChanged?.Invoke();
         }
 
+        /// <summary>治疗：增加当前生命，不超过 MaxHp；死亡中无效。</summary>
+        public float Heal(float amount)
+        {
+            if (!IsAlive || amount <= 0f)
+            {
+                return 0f;
+            }
+
+            float before = currentHp;
+            currentHp = Mathf.Min(maxHp, currentHp + amount);
+            float gained = currentHp - before;
+            if (gained > 0.0001f)
+            {
+                HpChanged?.Invoke();
+            }
+
+            return gained;
+        }
+
         /// <summary>读档恢复当前血量（不会超过 MaxHp）。</summary>
         public void SetCurrentHp(float hp)
         {

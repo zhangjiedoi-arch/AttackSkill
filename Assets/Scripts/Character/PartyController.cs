@@ -680,6 +680,7 @@ namespace AttackSkill.Character
             _lastSwitchTime = Time.time;
             RememberPose(spawnPos, worldRot);
             PlayerTargetLocator.InvalidateCache();
+            AttackSkill.Rouge.RougePassiveEffects.ApplyAbyssPactToActiveParty();
 
             if (old != null)
             {
@@ -771,6 +772,26 @@ namespace AttackSkill.Character
             RememberPose(_active.transform.position, _active.transform.rotation);
         }
 
+        public void TeleportActiveTo(Vector3 worldPos, Quaternion worldRot)
+        {
+            if (_active != null && !_active.IsDead)
+            {
+                _active.TeleportTo(worldPos, worldRot, resetMotion: true);
+            }
+
+            RememberPose(worldPos, worldRot);
+
+            if (thirdPersonCamera != null)
+            {
+                if (_active != null)
+                {
+                    thirdPersonCamera.FollowTarget = _active.transform;
+                }
+
+                thirdPersonCamera.SnapToFollowTarget();
+            }
+        }
+
         void RememberPose(Vector3 pos, Quaternion rot)
         {
             _lastGameplayPos = pos;
@@ -818,6 +839,8 @@ namespace AttackSkill.Character
             CharacterRuntimeAssembler.ApplyCombatStatsForPortrait(
                 character.gameObject,
                 GetPortraitId(index));
+
+            PlayerHurtbox.Ensure(character.gameObject);
 
             _spawned.Add(character);
             return character;

@@ -1,12 +1,13 @@
 using AttackSkill.Character;
 using AttackSkill.Character.HSM;
 using AttackSkill.Combat;
+using AttackSkill.Rouge;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace AttackSkill.UI
 {
-    /// <summary>战斗 HUD 生存区：跟随 Active 角色当前/最大血量刷新条与数值。</summary>
+    /// <summary>战斗 HUD 生存区：血量 + 共享等级/经验条。</summary>
     public partial class UIBattleVitalsPanel : UIBase
     {
         Health _boundHealth;
@@ -15,27 +16,83 @@ namespace AttackSkill.UI
         public override void OnOpen(object args)
         {
             SubscribeParty(true);
+            SubscribeRouge(true);
             BindActiveHealth();
             RefreshHp();
+            RefreshLevelAndExp();
+            PartyRougeProgress.TryOpenSkillSelectIfPending();
         }
 
         public override void OnClose()
         {
             UnbindHealth();
             SubscribeParty(false);
+            SubscribeRouge(false);
         }
 
         void OnEnable()
         {
             SubscribeParty(true);
+            SubscribeRouge(true);
             BindActiveHealth();
             RefreshHp();
+            RefreshLevelAndExp();
         }
 
         void OnDisable()
         {
             UnbindHealth();
             SubscribeParty(false);
+            SubscribeRouge(false);
+        }
+
+        void SubscribeRouge(bool subscribe)
+        {
+            if (subscribe)
+            {
+                PartyRougeProgress.Changed -= OnRougeChanged;
+                PartyRougeProgress.Changed += OnRougeChanged;
+            }
+            else
+            {
+                PartyRougeProgress.Changed -= OnRougeChanged;
+            }
+        }
+
+        void OnRougeChanged()
+        {
+            RefreshLevelAndExp();
+        }
+
+        void RefreshLevelAndExp()
+        {
+            int lv = Mathf.Max(1, PartyRougeProgress.Level);
+            if (txtLv != null)
+            {
+                txtLv.text = lv.ToString();
+            }
+
+            if (txtLvText != null && string.IsNullOrEmpty(txtLvText.text))
+            {
+                txtLvText.text = "Lv";
+            }
+
+            int exp = Mathf.Max(0, PartyRougeProgress.Exp);
+            int need = PartyRougeProgress.ExpToNext;
+            bool maxed = need <= 0;
+
+            if (imgExpFill != null)
+            {
+                imgExpFill.type = Image.Type.Filled;
+                imgExpFill.fillMethod = Image.FillMethod.Horizontal;
+                imgExpFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+                imgExpFill.fillAmount = maxed ? 1f : Mathf.Clamp01((float)exp / Mathf.Max(1, need));
+            }
+
+            if (txtExpValue != null)
+            {
+                txtExpValue.text = maxed ? $"{exp} / MAX" : $"{exp} / {need}";
+            }
         }
 
         void SubscribeParty(bool subscribe)
@@ -125,7 +182,6 @@ namespace AttackSkill.UI
             }
             else
             {
-                // 尚未生成 Active 时按满血占位，避免条空/文本空白
                 max = 20000f;
                 current = 20000f;
             }

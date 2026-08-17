@@ -424,6 +424,8 @@ namespace AttackSkill.Character.HSM
                 CombatLayers.ApplyLayerRecursively(gameObject, playerLayer);
             }
 
+            PlayerHurtbox.Ensure(gameObject);
+
             if (cameraYaw == null && autoFindThirdPersonCamera)
             {
                 var tpc = GameServices.ResolveCamera();
@@ -559,6 +561,12 @@ namespace AttackSkill.Character.HSM
             _fsm = new HStateMachine();
             States = new CharacterStateTree(_ctx, _fsm);
             _fsm.Start(States.Grounded.Idle);
+        }
+
+        void Start()
+        {
+            // 再确保一次：装配顺序/其它 Awake 改过 CC 尺寸时同步受击盒
+            PlayerHurtbox.Ensure(gameObject);
         }
 
         void OnDestroy()

@@ -13,10 +13,6 @@ namespace AttackSkill.Editor
     /// </summary>
     public static class CharacterAvatarSetupMenu
     {
-        const string SkillTimelinePath = "Assets/Prefabs/Timeline/CharacterSkillPlayer.prefab";
-        const string SkillCameraPath = "Assets/Prefabs/Timeline/Camera.prefab";
-        const string CircleVfxPath = "Assets/Prefabs/VFX/Freeze circle.prefab";
-        const string SlashVfxPath = "Assets/VFX/Slash/SlashArc.prefab";
         const string MaleWandererPath = "Assets/Prefabs/男漂泊者.prefab";
         const string FemaleWandererPath = "Assets/Prefabs/女漂泊者.prefab";
         const string QianxiaoPath = "Assets/Prefabs/千咲.prefab";
@@ -192,26 +188,6 @@ namespace AttackSkill.Editor
             {
                 existing = ScriptableObject.CreateInstance<CharacterRuntimeSettings>();
                 AssetDatabase.CreateAsset(existing, SettingsAssetPath);
-            }
-
-            if (existing.skillTimelinePrefab == null)
-            {
-                existing.skillTimelinePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SkillTimelinePath);
-            }
-
-            if (existing.skillCameraPrefab == null)
-            {
-                existing.skillCameraPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SkillCameraPath);
-            }
-
-            if (existing.circleVfxPrefab == null)
-            {
-                existing.circleVfxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(CircleVfxPath);
-            }
-
-            if (existing.slashVfxPrefab == null)
-            {
-                existing.slashVfxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SlashVfxPath);
             }
 
             if (existing.maleWandererPrefab == null)

@@ -124,6 +124,24 @@ namespace AttackSkill.Combat
             stack.Push(go);
         }
 
+        /// <summary>立即回收到池（取消延迟归还）。</summary>
+        public static void RecycleNow(GameObject instance)
+        {
+            if (instance == null)
+            {
+                return;
+            }
+
+            var member = instance.GetComponent<VfxPoolMember>();
+            if (member == null)
+            {
+                Object.Destroy(instance);
+                return;
+            }
+
+            Return(member);
+        }
+
         /// <param name="minIdleCount">空闲实例下限；0 表示仅在桶为空时补 DefaultPrewarm。</param>
         static void EnsurePool(int key, GameObject prefab, int minIdleCount)
         {

@@ -1,5 +1,85 @@
 %YAML 1.1
 %TAG !u! tag:yousandi.cn,2023:
+--- !u!1 &24908106762229031
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 7
+  m_Component:
+  - component: {fileID: 5855910304914212553}
+  - component: {fileID: 4252403208091240026}
+  - component: {fileID: 8632924159833722550}
+  m_Layer: 0
+  m_HasEditorInfo: 1
+  m_Name: txtExpValue
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5855910304914212553
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24908106762229031}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3959131369887802289}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 24, y: -10}
+  m_SizeDelta: {x: 260, y: 22}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!222 &4252403208091240026
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24908106762229031}
+  m_CullTransparentMesh: 1
+--- !u!114 &8632924159833722550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24908106762229031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: e3265ab4bf004d28a9537516768c1c75, type: 3}
+    m_FontSize: 20
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 1000 / 1000
 --- !u!1 &3305895879152218788
 GameObject:
   m_ObjectHideFlags: 0
@@ -13,7 +93,7 @@ GameObject:
   - component: {fileID: 4218962458208698291}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: imgEnergyBg
+  m_Name: imgExpBg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,7 +117,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 24, y: -10}
-  m_SizeDelta: {x: 420, y: 20}
+  m_SizeDelta: {x: 420, y: 22}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8892153104389182840
 CanvasRenderer:
@@ -60,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.68235296}
+  m_Color: {r: 0.7169812, g: 0.59861165, b: 0.59861165, a: 0.68235296}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -266,7 +346,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 24, y: 10}
-  m_SizeDelta: {x: 140, y: 22}
+  m_SizeDelta: {x: 260, y: 22}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &2688266382859678887
 CanvasRenderer:
@@ -479,7 +559,7 @@ GameObject:
   - component: {fileID: 4806538497071739937}
   m_Layer: 0
   m_HasEditorInfo: 1
-  m_Name: imgEnergyFill
+  m_Name: imgExpFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -632,7 +712,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3959131369887802289}
   - component: {fileID: 9142560806826295025}
-
   m_Layer: 0
   m_HasEditorInfo: 1
   m_Name: UI_BattleVitals_Panel
@@ -657,6 +736,7 @@ RectTransform:
   - {fileID: 3591926048454550646}
   - {fileID: 1116394459462030698}
   - {fileID: 2420509484741723415}
+  - {fileID: 5855910304914212553}
   - {fileID: 8250766512611301195}
   - {fileID: 3301603731204823214}
   m_Father: {fileID: 0}
@@ -682,7 +762,8 @@ MonoBehaviour:
   imgHpBg: {fileID: 8816424259179280514}
   imgHpFill: {fileID: 3135337927922881628}
   txtHpValue: {fileID: 2409470183100860249}
-  imgEnergyBg: {fileID: 4218962458208698291}
-  imgEnergyFill: {fileID: 4806538497071739937}
+  imgExpBg: {fileID: 4218962458208698291}
+  imgExpFill: {fileID: 4806538497071739937}
+  txtExpValue: {fileID: 8632924159833722550}
   txtLv: {fileID: 7812787754917558298}
   txtLvText: {fileID: 7949001328608943321}

@@ -148,32 +148,7 @@ namespace AttackSkill.Character
 
         void Awake()
         {
-            TryAssignDefaultPrefabs();
             ResolveRefs();
-        }
-
-        void TryAssignDefaultPrefabs()
-        {
-            var settings = CharacterRuntimeSettings.Get();
-            if (settings == null)
-            {
-                return;
-            }
-
-            if (skillTimelinePrefab == null)
-            {
-                skillTimelinePrefab = settings.skillTimelinePrefab;
-            }
-
-            if (skillCameraPrefab == null)
-            {
-                skillCameraPrefab = settings.skillCameraPrefab;
-            }
-
-            if (circleVfxPrefab == null)
-            {
-                circleVfxPrefab = settings.circleVfxPrefab;
-            }
         }
 
         void OnDestroy()

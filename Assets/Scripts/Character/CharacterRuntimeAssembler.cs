@@ -12,13 +12,6 @@ namespace AttackSkill.Character
     /// </summary>
     public static class CharacterRuntimeAssembler
     {
-        static GameObject _cachedTimeline;
-        static GameObject _cachedCamera;
-        static GameObject _cachedCircle;
-        static GameObject _cachedSlash;
-        static GameObject _cachedSnowHit;
-        static GameObject _cachedGroundAoe;
-
         /// <summary>
         /// 生成角色：Avatar-only → 建 Actor 壳再挂玩法；旧完整 Prefab → 就地补齐并接线。
         /// </summary>
@@ -163,9 +156,9 @@ namespace AttackSkill.Character
 
             skill.ConfigureRuntime(
                 animator,
-                LoadFromSettings(ref _cachedTimeline, "skillTimelinePrefab", s => s.GetSkillTimeline()),
-                LoadFromSettings(ref _cachedCamera, "skillCameraPrefab", s => s.GetSkillCamera()),
-                LoadFromSettings(ref _cachedCircle, "circleVfxPrefab", s => s.GetCircleVfx()),
+                null,
+                null,
+                null,
                 GameServices.ResolveCamera());
 
             var character = actorRoot.GetComponent<GenshinLikeCharacter>();
@@ -175,6 +168,9 @@ namespace AttackSkill.Character
             }
 
             character.BindPresentation(avatar, animator);
+
+            // 放在最终装配之后：避免被其它组件 Awake 干扰，且保证挂在 Actor 根上
+            PlayerHurtbox.Ensure(actorRoot);
             return character;
         }
 
@@ -278,54 +274,46 @@ namespace AttackSkill.Character
             Transform weapon = avatar != null ? avatar.Weapon : null;
             Transform vfx = avatar != null ? avatar.VfxSocket : weapon;
             Transform hit = avatar != null ? avatar.HitOrigin : weapon;
-            GameObject slash = LoadFromSettings(ref _cachedSlash, "slashVfxPrefab", s => s.GetSlashVfx());
-            GameObject snow = LoadFromSettings(ref _cachedSnowHit, "snowHitVfxPrefab", s => s.GetSnowHitVfx());
-            GameObject aoe = LoadFromSettings(
-                ref _cachedGroundAoe,
-                "groundAoeExplosionVfxPrefab",
-                s => s.GetGroundAoeExplosionVfx());
-
             Transform chestR = avatar != null ? avatar.Hits?.ChestR : null;
             Transform chestL = avatar != null ? avatar.Hits?.ChestL : null;
             Transform hitRoot = avatar != null ? avatar.Hits?.Root : null;
-            SkillHitProfile profile = null;
-            TimedHitProfile timedProfile = null;
-            var settings = CharacterRuntimeSettings.Get();
-            if (settings != null)
-            {
-                profile = settings.GetPlayerSkillHitProfile();
-                PartyPortraitId portrait = PartyPortraitId.WandererFemale;
-                if (avatar != null)
-                {
-                    portrait = ResolvePortraitFromName(avatar.DisplayName);
-                }
-
-                if (portrait == PartyPortraitId.Unknown && ownerRoot != null)
-                {
-                    portrait = ResolvePortraitFromName(ownerRoot.name);
-                }
-
-                if (portrait == PartyPortraitId.Unknown)
-                {
-                    portrait = PartyPortraitId.WandererFemale;
-                }
-
-                timedProfile = settings.GetTimedHitProfile(portrait);
-            }
 
             relay.ConfigurePresentation(
                 ownerRoot,
                 weapon,
                 vfx,
                 hit,
-                slash,
+                null,
                 chestR,
                 chestL,
                 hitRoot,
-                snow,
-                aoe,
-                profile);
+                null,
+                null,
+                null);
 
+            var settings = CharacterRuntimeSettings.Get();
+            if (settings == null)
+            {
+                return;
+            }
+
+            PartyPortraitId portrait = PartyPortraitId.WandererFemale;
+            if (avatar != null)
+            {
+                portrait = ResolvePortraitFromName(avatar.DisplayName);
+            }
+
+            if (portrait == PartyPortraitId.Unknown && ownerRoot != null)
+            {
+                portrait = ResolvePortraitFromName(ownerRoot.name);
+            }
+
+            if (portrait == PartyPortraitId.Unknown)
+            {
+                portrait = PartyPortraitId.WandererFemale;
+            }
+
+            TimedHitProfile timedProfile = settings.GetTimedHitProfile(portrait);
             if (timedProfile != null)
             {
                 relay.SetTimedHitProfile(timedProfile);
@@ -353,34 +341,6 @@ namespace AttackSkill.Character
 
             float maxStep = worldHeight + worldRadius * 2f;
             cc.stepOffset = Mathf.Min(worldStep, maxStep - 0.01f);
-        }
-
-        static GameObject LoadFromSettings(
-            ref GameObject cache,
-            string fieldName,
-            System.Func<CharacterRuntimeSettings, GameObject> getter)
-        {
-            if (cache != null)
-            {
-                return cache;
-            }
-
-            var settings = CharacterRuntimeSettings.Get();
-            if (settings == null)
-            {
-                Debug.LogError(
-                    "[CharacterRuntimeAssembler] 缺少 Resources/CharacterRuntimeSettings。请运行「工具/角色/生成 CharacterRuntimeSettings」。");
-                return null;
-            }
-
-            cache = getter != null ? getter(settings) : null;
-            if (cache == null)
-            {
-                Debug.LogError(
-                    $"[CharacterRuntimeAssembler] CharacterRuntimeSettings.{fieldName} 未配置。");
-            }
-
-            return cache;
         }
     }
 }

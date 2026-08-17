@@ -179,13 +179,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 3.63
+  m_Height: 3.64
   m_Radius: 0.6
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1.88, z: 0}
+  m_Center: {x: 0, y: 1.82, z: 0}
 --- !u!114 &9197317001262344795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5dabd9b7952a114895e50aefa5a9a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  definitionOverride: {fileID: 0}
+  definitionOverride: {fileID: 11400000, guid: 0ec501e68c5ca9a459c4fd5fb5043672, type: 2}
   animator: {fileID: 5409652536265146365}
   sensorOrigin: {fileID: 0}
   drawDebug: 0

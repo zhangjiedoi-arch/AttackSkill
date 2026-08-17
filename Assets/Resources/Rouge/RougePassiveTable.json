@@ -1,0 +1,84 @@
+{
+  "expOrb": {
+    "dropChance": 0.75,
+    "expAmount": 10,
+    "lifetime": 20,
+    "pickRadius": 3
+  },
+  "rarityWeights": {
+    "common": 70,
+    "rare": 25,
+    "epic": 5,
+    "commonFromLevel5": 60,
+    "rareFromLevel5": 30,
+    "epicFromLevel5": 10
+  },
+  "passives": [
+    {
+      "id": "blade",
+      "rarity": "common",
+      "maxStack": 3,
+      "nameZh": "锋刃",
+      "nameEn": "Blade",
+      "descZh": "普攻伤害每层 +12%",
+      "descEn": "+12% basic attack damage per stack",
+      "mods": [{ "type": "attackDamageMul", "perStack": 0.12 }]
+    },
+    {
+      "id": "thick_skin",
+      "rarity": "common",
+      "maxStack": 3,
+      "nameZh": "厚皮",
+      "nameEn": "Thick Skin",
+      "descZh": "受到伤害每层 -8%",
+      "descEn": "-8% damage taken per stack",
+      "mods": [{ "type": "damageTakenMul", "perStack": -0.08 }]
+    },
+    {
+      "id": "medicine",
+      "rarity": "common",
+      "maxStack": 3,
+      "nameZh": "药引",
+      "nameEn": "Medicine",
+      "descZh": "治疗圈回血每层 +20/秒，掉落率 +5%",
+      "descEn": "Healing circle +20 HP/s and +5% drop chance per stack",
+      "mods": [
+        { "type": "healCircleBonusPerSecond", "perStack": 20 },
+        { "type": "healCircleDropChanceAdd", "perStack": 0.05 }
+      ]
+    },
+    {
+      "id": "lifesteal",
+      "rarity": "rare",
+      "maxStack": 3,
+      "nameZh": "嗜血",
+      "nameEn": "Lifesteal",
+      "descZh": "造成伤害的 4%/层 转化为生命",
+      "descEn": "Heal for 4% of damage dealt per stack",
+      "mods": [{ "type": "lifestealRatio", "perStack": 0.04 }]
+    },
+    {
+      "id": "hunter",
+      "rarity": "rare",
+      "maxStack": 3,
+      "nameZh": "猎手直觉",
+      "nameEn": "Hunter Instinct",
+      "descZh": "贴身搜索距离每层 +0.6m（基础 2m）",
+      "descEn": "+0.6m engage search radius per stack (base 2m)",
+      "mods": [{ "type": "engageRadiusAdd", "perStack": 0.6 }]
+    },
+    {
+      "id": "abyss_pact",
+      "rarity": "epic",
+      "maxStack": 1,
+      "nameZh": "深渊契约",
+      "nameEn": "Abyss Pact",
+      "descZh": "攻击 +25%，最大生命 -15%",
+      "descEn": "+25% attack, -15% max HP",
+      "mods": [
+        { "type": "attackMul", "perStack": 0.25 },
+        { "type": "maxHpMul", "perStack": -0.15 }
+      ]
+    }
+  ]
+}

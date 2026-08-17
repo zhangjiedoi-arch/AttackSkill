@@ -72,8 +72,8 @@ namespace AttackSkill.Enemy
                 case EnemyAttackPhase.Windup:
                     _phase = EnemyAttackPhase.Active;
                     _phaseTimer = _def.attackActive;
-                    // 出伤改由动画 Event Enemy_Hit_Chest_R（EnemyAttackHitRelay）触发，
-                    // 不再在 Active 阶段自动开 Trigger Hitbox，避免重复结算。
+                    // 动画未绑 SkillHit / Enemy_Hit_Chest_R Event，Active 开始时主动出伤
+                    FireActiveDamage();
                     break;
 
                 case EnemyAttackPhase.Active:
@@ -88,6 +88,24 @@ namespace AttackSkill.Enemy
                     _agent.SetAnimBool("IsAttacking", false);
                     break;
             }
+        }
+
+        void FireActiveDamage()
+        {
+            if (_def == null || _agent == null)
+            {
+                return;
+            }
+
+            // Active 窗口开 Trigger 盒（动画未绑 Event 时的可靠出伤）
+            // 若以后在 Attack 动画上加了 SkillHit Event，请关掉这里以免双倍结算
+            _hitbox?.EnableHit(
+                _def.attackDamage,
+                _def.attackKnockback,
+                _def.hitRadius,
+                _def.hitForwardOffset,
+                _def.attackActive,
+                _agent.gameObject);
         }
 
         public void Interrupt()

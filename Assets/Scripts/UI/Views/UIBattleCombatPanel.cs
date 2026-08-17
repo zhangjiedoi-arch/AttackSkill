@@ -4,6 +4,7 @@ using AttackSkill.Character.HSM;
 using AttackSkill.Combat;
 using AttackSkill.Core;
 using AttackSkill.Game;
+using AttackSkill.Rouge;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -135,17 +136,32 @@ namespace AttackSkill.UI
 
         void OnSkillT()
         {
-            if (!PartySkillCooldown.IsTReady)
-            {
-                return;
-            }
-
             var character = PartyController.Instance != null
                 ? PartyController.Instance.Active
                 : null;
 
-            if (character == null ||
-                !ExplorationToolService.TryToggleEquipped(
+            if (character == null)
+            {
+                ShowWipTip();
+                return;
+            }
+
+            // 飞行/御剑/摩托中允许随时退出；冷却只拦「再次进入」
+            bool toolActive = ExplorationToolService.IsAnyWheelBlockingToolActive(character);
+            if (!toolActive && !PartySkillCooldown.IsTReady)
+            {
+                return;
+            }
+
+            // 进入探索工具前：贴身搜索（猎手直觉可加成）
+            if (!toolActive)
+            {
+                CombatEngageUtility.TrySnapToNearestEnemy(
+                    character,
+                    RougePassiveEffects.EngageRadius);
+            }
+
+            if (!ExplorationToolService.TryToggleEquipped(
                     character,
                     BattleSkillWheelState.SelectedIndex,
                     out bool entered))
@@ -154,7 +170,7 @@ namespace AttackSkill.UI
                 return;
             }
 
-            // 仅「进入」飞行/御剑/摩托开 CD；退出不进冷却
+            // 仅「进入」开 CD；退出不进冷却
             if (entered)
             {
                 PartySkillCooldown.BeginT();

@@ -7,23 +7,12 @@ namespace AttackSkill.Character
     /// <summary>
     /// 运行时装配默认资源（放 Resources/CharacterRuntimeSettings）。
     /// 包体只从这里取 Prefab，禁止运行时 AssetDatabase。
+    /// 战斗出伤/特效走 TimedHitProfile，不在此配置。
     /// </summary>
     [CreateAssetMenu(menuName = "AttackSkill/Character/Runtime Settings", fileName = "CharacterRuntimeSettings")]
     public class CharacterRuntimeSettings : ScriptableObject
     {
         public const string ResourcesPath = "CharacterRuntimeSettings";
-
-        [Header("Skill / VFX")]
-        public GameObject skillTimelinePrefab;
-        public GameObject skillCameraPrefab;
-        public GameObject circleVfxPrefab;
-        public GameObject slashVfxPrefab;
-        [Tooltip("Assets/Prefabs/VFX/Snow hit.prefab — Hit_Chest_L/R")]
-        public GameObject snowHitVfxPrefab;
-        [Tooltip("Assets/Prefabs/VFX/Ground AOE explosion.prefab — Hit_Root")]
-        public GameObject groundAoeExplosionVfxPrefab;
-        [Tooltip("玩家 E 技能多段出伤表；空则用运行时默认（legacy，优先 TimedHit）")]
-        public SkillHitProfile playerSkillHitProfile;
 
         [Header("Timed Hit Profiles（普攻/E/R，按角色）")]
         [Tooltip("Assets/HitProfile/HitProfile_漂泊者")]
@@ -32,14 +21,6 @@ namespace AttackSkill.Character
         public TimedHitProfile timedHitQianxiao;
         [Tooltip("Assets/HitProfile/HitProfile_柯莱塔")]
         public TimedHitProfile timedHitColetta;
-
-        [Header("Skill Hit SFX")]
-        [Tooltip("Assets/Audio/FatKick_R.wav — Hit_Chest_R")]
-        public AudioClip skillHitFatKickR;
-        [Tooltip("Assets/Audio/FatKick_L.wav — Hit_Chest_L")]
-        public AudioClip skillHitFatKickL;
-        [Tooltip("Assets/Audio/Hit_Root_Land.wav — Hit_Root")]
-        public AudioClip skillHitRootLand;
 
         [Header("World UI")]
         [Tooltip("Assets/Prefabs/UI/WorldUI/DamageNumber.prefab")]
@@ -64,10 +45,6 @@ namespace AttackSkill.Character
         public GameObject swordPrefab;
         [Tooltip("挂到 wings_pos：Prefabs/Tools/哥伦比亚的翅膀")]
         public GameObject wingsPrefab;
-
-        [Header("Skill R")]
-        [Tooltip("Assets/Prefabs/VFX/AoE slash orange.prefab — 挂到 R_Hit_Root")]
-        public GameObject skillRAoeVfxPrefab;
 
         [Header("Flight Airflow Vfx")]
         [Tooltip("Prefabs/VFX/Sparks blue — 翅膀/御剑飞行气流")]
@@ -103,6 +80,18 @@ namespace AttackSkill.Character
         [Tooltip("GameScene 海滩 BGM")]
         public AudioClip seaBgm;
 
+        [Header("Enemy Drops")]
+        [Tooltip("Prefabs/VFX/Healing circle")]
+        public GameObject healingCirclePrefab;
+        [Tooltip("Prefabs/VFX/Healing — 挂玩家 Hit_Root")]
+        public GameObject healingAuraPrefab;
+        [Range(0f, 1f)] public float enemyHealDropChance = 0.3f;
+        public float healingCircleRadius = 3f;
+        public float healingCircleHealPerSecond = 100f;
+        public float healingCircleLifetime = 20f;
+        [Tooltip("Prefabs/Tools/Exp — 经验球")]
+        public GameObject expOrbPrefab;
+
         [Header("Party Portraits (Battle HUD)")]
         [Tooltip("IconPlayerFemale")]
         public Sprite iconPlayerFemale;
@@ -125,20 +114,27 @@ namespace AttackSkill.Character
             return _cached;
         }
 
-        public GameObject GetSkillTimeline() => skillTimelinePrefab;
-        public GameObject GetSkillCamera() => skillCameraPrefab;
-        public GameObject GetCircleVfx() => circleVfxPrefab;
-        public GameObject GetSlashVfx() => slashVfxPrefab;
-        public GameObject GetSnowHitVfx() => snowHitVfxPrefab;
-        public GameObject GetGroundAoeExplosionVfx() => groundAoeExplosionVfxPrefab;
         public GameObject GetFlightAirflowVfx() => flightAirflowVfxPrefab;
-        public AudioClip GetSkillHitFatKickR() => skillHitFatKickR;
-        public AudioClip GetSkillHitFatKickL() => skillHitFatKickL;
-        public AudioClip GetSkillHitRootLand() => skillHitRootLand;
         public GameObject GetDamageNumberPrefab() => damageNumberPrefab;
         public GameObject GetEnemyBloodPrefab() => enemyBloodPrefab;
         public GameObject GetObtainRemainsPrefab() => obtainRemainsPrefab;
-        public GameObject GetSkillRAoeVfx() => skillRAoeVfxPrefab;
+
+        public GameObject GetExpOrbPrefab()
+        {
+            if (expOrbPrefab == null)
+            {
+                expOrbPrefab = Resources.Load<GameObject>("Rouge/Exp");
+            }
+
+#if UNITY_EDITOR
+            if (expOrbPrefab == null)
+            {
+                expOrbPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Tools/Exp.prefab");
+            }
+#endif
+            return expOrbPrefab;
+        }
 
         public TimedHitProfile GetTimedHitProfile(PartyPortraitId portraitId)
         {
@@ -171,57 +167,6 @@ namespace AttackSkill.Character
             if (timedHitColetta == null)
             {
                 timedHitColetta = Resources.Load<TimedHitProfile>("HitProfile/HitProfile_柯莱塔");
-            }
-        }
-
-        public SkillHitProfile GetPlayerSkillHitProfile()
-        {
-            if (playerSkillHitProfile == null)
-            {
-                playerSkillHitProfile = Resources.Load<SkillHitProfile>("Combat/SkillHit_Player_E");
-            }
-
-            if (playerSkillHitProfile != null)
-            {
-                FillSkillHitSfxIfEmpty(playerSkillHitProfile);
-                return playerSkillHitProfile;
-            }
-
-            return SkillHitProfileDefaults.PlayerE(
-                snowHitVfxPrefab,
-                groundAoeExplosionVfxPrefab,
-                skillHitFatKickR,
-                skillHitFatKickL,
-                skillHitRootLand);
-        }
-
-        public void FillSkillHitSfxIfEmpty(SkillHitProfile profile)
-        {
-            if (profile?.segments == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < profile.segments.Length; i++)
-            {
-                var seg = profile.segments[i];
-                if (seg == null || seg.sfxClip != null)
-                {
-                    continue;
-                }
-
-                switch (seg.socket)
-                {
-                    case HitSocketId.Hit_Chest_R:
-                        seg.sfxClip = skillHitFatKickR;
-                        break;
-                    case HitSocketId.Hit_Chest_L:
-                        seg.sfxClip = skillHitFatKickL;
-                        break;
-                    case HitSocketId.Hit_Root:
-                        seg.sfxClip = skillHitRootLand;
-                        break;
-                }
             }
         }
 
@@ -258,7 +203,6 @@ namespace AttackSkill.Character
 #if UNITY_EDITOR
         void OnValidate()
         {
-            // 删除 Resources/Tools 后，自动补齐 Prefabs/Tools 引用
             if (motorcyclePrefab == null)
             {
                 motorcyclePrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
@@ -275,30 +219,6 @@ namespace AttackSkill.Character
             {
                 wingsPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
                     "Assets/Prefabs/Tools/哥伦比亚的翅膀.prefab");
-            }
-
-            if (skillRAoeVfxPrefab == null)
-            {
-                skillRAoeVfxPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
-                    "Assets/Prefabs/VFX/AoE slash orange.prefab");
-            }
-
-            if (snowHitVfxPrefab == null)
-            {
-                snowHitVfxPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
-                    "Assets/Prefabs/VFX/Snow hit.prefab");
-            }
-
-            if (groundAoeExplosionVfxPrefab == null)
-            {
-                groundAoeExplosionVfxPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
-                    "Assets/Prefabs/VFX/Ground AOE explosion.prefab");
-            }
-
-            if (playerSkillHitProfile == null)
-            {
-                playerSkillHitProfile = UnityEditor.AssetDatabase.LoadAssetAtPath<SkillHitProfile>(
-                    "Assets/Resources/Combat/SkillHit_Player_E.asset");
             }
 
             if (timedHitWanderer == null)
@@ -325,24 +245,6 @@ namespace AttackSkill.Character
                     "Assets/Prefabs/VFX/Sparks blue.prefab");
             }
 
-            if (skillHitFatKickR == null)
-            {
-                skillHitFatKickR = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(
-                    "Assets/Audio/FatKick_R.wav");
-            }
-
-            if (skillHitFatKickL == null)
-            {
-                skillHitFatKickL = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(
-                    "Assets/Audio/FatKick_L.wav");
-            }
-
-            if (skillHitRootLand == null)
-            {
-                skillHitRootLand = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(
-                    "Assets/Audio/Hit_Root_Land.wav");
-            }
-
             if (damageNumberPrefab == null)
             {
                 damageNumberPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
@@ -361,9 +263,28 @@ namespace AttackSkill.Character
                     "Assets/Prefabs/UI/WorldUI/ObtainRemains.prefab");
             }
 
-            if (playerSkillHitProfile != null)
+            if (healingCirclePrefab == null)
             {
-                FillSkillHitSfxIfEmpty(playerSkillHitProfile);
+                healingCirclePrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/VFX/Healing circle.prefab");
+            }
+
+            if (healingAuraPrefab == null)
+            {
+                healingAuraPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/VFX/Healing.prefab");
+            }
+
+            if (expOrbPrefab == null)
+            {
+                expOrbPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Resources/Rouge/Exp.prefab");
+            }
+
+            if (expOrbPrefab == null)
+            {
+                expOrbPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Tools/Exp.prefab");
             }
         }
 #endif

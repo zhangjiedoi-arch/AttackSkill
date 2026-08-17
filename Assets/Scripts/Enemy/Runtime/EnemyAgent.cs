@@ -245,6 +245,7 @@ namespace AttackSkill.Enemy
             _combat.Interrupt();
             _aggro.Clear();
             _brain.SetState(_brain.Dead);
+            EnemyDeathLoot.TryDropAll(this);
             _deathDirector?.Begin();
             Died?.Invoke(this);
         }

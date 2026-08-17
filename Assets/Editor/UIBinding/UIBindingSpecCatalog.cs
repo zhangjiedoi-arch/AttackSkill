@@ -214,8 +214,9 @@ namespace AttackSkill.Editor.UIBinding
                     new UIBindingField("imgHpBg", typeof(UnityEngine.UI.Image)),
                     new UIBindingField("imgHpFill", typeof(UnityEngine.UI.Image)),
                     new UIBindingField("txtHpValue", typeof(UnityEngine.UI.Text)),
-                    new UIBindingField("imgEnergyBg", typeof(UnityEngine.UI.Image)),
-                    new UIBindingField("imgEnergyFill", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("imgExpBg", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("imgExpFill", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("txtExpValue", typeof(UnityEngine.UI.Text)),
                     new UIBindingField("txtLv", typeof(UnityEngine.UI.Text)),
                     new UIBindingField("txtLvText", typeof(UnityEngine.UI.Text)),
                 }
@@ -255,6 +256,21 @@ namespace AttackSkill.Editor.UIBinding
                     new UIBindingField("txtTip", typeof(UnityEngine.UI.Text)),
                     new UIBindingField("imgMask", typeof(UnityEngine.UI.Image)),
                     new UIBindingField("imgBg", typeof(UnityEngine.UI.Image)),
+                }
+            },
+            new UIBindingViewSpec
+            {
+                ClassName = "UISkillSelectPanel",
+                PrefabName = "UI_SkillSelect_Panel",
+                PrefabPath = "Assets/Prefabs/UI/BattleHUD/UI_SkillSelect_Panel.prefab",
+                Fields = new[]
+                {
+                    new UIBindingField("btnSelect", typeof(UnityEngine.UI.Button)),
+                    new UIBindingField("txtTitle", typeof(UnityEngine.UI.Text)),
+                    new UIBindingField("txtSelect", typeof(UnityEngine.UI.Text)),
+                    new UIBindingField("palCard0", typeof(UnityEngine.UI.Button)),
+                    new UIBindingField("palCard1", typeof(UnityEngine.UI.Button)),
+                    new UIBindingField("palCard2", typeof(UnityEngine.UI.Button)),
                 }
             },
         };

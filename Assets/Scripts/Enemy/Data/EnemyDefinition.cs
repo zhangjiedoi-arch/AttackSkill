@@ -19,7 +19,8 @@ namespace AttackSkill.Enemy
         public float turnSpeed = 8f;
 
         [Header("Sense")]
-        public float sightRange = 12f;
+        [Tooltip("发现/追击玩家的视觉距离（米）")]
+        public float sightRange = 20f;
         [Range(10f, 180f)] public float sightAngle = 90f;
         public float hearRange = 6f;
         [Tooltip("视线遮挡检测层；默认 Everything")]
