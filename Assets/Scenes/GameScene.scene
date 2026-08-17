@@ -1339,6 +1339,9 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 474934
+  enableNearCharacterFade: 1
+  fadeStartDistance: 1.55
+  fadeEndDistance: 0.55
 --- !u!4 &1994461887
 Transform:
   m_ObjectHideFlags: 0

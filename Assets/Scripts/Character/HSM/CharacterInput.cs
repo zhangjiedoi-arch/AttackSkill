@@ -17,6 +17,7 @@ namespace AttackSkill.Character.HSM
         public bool GlidePressed;
         public bool AttackPressed;
         public bool SkillPressed;
+        public bool SkillRPressed;
         public bool InteractPressed;
         public bool DodgePressed;
 
@@ -29,7 +30,7 @@ namespace AttackSkill.Character.HSM
     }
 
     /// <summary>
-    /// 默认：WASD、Space 跳、LeftShift 冲刺、F 滑翔、鼠标左键普攻、右键闪避、E 技能、R 攀爬。
+    /// 默认：WASD、Space 跳、LeftShift 冲刺、F 滑翔、鼠标左键普攻、右键闪避、E 技能、R 技能。
     /// 经 <see cref="AttackSkill.Core.GameInput"/> 读取（Input System 后端）。
     /// </summary>
     public class LegacyCharacterInputSource : ICharacterInputSource
@@ -37,7 +38,10 @@ namespace AttackSkill.Character.HSM
         /// <summary>临时关闭 E 技能输入；改回 true 即恢复。</summary>
         public const bool SkillInputEnabled = true;
 
-        /// <summary>临时关闭 R 攀爬交互（战斗技能键占用 R）；改回 true 即恢复。</summary>
+        /// <summary>R 技能输入（占用攀爬键位）。</summary>
+        public const bool SkillRInputEnabled = true;
+
+        /// <summary>临时关闭 R 攀爬交互（战斗技能键占用 R）；恢复需改回 true 并另绑攀爬键。</summary>
         public const bool InteractInputEnabled = false;
 
         public CharacterInput Read()
@@ -57,6 +61,8 @@ namespace AttackSkill.Character.HSM
                 AttackPressed = GameInput.GetMouseButtonDown(0),
                 SkillPressed = SkillInputEnabled &&
                                (GameInput.GetKeyDown(KeyCode.E) || CombatSkillInput.TakePending()),
+                SkillRPressed = SkillRInputEnabled &&
+                                (GameInput.GetKeyDown(KeyCode.R) || CombatSkillRInput.TakePending()),
                 InteractPressed = InteractInputEnabled && GameInput.GetKeyDown(KeyCode.R),
                 DodgePressed = GameInput.GetMouseButtonDown(1)
             };
@@ -65,6 +71,25 @@ namespace AttackSkill.Character.HSM
 
     /// <summary>HUD 按钮等非键盘路径请求释放 E 技能（下一帧输入读取时消费）。</summary>
     public static class CombatSkillInput
+    {
+        static bool _pending;
+
+        public static void Request() => _pending = true;
+
+        public static bool TakePending()
+        {
+            if (!_pending)
+            {
+                return false;
+            }
+
+            _pending = false;
+            return true;
+        }
+    }
+
+    /// <summary>HUD / 键盘同源：请求释放 R 技能。</summary>
+    public static class CombatSkillRInput
     {
         static bool _pending;
 

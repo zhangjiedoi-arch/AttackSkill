@@ -22,7 +22,7 @@ namespace AttackSkill.Combat
             }
 
             int key = prefab.GetInstanceID();
-            EnsurePool(key, prefab, 0);
+            EnsurePool(key, prefab, minIdleCount: 0);
 
             GameObject go = null;
             var stack = Pools[key];
@@ -74,6 +74,7 @@ namespace AttackSkill.Combat
             member.ScheduleReturn(Mathf.Max(0.01f, lifetime));
         }
 
+        /// <summary>确保空闲池至少有 count 个；已有足够数量时不再新建（切人重复 Prewarm 安全）。</summary>
         public static void Prewarm(GameObject prefab, int count)
         {
             if (prefab == null || count <= 0)
@@ -81,7 +82,7 @@ namespace AttackSkill.Combat
                 return;
             }
 
-            EnsurePool(prefab.GetInstanceID(), prefab, count);
+            EnsurePool(prefab.GetInstanceID(), prefab, minIdleCount: count);
         }
 
         internal static void Return(VfxPoolMember member)
@@ -92,10 +93,25 @@ namespace AttackSkill.Combat
             }
 
             GameObject go = member.gameObject;
-            StopParticles(go);
-            go.SetActive(false);
+            if (go == null)
+            {
+                return;
+            }
 
+            // 已在池根下且未激活：视为已归还，避免 OnDisable/重复 Return 再 Push
             Transform root = GetRoot();
+            if (!go.activeSelf && go.transform.parent == root && member.IsPooled)
+            {
+                return;
+            }
+
+            StopParticles(go);
+            member.MarkPooled(true);
+            if (go.activeSelf)
+            {
+                go.SetActive(false);
+            }
+
             go.transform.SetParent(root, false);
 
             int key = member.PrefabKey;
@@ -108,7 +124,8 @@ namespace AttackSkill.Combat
             stack.Push(go);
         }
 
-        static void EnsurePool(int key, GameObject prefab, int extraCount)
+        /// <param name="minIdleCount">空闲实例下限；0 表示仅在桶为空时补 DefaultPrewarm。</param>
+        static void EnsurePool(int key, GameObject prefab, int minIdleCount)
         {
             if (!Pools.TryGetValue(key, out Stack<GameObject> stack))
             {
@@ -116,10 +133,16 @@ namespace AttackSkill.Combat
                 Pools[key] = stack;
             }
 
-            int need = Mathf.Max(0, extraCount);
-            if (stack.Count == 0 && need == 0)
+            int target = minIdleCount;
+            if (target <= 0 && stack.Count == 0)
             {
-                need = DefaultPrewarm;
+                target = DefaultPrewarm;
+            }
+
+            int need = target - stack.Count;
+            if (need <= 0)
+            {
+                return;
             }
 
             Transform root = GetRoot();
@@ -135,6 +158,7 @@ namespace AttackSkill.Combat
                 }
 
                 member.Bind(key, prefab);
+                member.MarkPooled(true);
                 stack.Push(go);
             }
         }
@@ -193,17 +217,26 @@ namespace AttackSkill.Combat
     public sealed class VfxPoolMember : MonoBehaviour
     {
         public int PrefabKey { get; private set; }
+        public bool IsPooled { get; private set; }
 
         float _returnAt = -1f;
         bool _pending;
+        bool _returning;
 
         public void Bind(int prefabKey, GameObject _)
         {
             PrefabKey = prefabKey;
+            IsPooled = false;
+        }
+
+        public void MarkPooled(bool pooled)
+        {
+            IsPooled = pooled;
         }
 
         public void ScheduleReturn(float lifetime)
         {
+            IsPooled = false;
             _pending = true;
             _returnAt = Time.time + Mathf.Max(0.01f, lifetime);
             enabled = true;
@@ -223,8 +256,24 @@ namespace AttackSkill.Combat
 
         void OnDisable()
         {
+            // 延迟回收被提前失活时仍归还，避免游离实例 + 下次 Spawn 再新建导致池膨胀
+            if (_pending && !_returning)
+            {
+                _pending = false;
+                _returnAt = -1f;
+                _returning = true;
+                VfxObjectPool.Return(this);
+                _returning = false;
+                return;
+            }
+
             _pending = false;
             _returnAt = -1f;
+        }
+
+        void OnEnable()
+        {
+            IsPooled = false;
         }
     }
 }

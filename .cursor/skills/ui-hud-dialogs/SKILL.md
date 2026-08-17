@@ -40,7 +40,7 @@ Tab 轮盘 → SoftBlock + Commit 装备索引
 6. **勿手改** Generated Bindings；走生成管线。
 7. Tip 用独立层，避免被 Dialog 盖住。
 8. 暂停：`UIPauseMenuDialog` + `GamePause`。
-9. HUD E 按钮走 `CombatSkillInput.Request()`。
+9. HUD E/R 按钮走 `CombatSkillInput` / `CombatSkillRInput`；T/Q/E/R 冷却见 `PartySkillCooldown` + `CombatStats`；`imgFill`：0=进 CD、1=可用；`txtFill` 显示剩余秒（&lt;1s 为 0.x）。
 10. 占位技能键可能只 Tip（README 已说明），加功能时接真实输入。
 
 ## 约定与坑

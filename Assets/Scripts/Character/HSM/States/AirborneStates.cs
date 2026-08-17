@@ -1,4 +1,5 @@
 using AttackSkill.Character.Exploration;
+using AttackSkill.Combat;
 using UnityEngine;
 
 namespace AttackSkill.Character.HSM
@@ -65,7 +66,11 @@ namespace AttackSkill.Character.HSM
             // 空中也可放技能（简化：仅技能）
             if (Ctx.Input.SkillPressed)
             {
-                GoTo(Ctx.Owner.States.Combat.Skill);
+                var stats = CombatStats.Find(Ctx.Transform);
+                if (stats == null || stats.IsSkillEReady)
+                {
+                    GoTo(Ctx.Owner.States.Combat.Skill);
+                }
             }
         }
     }

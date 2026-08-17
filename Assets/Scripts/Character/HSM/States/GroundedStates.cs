@@ -1,4 +1,5 @@
 using UnityEngine;
+using AttackSkill.Combat;
 
 namespace AttackSkill.Character.HSM
 {
@@ -89,7 +90,22 @@ namespace AttackSkill.Character.HSM
 
             if (Ctx.Input.SkillPressed)
             {
-                GoTo(Ctx.Owner.States.Combat.Skill);
+                var stats = CombatStats.Find(Ctx.Transform);
+                if (stats == null || stats.IsSkillEReady)
+                {
+                    GoTo(Ctx.Owner.States.Combat.Skill);
+                }
+
+                return;
+            }
+
+            if (Ctx.Input.SkillRPressed)
+            {
+                var stats = CombatStats.Find(Ctx.Transform);
+                if (stats == null || stats.IsSkillRReady)
+                {
+                    GoTo(Ctx.Owner.States.Combat.SkillR);
+                }
             }
         }
     }

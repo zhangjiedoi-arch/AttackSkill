@@ -31,6 +31,8 @@ namespace AttackSkill.Character.HSM
         public static readonly int Climb = Animator.StringToHash("Climb");
         public static readonly int Attack = Animator.StringToHash("Attack");
         public static readonly int Skill = Animator.StringToHash("Skill");
+        /// <summary>R 技能 Trigger（状态名建议 skill_r / SkillR）。</summary>
+        public static readonly int SkillR = Animator.StringToHash("SkillR");
         public static readonly int Dodge = Animator.StringToHash("Dodge");
     }
 }

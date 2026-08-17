@@ -90,10 +90,28 @@ namespace AttackSkill.Combat
                 }
             }
 
-            request.Target.TakeDamage(request.Damage);
+            DamageInfo resolved = ResolveDamage(request);
+            request.Target.TakeDamage(resolved);
             SpawnHitVfx(request);
-            Applied?.Invoke(request.Damage, request.Target);
+            Applied?.Invoke(resolved, request.Target);
             return true;
+        }
+
+        static DamageInfo ResolveDamage(in HitRequest request)
+        {
+            CombatStats attackerStats = CombatStats.Find(request.Damage.Attacker);
+            CombatStats defenderStats = null;
+            if (request.TargetHint != null)
+            {
+                defenderStats = CombatStats.Find(request.TargetHint);
+            }
+
+            if (defenderStats == null && request.Target is Component targetComp)
+            {
+                defenderStats = CombatStats.Find(targetComp);
+            }
+
+            return DamageCalculator.Resolve(request.Damage, attackerStats, defenderStats);
         }
 
         public static int ResolveDedupId(Transform hintTf, IDamageable target)

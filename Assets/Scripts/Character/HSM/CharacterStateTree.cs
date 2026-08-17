@@ -44,6 +44,7 @@ namespace AttackSkill.Character.HSM
             Bind(machine, Combat, null);
             Bind(machine, Combat.Attack, Combat);
             Bind(machine, Combat.Skill, Combat);
+            Bind(machine, Combat.SkillR, Combat);
         }
 
         static void Bind(HStateMachine machine, HState state, HState parent)

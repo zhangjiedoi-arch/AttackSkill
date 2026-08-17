@@ -1,0 +1,155 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93b76e548fc227040a9867482842d531, type: 3}
+  m_Name: "HitProfile_\u5343\u54B2"
+  m_EditorClassIdentifier: 
+  phases:
+  - id: attack1
+    comboIndex: 0
+    animatorStateName: attack1
+    cues:
+    - id: attack1
+      fireMode: 0
+      startNormalized: 0.45
+      endNormalized: 0.6
+      playPresentation: 1
+      dealHit: 1
+      continuousHitSampling: 0
+      segment:
+        id: attack1
+        socket: 4
+        shape: 2
+        radius: 2
+        height: 0
+        fanAngle: 180
+        minHitDistance: 0.15
+        hitHeight: 0.9
+        damage: 100
+        knockback: 0
+        vfxPrefab: {fileID: 3153472991145048103, guid: 762ff98a755b6a74fbc0f04ccc78dce0,
+          type: 3}
+        vfxLife: 1.2
+        parentVfxToSocket: 0
+        sfxClip: {fileID: 8300000, guid: 3c473fbf95afddc408f083db4bb95796, type: 3}
+        sfxVolume: 1
+  - id: attack2
+    comboIndex: 1
+    animatorStateName: attack2
+    cues:
+    - id: attack2
+      fireMode: 0
+      startNormalized: 0.42
+      endNormalized: 0.6
+      playPresentation: 1
+      dealHit: 1
+      continuousHitSampling: 0
+      segment:
+        id: attack2
+        socket: 4
+        shape: 2
+        radius: 2.3
+        height: 0
+        fanAngle: 180
+        minHitDistance: 0.15
+        hitHeight: 0.9
+        damage: 120
+        knockback: 0
+        vfxPrefab: {fileID: 3153472991145048103, guid: 762ff98a755b6a74fbc0f04ccc78dce0,
+          type: 3}
+        vfxLife: 1.2
+        parentVfxToSocket: 0
+        sfxClip: {fileID: 8300000, guid: 3c473fbf95afddc408f083db4bb95796, type: 3}
+        sfxVolume: 1
+  - id: attack3
+    comboIndex: 2
+    animatorStateName: attack3
+    cues:
+    - id: attack3
+      fireMode: 0
+      startNormalized: 0.24
+      endNormalized: 0.36
+      playPresentation: 1
+      dealHit: 1
+      continuousHitSampling: 0
+      segment:
+        id: attack3
+        socket: 4
+        shape: 2
+        radius: 2.6
+        height: 0
+        fanAngle: 200
+        minHitDistance: 0.15
+        hitHeight: 0.9
+        damage: 150
+        knockback: 0
+        vfxPrefab: {fileID: 3153472991145048103, guid: 762ff98a755b6a74fbc0f04ccc78dce0,
+          type: 3}
+        vfxLife: 1.2
+        parentVfxToSocket: 0
+        sfxClip: {fileID: 8300000, guid: 3c473fbf95afddc408f083db4bb95796, type: 3}
+        sfxVolume: 1
+  - id: skill
+    comboIndex: 0
+    animatorStateName: skill
+    cues:
+    - id: skill
+      fireMode: 0
+      startNormalized: 0.35
+      endNormalized: 0.5
+      playPresentation: 1
+      dealHit: 1
+      continuousHitSampling: 0
+      segment:
+        id: skill
+        socket: 3
+        shape: 1
+        radius: 3
+        height: 2
+        fanAngle: 200
+        minHitDistance: 0.15
+        hitHeight: 0.9
+        damage: 200
+        knockback: 0
+        vfxPrefab: {fileID: 4994997792314849709, guid: c8152f3900dc6be4099842f7444720a6,
+          type: 3}
+        vfxLife: 1.2
+        parentVfxToSocket: 0
+        sfxClip: {fileID: 8300000, guid: ee88ac78e641f5d47904a38324f2b78c, type: 3}
+        sfxVolume: 1
+  - id: Skill_R
+    comboIndex: 0
+    animatorStateName: Skill_R
+    cues:
+    - id: Skill_R
+      fireMode: 0
+      startNormalized: 0.1
+      endNormalized: 0.6
+      playPresentation: 1
+      dealHit: 1
+      continuousHitSampling: 0
+      segment:
+        id: Skill_R
+        socket: 7
+        shape: 1
+        radius: 3
+        height: 2
+        fanAngle: 200
+        minHitDistance: 0.15
+        hitHeight: 0.9
+        damage: 280
+        knockback: 0
+        vfxPrefab: {fileID: 689667626583958020, guid: e063914682f20e549bbd9b0f779c0b2d,
+          type: 3}
+        vfxLife: 1.2
+        parentVfxToSocket: 0
+        sfxClip: {fileID: 8300000, guid: ee88ac78e641f5d47904a38324f2b78c, type: 3}
+        sfxVolume: 1

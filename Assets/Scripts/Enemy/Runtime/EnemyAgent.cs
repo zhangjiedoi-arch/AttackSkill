@@ -129,7 +129,7 @@ namespace AttackSkill.Enemy
                 return;
             }
 
-            _health.Configure(_def.maxHp, destroyWhenDead: false);
+            ApplyCombatStats(_def);
             _motor.Configure(_def.moveSpeed, _def.turnSpeed);
             _sensor.Configure(_def);
             _aggro.Configure(_def.loseTargetTime);
@@ -151,6 +151,26 @@ namespace AttackSkill.Enemy
             _brain.Start();
 
             AttackSkill.UI.World.WorldUiService.EnsureExists()?.AttachEnemyBlood(this);
+        }
+
+        void ApplyCombatStats(EnemyDefinition def)
+        {
+            CombatStats stats = CombatStats.Ensure(gameObject);
+            EnemyCombatStatsDefinition table = CombatStatsCatalog.ResolveEnemy(def != null ? def.combatStats : null);
+            if (table != null)
+            {
+                stats.ApplyEnemyDefinition(table, refillHp: true);
+            }
+            else
+            {
+                CombatStatBlock block = CombatStatBlock.DefaultEnemyThunder();
+                if (def != null && def.maxHp > 1f)
+                {
+                    block.maxHp = def.maxHp;
+                }
+
+                stats.ApplyBlock(block, refillHp: true);
+            }
         }
 
         public void Hibernate()

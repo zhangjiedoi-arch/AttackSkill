@@ -482,6 +482,41 @@ namespace AttackSkill.Character.HSM
                 }
             }
 
+            if (hitRelay != null && hitRelay.TimedHitProfile == null)
+            {
+                var settings = CharacterRuntimeSettings.Get();
+                if (settings != null)
+                {
+                    PartyPortraitId portrait = PartyPortraitId.WandererFemale;
+                    if (avatar != null && !string.IsNullOrEmpty(avatar.DisplayName))
+                    {
+                        // 与 Assembler 命名约定一致的粗匹配
+                        string n = avatar.DisplayName;
+                        if (n.IndexOf("千咲", System.StringComparison.Ordinal) >= 0 ||
+                            n.IndexOf("Qianxiao", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            portrait = PartyPortraitId.Qianxiao;
+                        }
+                        else if (n.IndexOf("柯莱塔", System.StringComparison.Ordinal) >= 0 ||
+                                 n.IndexOf("Coletta", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            portrait = PartyPortraitId.Coletta;
+                        }
+                        else if (n.IndexOf("男", System.StringComparison.Ordinal) >= 0 ||
+                                 n.IndexOf("Male", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            portrait = PartyPortraitId.WandererMale;
+                        }
+                    }
+
+                    TimedHitProfile timed = settings.GetTimedHitProfile(portrait);
+                    if (timed != null)
+                    {
+                        hitRelay.SetTimedHitProfile(timed);
+                    }
+                }
+            }
+
             var audio = GetComponent<CharacterAudio>();
             if (audio == null)
             {
@@ -874,6 +909,7 @@ namespace AttackSkill.Character.HSM
             input.GlidePressed = false;
             input.AttackPressed = false;
             input.SkillPressed = false;
+            input.SkillRPressed = false;
             input.InteractPressed = false;
             input.DodgePressed = false;
             _ctx.Input = input;

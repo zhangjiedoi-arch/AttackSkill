@@ -24,7 +24,9 @@ namespace AttackSkill.Combat
                 if (avatar.Hits == null ||
                     avatar.Hits.ChestR == null ||
                     avatar.Hits.ChestL == null ||
-                    avatar.Hits.Root == null)
+                    avatar.Hits.Root == null ||
+                    avatar.SkillR == null ||
+                    avatar.SkillR.RHitRoot == null)
                 {
                     avatar.AutoBind();
                 }
@@ -49,6 +51,13 @@ namespace AttackSkill.Combat
                         if (avatar.Hits?.Root != null)
                         {
                             return avatar.Hits.Root;
+                        }
+
+                        break;
+                    case HitSocketId.R_Hit_Root:
+                        if (avatar.SkillR?.RHitRoot != null)
+                        {
+                            return avatar.SkillR.RHitRoot;
                         }
 
                         break;
@@ -77,6 +86,8 @@ namespace AttackSkill.Combat
                     return CharacterAvatar.HitChestLName;
                 case HitSocketId.Hit_Root:
                     return CharacterAvatar.HitRootName;
+                case HitSocketId.R_Hit_Root:
+                    return CharacterAvatar.SkillRHitRootName;
                 case HitSocketId.Enemy_Hit_Chest_R:
                     return "Enemy_Hit_Chest_R";
                 case HitSocketId.Weapon:

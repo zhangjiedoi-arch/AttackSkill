@@ -1,4 +1,5 @@
 using UnityEngine;
+using AttackSkill.Combat;
 
 namespace AttackSkill.Character.HSM
 {
@@ -9,11 +10,13 @@ namespace AttackSkill.Character.HSM
     {
         public readonly AttackState Attack;
         public readonly SkillState Skill;
+        public readonly SkillRState SkillR;
 
         public CombatState(CharacterContext ctx) : base("Combat", ctx)
         {
             Attack = new AttackState(ctx);
             Skill = new SkillState(ctx);
+            SkillR = new SkillRState(ctx);
         }
 
         public override void OnEnter()
@@ -77,12 +80,6 @@ namespace AttackSkill.Character.HSM
             {
                 Ctx.AttackComboIndex = 0;
             }
-        }
-
-        public override void OnExit()
-        {
-            // 离开普攻（含连段间隙会马上再 OnEnter 显示；进 Skill/Idle 则保持隐藏）
-            Ctx.AttackHits?.SetWeaponVisible(false);
         }
 
         public override void OnUpdate(float deltaTime)
@@ -197,7 +194,7 @@ namespace AttackSkill.Character.HSM
             Ctx.Motor.Velocity.x = 0f;
             Ctx.Motor.Velocity.z = 0f;
 
-            // E 技能：只走 Animator 状态 skill（Trigger），不再播 Timeline
+            // E 技能：只走 Animator 状态 skill（Trigger），出伤由 TimedHitProfile phase「skill」
             _elapsed = 0f;
             _durationSynced = false;
             _duration = Mathf.Max(0.1f, Ctx.Settings.SkillDuration);
@@ -207,11 +204,9 @@ namespace AttackSkill.Character.HSM
                 Ctx.SkillPlayer.Stop();
             }
 
-            // 允许动画 Event（Hit_Chest_* / Hit_Root）出伤
-            if (Ctx.AttackHits != null)
-            {
-                Ctx.AttackHits.SuppressAnimHits = false;
-            }
+            Ctx.AttackHits?.BeginTimedPhase("skill");
+            Ctx.AttackHits?.SetWeaponVisible(false);
+            CombatStats.Find(Ctx.Transform)?.BeginSkillECooldown();
 
             Ctx.SetAnimBool(CharacterAnimParams.InCombatAction, true);
             if (Ctx.Animator != null)
@@ -228,6 +223,7 @@ namespace AttackSkill.Character.HSM
 
         public override void OnExit()
         {
+            Ctx.AttackHits?.EndTimedPhase();
             Ctx.SetAnimBool(CharacterAnimParams.InCombatAction, false);
             Ctx.ResetAnimTrigger(CharacterAnimParams.Skill);
         }
@@ -282,6 +278,193 @@ namespace AttackSkill.Character.HSM
                 _duration = info.length;
                 _durationSynced = true;
             }
+        }
+
+        void ReturnFromSkill()
+        {
+            if (Ctx.IsInWater)
+            {
+                GoTo(Ctx.Owner.States.Swim.Idle);
+            }
+            else if (Ctx.Motor.IsGrounded)
+            {
+                GoTo(Ctx.Owner.States.Grounded.Idle);
+            }
+            else
+            {
+                GoTo(Ctx.Owner.States.Airborne.Fall);
+            }
+        }
+    }
+
+    /// <summary>
+    /// R 技能：Trigger SkillR；AoE/出伤由 TimedHit「Skill_R」驱动。
+    /// 以 Animator 播完为准再退状态。
+    /// </summary>
+    public class SkillRState : CharacterState
+    {
+        static readonly string[] SkillRAnimStateNames =
+        {
+            "skill_r", "SkillR", "skillr", "Skill_R", "RSkill", "r_skill"
+        };
+
+        float _elapsed;
+        float _fallbackDuration;
+        bool _enteredSkillRAnim;
+
+        public SkillRState(CharacterContext ctx) : base("SkillR", ctx) { }
+
+        public override void OnEnter()
+        {
+            Ctx.Motor.PlanarVelocity = Vector3.zero;
+            Ctx.Motor.Velocity.x = 0f;
+            Ctx.Motor.Velocity.z = 0f;
+
+            _elapsed = 0f;
+            _enteredSkillRAnim = false;
+            _fallbackDuration = Mathf.Max(0.5f, Ctx.Settings != null ? Ctx.Settings.SkillRDuration : 2.5f);
+
+            if (Ctx.SkillPlayer != null && Ctx.SkillPlayer.IsPlaying)
+            {
+                Ctx.SkillPlayer.Stop();
+            }
+
+            // AoE / 出伤由 TimedHitProfile「Skill_R」驱动，不再走 SkillRVisual
+            Ctx.AttackHits?.BeginTimedPhase("Skill_R");
+            Ctx.AttackHits?.SetWeaponVisible(false);
+            CombatStats.Find(Ctx.Transform)?.BeginSkillRCooldown();
+
+            Ctx.SetAnimBool(CharacterAnimParams.InCombatAction, true);
+            Ctx.ResetAnimTrigger(CharacterAnimParams.SkillR);
+            Ctx.SetAnimTrigger(CharacterAnimParams.SkillR);
+        }
+
+        public override void OnExit()
+        {
+            Ctx.AttackHits?.EndTimedPhase();
+            Ctx.SetAnimBool(CharacterAnimParams.InCombatAction, false);
+            Ctx.ResetAnimTrigger(CharacterAnimParams.SkillR);
+        }
+
+        public override void OnUpdate(float deltaTime)
+        {
+            _elapsed += deltaTime;
+
+            if (ShouldFinishSkillR())
+            {
+                ReturnFromSkill();
+            }
+        }
+
+        public override void OnFixedUpdate(float deltaTime)
+        {
+            float g = Ctx.Motor.IsGrounded
+                ? Ctx.Settings.Gravity
+                : Ctx.Settings.Gravity * Ctx.Settings.FallGravityMultiplier;
+            Ctx.Motor.PlanarVelocity = Vector3.zero;
+            Ctx.Motor.Velocity.x = 0f;
+            Ctx.Motor.Velocity.z = 0f;
+            Ctx.Motor.ApplyGravity(deltaTime, g);
+            Ctx.Motor.TickMove(deltaTime);
+        }
+
+        bool ShouldFinishSkillR()
+        {
+            if (Ctx.Animator == null)
+            {
+                return _elapsed >= _fallbackDuration;
+            }
+
+            bool inSkillR = IsPlayingSkillR(out AnimatorStateInfo info, out bool inTransition);
+            if (inSkillR)
+            {
+                _enteredSkillRAnim = true;
+                float clipLen = info.length / Mathf.Max(0.01f, info.speed);
+                if (clipLen > _fallbackDuration)
+                {
+                    _fallbackDuration = clipLen + 0.15f;
+                }
+
+                // 仍在 SkillR：等本段接近播完且不在过渡中
+                if (!inTransition && info.normalizedTime >= 0.98f)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            // 已经进过 SkillR，又离开该状态 → 动画结束
+            if (_enteredSkillRAnim)
+            {
+                return true;
+            }
+
+            // Trigger 尚未切入：等到回退时长再结束（防卡死）
+            return _elapsed >= _fallbackDuration;
+        }
+
+        bool IsPlayingSkillR(out AnimatorStateInfo info, out bool inTransition)
+        {
+            inTransition = Ctx.Animator.IsInTransition(0);
+            info = Ctx.Animator.GetCurrentAnimatorStateInfo(0);
+            if (MatchesSkillR(info) || MatchesSkillRClips(Ctx.Animator, 0))
+            {
+                return true;
+            }
+
+            if (inTransition)
+            {
+                info = Ctx.Animator.GetNextAnimatorStateInfo(0);
+                if (MatchesSkillR(info))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        static bool MatchesSkillR(AnimatorStateInfo info)
+        {
+            for (int i = 0; i < SkillRAnimStateNames.Length; i++)
+            {
+                if (info.IsName(SkillRAnimStateNames[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        static bool MatchesSkillRClips(Animator animator, int layer)
+        {
+            int count = animator.GetCurrentAnimatorClipInfoCount(layer);
+            if (count <= 0)
+            {
+                return false;
+            }
+
+            var clips = animator.GetCurrentAnimatorClipInfo(layer);
+            for (int i = 0; i < clips.Length; i++)
+            {
+                AnimationClip clip = clips[i].clip;
+                if (clip == null || string.IsNullOrEmpty(clip.name))
+                {
+                    continue;
+                }
+
+                string n = clip.name;
+                if (n.IndexOf("SkillR", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    n.IndexOf("skill_r", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    n.IndexOf("Skill_R", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         void ReturnFromSkill()

@@ -1,7 +1,17 @@
+using System;
 using UnityEngine;
 
 namespace AttackSkill.Combat
 {
+    [Flags]
+    public enum SkillHitExecuteFlags
+    {
+        None = 0,
+        Presentation = 1 << 0,
+        Hit = 1 << 1,
+        All = Presentation | Hit,
+    }
+
     /// <summary>执行一段 <see cref="SkillHitSegment"/>：特效 + 形状检测 + HitResolver。</summary>
     public static class SkillHitExecutor
     {
@@ -18,12 +28,17 @@ namespace AttackSkill.Combat
             public int ComboIndex;
             public bool ClearSession;
             public bool DrawDebug;
-            public Object LogContext;
+            public UnityEngine.Object LogContext;
         }
 
         public static int Execute(in SkillHitSegment segment, in Context ctx)
         {
-            if (segment == null)
+            return Execute(segment, ctx, SkillHitExecuteFlags.All);
+        }
+
+        public static int Execute(in SkillHitSegment segment, in Context ctx, SkillHitExecuteFlags flags)
+        {
+            if (segment == null || flags == SkillHitExecuteFlags.None)
             {
                 return 0;
             }
@@ -35,7 +50,8 @@ namespace AttackSkill.Combat
             }
 
             Transform socket = HitSocketResolver.Resolve(root, segment.socket);
-            if (socket == null && segment.shape != HitShapeType.Fan)
+            bool needSocketForHit = (flags & SkillHitExecuteFlags.Hit) != 0 && segment.shape != HitShapeType.Fan;
+            if (socket == null && needSocketForHit)
             {
                 Debug.LogWarning(
                     $"[SkillHit] 缺少挂点 {segment.socket}（{HitSocketResolver.ToHierarchyName(segment.socket)}）。",
@@ -43,15 +59,23 @@ namespace AttackSkill.Combat
                 return 0;
             }
 
-            SpawnVfx(segment, socket);
-            PlaySfx(segment, root);
+            if ((flags & SkillHitExecuteFlags.Presentation) != 0)
+            {
+                SpawnVfx(segment, socket);
+                PlaySfx(segment, root);
+            }
+
+            if ((flags & SkillHitExecuteFlags.Hit) == 0)
+            {
+                return 0;
+            }
 
             switch (segment.shape)
             {
                 case HitShapeType.Sphere:
-                    return ExecuteSphere(segment, socket.position, ctx);
+                    return socket != null ? ExecuteSphere(segment, socket.position, ctx) : 0;
                 case HitShapeType.Cylinder:
-                    return ExecuteCylinder(segment, socket.position, ctx);
+                    return socket != null ? ExecuteCylinder(segment, socket.position, ctx) : 0;
                 case HitShapeType.Fan:
                     return ExecuteFan(segment, socket, ctx);
                 default:
@@ -68,10 +92,10 @@ namespace AttackSkill.Combat
 
             if (segment.parentVfxToSocket)
             {
-                var fx = Object.Instantiate(segment.vfxPrefab, socket, false);
+                var fx = UnityEngine.Object.Instantiate(segment.vfxPrefab, socket, false);
                 fx.transform.localPosition = Vector3.zero;
                 fx.transform.localRotation = Quaternion.identity;
-                Object.Destroy(fx, Mathf.Max(0.1f, segment.vfxLife));
+                UnityEngine.Object.Destroy(fx, Mathf.Max(0.1f, segment.vfxLife));
                 return;
             }
 

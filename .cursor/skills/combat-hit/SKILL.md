@@ -1,50 +1,51 @@
 ---
 name: combat-hit
 description: >-
-  AttackSkill 战斗出伤管线：AttackHitRelay、SkillHitProfile、形状检测、HitResolver、VFX/SFX。
-  在改普攻扇形、E 技能多段、挂点出伤、去重过滤或跳字事件时使用。
+  AttackSkill 战斗出伤管线：AttackHitRelay、TimedHitProfile、SkillHitProfile、形状检测、HitResolver、VFX/SFX。
+  在改普攻扇形、E/R 技能多段、挂点出伤、去重过滤或跳字事件时使用。
 ---
 
 # 战斗出伤管线
 
 ## 方案
 
-统一：触发（动画 Event / 窗口）→ 形状检测 → `HitResolver` 过滤去重 → `IDamageable.TakeDamage` → VFX/SFX。E 技能用 `SkillHitProfile` 配置多段。
+统一：触发（**TimedHit normalizedTime** / 遗留窗口）→ 形状检测 → `HitResolver` 过滤去重 → `IDamageable.TakeDamage` → VFX/SFX。
+
+玩家普攻 / E / R：**不依赖 Animation Event**。HSM `BeginSwing` / `BeginTimedPhase` → `AttackHitRelay` 按 `TimedHitProfile` 采样。
 
 ## 关键文件
 
 - `Assets/Scripts/Combat/AttackHitRelay.cs`
-- `SkillHitProfile.cs` / `SkillHitSegment.cs` / `SkillHitExecutor.cs` / `SkillHitProfileDefaults.cs`
+- `TimedHitProfile.cs` / `TimedHitCue.cs`
+- `SkillHitProfile.cs` / `SkillHitSegment.cs` / `SkillHitExecutor.cs`（段执行与形状）
 - `HitResolver.cs` / `HitRequest.cs` / `HitSession.cs`
 - `FanHitDetector.cs` / `ShapeHitDetector.cs` / `HitSocketResolver.cs`
-- `Health.cs` / `CombatLayers.cs` / `VfxObjectPool.cs` / `SlashArcVfx.cs`
-- Editor：`SkillHitProfileMenu.cs`
-- Resources：`Combat/SkillHit_Player_E.asset`、`SkillHit_Enemy_Basic.asset`
+- 属性：`Stats/CombatStats.cs`、`DamageCalculator.cs`
+- 角色表：`Assets/HitProfile/HitProfile_*.asset`（Settings 引用 + `Resources/HitProfile` 兜底）
+- `CharacterRuntimeSettings`：`timedHitWanderer` / `timedHitQianxiao` / `timedHitColetta`
 
 ## 数据流
 
 ```text
-普攻：OnAttackHit → Fan → HitResolver.DefaultPlayerOffense
-E：SkillHit(segmentIndex) → Profile 段 → Socket → Sphere/Cylinder/Fan
-  → Executor → Resolver → Applied 事件（世界跳字）
+普攻：AttackState.BeginSwing(combo) → phase attack1/2/3 → TimedTick → SkillHitExecutor
+E：SkillState → BeginTimedPhase("skill")
+R：SkillRState → BeginTimedPhase("Skill_R")
+属性：CombatStats.ATK × segment.damage(倍率%) → 防御 × 元素 → 暴击
 ```
 
 ## 实现步骤
 
-1. 改数值/形状：编辑 Profile SO 或 Relay `swings[]`。
-2. 动画 Event：推荐 `SkillHit(int)`；兼容 `Hit_Chest_R/L`、`Hit_Root`。
+1. 改时机/倍率/形状：编辑对应角色 `TimedHitProfile`（`damage` = ATK%，100=100%）。
+2. 改角色/怪基础属性：`Resources/Combat/Stats/...`
 3. 新挂点：扩 `HitSocketId` + Avatar + Resolver。
-4. 层级：玩家打 `PlayerOffenseHurtboxMask`（Enemy+Default）。
-5. 同段去重：`HitSession` 按 root InstanceID。
-6. 大招双通道时设 `SuppressAnimHits`。
-7. `VfxObjectPool.Prewarm`；SFX 空则 Settings 回填。
-8. Gizmo：`drawSocketHitGizmos` 调半径。
-9. 菜单：`AttackSkill/Combat/Create Default Skill Hit Profiles`。
-10. Relay **必须与 Animator 同物体**，否则 Event 调不到。
+4. 层级：玩家打 `PlayerOffenseHurtboxMask`。
+5. 同段去重：`HitSession`（每次 BeginSwing/BeginTimedPhase 重置）。
+6. Timeline 大招窗口仍可用 `SuppressAnimHits` 抑制 TimedTick。
+7. Relay 与 Animator 同物体（读 `normalizedTime`）。
 
 ## 约定与坑
 
-- 扇形高度用 `HitHeight`，不完全跟 weapon Y。
-- 刀光 Instantiate 到世界根，不跟随角色。
-- Friendly / Dead / Owner 过滤在 Resolver flags。
-- 世界 UI 只订 `HitResolver.Applied` 成功结算。
+- `damage` 一律为倍率%，不是绝对伤害。
+- 扇形高度用 `hitHeight`；刀光默认世界坐标不跟随。
+- phase id 须与 HSM 一致：`attack1`/`attack2`/`attack3`/`skill`/`Skill_R`。
+- 敌人仍可用 `EnemyAttackHitRelay` 动画 Event（未改）。

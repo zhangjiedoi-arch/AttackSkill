@@ -28,6 +28,8 @@ namespace AttackSkill.Character.HSM
         [Tooltip("可选：三段普攻各自时长，长度>=3 时优先使用；否则用 AttackDuration。")]
         public float[] AttackComboDurations = { 1.0f, 1.0f, 1.1f };
         public float SkillDuration = 2.5f;
+        [Tooltip("R 技能最长回退时长（秒）；能识别到 Animator 状态/Clip 时以动画播完为准。")]
+        public float SkillRDuration = 5f;
         public int MaxAttackCombo = 3;
         [Tooltip("距离上次攻击超过该时间后，连段从第一刀重新开始。")]
         public float ComboResetTime = 1.2f;

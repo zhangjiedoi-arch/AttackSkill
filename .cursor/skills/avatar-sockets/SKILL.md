@@ -16,7 +16,7 @@ description: >-
 - `Assets/Scripts/Character/CharacterAvatar.cs`
 - `Assets/Scripts/Character/CharacterToolAttach.cs`
 - `Assets/Scripts/Editor/CharacterToolWiringMenu.cs`
-- Prefab 引用：`CharacterRuntimeSettings` 的 `motorcyclePrefab` / `swordPrefab` / `wingsPrefab`
+- Prefab 引用：`CharacterRuntimeSettings` 的 `motorcyclePrefab` / `swordPrefab` / `wingsPrefab` / `skillRAoeVfxPrefab`
 
 ## 挂点命名（敏感）
 
@@ -26,6 +26,8 @@ description: >-
 | 御剑 | `Sword_pos` |
 | 翅膀 | `wings_pos`（小写 w） |
 | 出伤 | `Hit_Chest_R` / `Hit_Chest_L` / `Hit_Root` 等 |
+| R 技能 AOE | `R_Hit_Root`（`HitSocketId.R_Hit_Root`） |
+| 普攻可见武器 | `Weapon_Pos`（`AttackHitRelay.SetWeaponVisible`） |
 
 ## 数据流
 
@@ -52,5 +54,5 @@ Assembler / OnValidate AutoBind
 ## 约定与坑
 
 - 挂点名大小写敏感。
-- 大剑默认可隐藏，普攻 `BeginSwing` 再显示。
+- `Weapon_Pos` 默认隐藏，普攻 `BeginSwing` 显示，`EndCombat` / 闪避隐藏；R 技能不再往该挂点生成脆刃。
 - 工具网格不要拷进 Resources 重复一份。

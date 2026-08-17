@@ -84,6 +84,12 @@ namespace AttackSkill.Character.Exploration
         /// <summary>按装备定义切换工具；成功进入/退出对应 HSM 薄壳。</summary>
         public bool TryToggle(ExplorationToolDefinition definition)
         {
+            return TryToggle(definition, out _);
+        }
+
+        public bool TryToggle(ExplorationToolDefinition definition, out bool entered)
+        {
+            entered = false;
             if (_owner == null || definition == null || !definition.IsImplemented)
             {
                 return false;
@@ -95,7 +101,14 @@ namespace AttackSkill.Character.Exploration
                 return false;
             }
 
-            return _owner.TryToggleExplorationTool(tool, definition);
+            bool wasActive = tool.IsActive;
+            bool ok = _owner.TryToggleExplorationTool(tool, definition);
+            if (ok && !wasActive)
+            {
+                entered = true;
+            }
+
+            return ok;
         }
     }
 }

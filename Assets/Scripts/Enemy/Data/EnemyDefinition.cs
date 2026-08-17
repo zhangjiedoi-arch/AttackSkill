@@ -10,6 +10,8 @@ namespace AttackSkill.Enemy
         public GameObject prefab;
 
         [Header("Stats")]
+        [Tooltip("可选：覆盖 Resources/Combat/Stats/Enemies 默认雷属性表；空则用 Enemy_Thunder")]
+        public EnemyCombatStatsDefinition combatStats;
         public float maxHp = 80f;
         [Tooltip("头顶血条显示等级")]
         public int level = 1;

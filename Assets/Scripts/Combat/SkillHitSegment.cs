@@ -11,6 +11,8 @@ namespace AttackSkill.Combat
         Weapon,
         HitOrigin,
         Enemy_Hit_Chest_R,
+        /// <summary>R 技能 AoE 挂点（节点名 R_Hit_Root）。</summary>
+        R_Hit_Root,
     }
 
     public enum HitShapeType
@@ -43,7 +45,8 @@ namespace AttackSkill.Combat
         public float hitHeight = 0.9f;
 
         [Header("Damage")]
-        public float damage = 20f;
+        [Tooltip("技能倍率%（100 = 100% 攻击力）。最终伤害由角色 CombatStats.Attack 经 DamageCalculator 结算。")]
+        public float damage = 100f;
         public float knockback = 1.2f;
 
         [Header("VFX")]

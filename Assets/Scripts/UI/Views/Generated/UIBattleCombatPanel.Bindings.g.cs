@@ -15,5 +15,13 @@ namespace AttackSkill.UI
         [SerializeField] Image imgSkillT;
         [SerializeField] Image[] imgSkill;
         [SerializeField] Text[] txtSkill;
+        [SerializeField] Image imgFillT;
+        [SerializeField] Image imgFillQ;
+        [SerializeField] Image imgFillE;
+        [SerializeField] Image imgFillR;
+        [SerializeField] Text txtFillT;
+        [SerializeField] Text txtFillQ;
+        [SerializeField] Text txtFillE;
+        [SerializeField] Text txtFillR;
     }
 }

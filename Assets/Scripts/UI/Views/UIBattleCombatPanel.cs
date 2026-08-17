@@ -1,6 +1,7 @@
 using AttackSkill.Character;
 using AttackSkill.Character.Exploration;
 using AttackSkill.Character.HSM;
+using AttackSkill.Combat;
 using AttackSkill.Core;
 using AttackSkill.Game;
 using UnityEngine;
@@ -9,7 +10,8 @@ using UnityEngine.UI;
 namespace AttackSkill.UI
 {
     /// <summary>
-    /// 战斗 HUD 右下操作区：Tab 开探索工具轮盘；T 执行当前装备工具；E 释放技能。
+    /// 战斗 HUD 右下操作区：Tab 开探索工具轮盘；T 执行当前装备工具；E/R 释放技能。
+    /// T/Q/E/R 冷却：imgFill.fillAmount（0=刚进 CD，1=可用）；txtFill 显示剩余秒数。
     /// </summary>
     public partial class UIBattleCombatPanel : UIBase
     {
@@ -21,6 +23,7 @@ namespace AttackSkill.UI
             EnsureSkillWheelSubscription();
             BattleSkillWheelState.EnsureIconResolved();
             ApplySkillTIcon(BattleSkillWheelState.SelectedIcon);
+            RefreshCooldownFills();
         }
 
         void OnEnable()
@@ -47,6 +50,8 @@ namespace AttackSkill.UI
                 return;
             }
 
+            RefreshCooldownFills();
+
             var ui = UIManager.Instance;
             if (ui != null && ui.IsOpen(UIId.SkillWheel))
             {
@@ -70,14 +75,10 @@ namespace AttackSkill.UI
                 return;
             }
 
-            // E 由角色输入 / 按钮 OnSkillE 释放技能，此处不再处理以免弹 WIP
+            // E / R 由角色输入或按钮 Request，此处不再处理以免抢键/弹 WIP
             if (GameInput.GetKeyDown(KeyCode.Q))
             {
                 OnSkillQ();
-            }
-            else if (GameInput.GetKeyDown(KeyCode.R))
-            {
-                OnSkillR();
             }
             else if (GameInput.GetKeyDown(KeyCode.T))
             {
@@ -100,28 +101,145 @@ namespace AttackSkill.UI
             _clicksBound = true;
         }
 
-        void OnSkillE() => CombatSkillInput.Request();
+        void OnSkillE()
+        {
+            if (!IsActiveSkillEReady())
+            {
+                return;
+            }
 
-        void OnSkillQ() => ShowWipTip();
+            CombatSkillInput.Request();
+        }
 
-        void OnSkillR() => ShowWipTip();
+        void OnSkillQ()
+        {
+            if (!PartySkillCooldown.IsQReady)
+            {
+                return;
+            }
+
+            PartySkillCooldown.BeginQ();
+            ShowWipTip();
+            RefreshCooldownFills();
+        }
+
+        void OnSkillR()
+        {
+            if (!IsActiveSkillRReady())
+            {
+                return;
+            }
+
+            CombatSkillRInput.Request();
+        }
 
         void OnSkillT()
         {
+            if (!PartySkillCooldown.IsTReady)
+            {
+                return;
+            }
+
             var character = PartyController.Instance != null
                 ? PartyController.Instance.Active
                 : null;
 
             if (character == null ||
-                !ExplorationToolService.TryToggleEquipped(character, BattleSkillWheelState.SelectedIndex))
+                !ExplorationToolService.TryToggleEquipped(
+                    character,
+                    BattleSkillWheelState.SelectedIndex,
+                    out bool entered))
             {
                 ShowWipTip();
+                return;
+            }
+
+            // 仅「进入」飞行/御剑/摩托开 CD；退出不进冷却
+            if (entered)
+            {
+                PartySkillCooldown.BeginT();
+                RefreshCooldownFills();
             }
         }
 
         void OnSkillWheelCommitted(int _, Sprite icon)
         {
             ApplySkillTIcon(icon != null ? icon : BattleSkillWheelState.SelectedIcon);
+        }
+
+        void RefreshCooldownFills()
+        {
+            CombatStats stats = GetActiveCombatStats();
+            SetCooldownVisual(
+                imgFillT,
+                txtFillT,
+                PartySkillCooldown.TFillAmount,
+                PartySkillCooldown.TRemaining);
+            SetCooldownVisual(
+                imgFillQ,
+                txtFillQ,
+                PartySkillCooldown.QFillAmount,
+                PartySkillCooldown.QRemaining);
+            SetCooldownVisual(
+                imgFillE,
+                txtFillE,
+                stats != null ? stats.SkillEFillAmount : 1f,
+                stats != null ? stats.SkillERemaining : 0f);
+            SetCooldownVisual(
+                imgFillR,
+                txtFillR,
+                stats != null ? stats.SkillRFillAmount : 1f,
+                stats != null ? stats.SkillRRemaining : 0f);
+        }
+
+        static void SetCooldownVisual(Image fill, Text label, float fillAmount, float remaining)
+        {
+            if (fill != null)
+            {
+                fill.fillAmount = Mathf.Clamp01(fillAmount);
+            }
+
+            if (label == null)
+            {
+                return;
+            }
+
+            if (remaining <= 0.001f)
+            {
+                label.text = string.Empty;
+                label.enabled = false;
+                return;
+            }
+
+            label.enabled = true;
+            if (remaining < 1f)
+            {
+                label.text = remaining.ToString("0.0");
+            }
+            else
+            {
+                label.text = Mathf.CeilToInt(remaining).ToString();
+            }
+        }
+
+        static CombatStats GetActiveCombatStats()
+        {
+            var character = PartyController.Instance != null
+                ? PartyController.Instance.Active
+                : null;
+            return character != null ? CombatStats.Find(character) : null;
+        }
+
+        static bool IsActiveSkillEReady()
+        {
+            CombatStats stats = GetActiveCombatStats();
+            return stats == null || stats.IsSkillEReady;
+        }
+
+        static bool IsActiveSkillRReady()
+        {
+            CombatStats stats = GetActiveCombatStats();
+            return stats == null || stats.IsSkillRReady;
         }
 
         void ApplySkillTIcon(Sprite icon)

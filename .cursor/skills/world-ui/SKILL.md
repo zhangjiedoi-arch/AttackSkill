@@ -27,8 +27,19 @@ description: >-
 ```text
 Progress/Party Awake → WorldUiService.EnsureExists（DDOL Overlay Canvas）
 敌人 Initialize → AttachEnemyBlood → LateUpdate 投影 + 距离/遮挡
-HitResolver.Applied → DamageNumberPool 跳字（播放中再判遮挡）
+HitResolver.Applied → DamageNumberPool 跳字（元素色；暴击橙黄 + 字号×2；播放中再判遮挡）
 ```
+
+## 跳字样式
+
+| 条件 | 颜色 | 字号 |
+|------|------|------|
+| 光 | 黄 | 正常 |
+| 暗 | 黑 | 正常 |
+| 雷 | 紫 | 正常 |
+| 冰 | 蓝白 | 正常 |
+| 火 | 红 | 正常 |
+| 暴击 | 橙黄 | ×2 |
 
 ## 挂点
 

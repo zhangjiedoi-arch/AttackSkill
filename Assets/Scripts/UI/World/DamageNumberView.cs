@@ -1,15 +1,24 @@
+using AttackSkill.Combat;
 using TMPro;
 using UnityEngine;
 
 namespace AttackSkill.UI.World
 {
-    /// <summary>伤害跳字：世界 HitPoint → 屏幕投影，上浮、遮挡隐藏。</summary>
+    /// <summary>伤害跳字：世界 HitPoint → 屏幕投影；按元素着色，暴击橙黄且字号×2。</summary>
     [DefaultExecutionOrder(1000)]
     public sealed class DamageNumberView : MonoBehaviour
     {
+        static readonly Color CritColor = new Color(1f, 0.72f, 0.12f, 1f);      // 橙黄
+        static readonly Color LightColor = new Color(1f, 0.92f, 0.2f, 1f);     // 黄
+        static readonly Color DarkColor = new Color(0.12f, 0.12f, 0.14f, 1f);   // 黑
+        static readonly Color ThunderColor = new Color(0.72f, 0.35f, 1f, 1f);   // 紫
+        static readonly Color IceColor = new Color(0.75f, 0.92f, 1f, 1f);       // 蓝白
+        static readonly Color FireColor = new Color(1f, 0.28f, 0.18f, 1f);      // 红
+
         [SerializeField] TextMeshProUGUI txtNumber;
         [SerializeField] float worldRiseSpeed = 1.35f;
         [SerializeField] float fadeStartNormalized = 0.4f;
+        [SerializeField] float normalFontSize = 36f;
 
         Color _color;
         float _baseScale = 1f;
@@ -27,16 +36,10 @@ namespace AttackSkill.UI.World
 
         void Awake()
         {
-            if (txtNumber == null)
+            CacheRefs();
+            if (txtNumber != null && normalFontSize < 1f)
             {
-                txtNumber = GetComponentInChildren<TextMeshProUGUI>(true);
-            }
-
-            _rt = transform as RectTransform;
-            _group = GetComponent<CanvasGroup>();
-            if (_group == null)
-            {
-                _group = gameObject.AddComponent<CanvasGroup>();
+                normalFontSize = txtNumber.fontSize;
             }
         }
 
@@ -46,13 +49,11 @@ namespace AttackSkill.UI.World
             float lifetime,
             WorldUiService ui,
             Transform ignoreRoot,
-            System.Action<DamageNumberView> onFinished)
+            System.Action<DamageNumberView> onFinished,
+            bool isCritical = false,
+            CombatElement element = CombatElement.Light)
         {
-            if (txtNumber == null)
-            {
-                txtNumber = GetComponentInChildren<TextMeshProUGUI>(true);
-            }
-
+            CacheRefs();
             if (_group == null)
             {
                 _group = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
@@ -68,12 +69,13 @@ namespace AttackSkill.UI.World
             _rt = transform as RectTransform;
             WorldUiScreen.PrepareOverlayItem(gameObject);
 
-            ResolveStyle(amount, out _color, out _baseScale);
+            ResolveStyle(isCritical, element, out _color, out _baseScale, out float fontSize);
             int shown = Mathf.Max(1, Mathf.RoundToInt(amount));
             if (txtNumber != null)
             {
                 txtNumber.text = shown.ToString();
                 txtNumber.color = _color;
+                txtNumber.fontSize = fontSize;
                 txtNumber.ForceMeshUpdate();
             }
 
@@ -157,22 +159,62 @@ namespace AttackSkill.UI.World
             }
         }
 
-        static void ResolveStyle(float amount, out Color color, out float scale)
+        void CacheRefs()
         {
-            if (amount < 100f)
+            if (txtNumber == null)
             {
-                color = Color.white;
-                scale = 0.9f;
+                txtNumber = GetComponentInChildren<TextMeshProUGUI>(true);
             }
-            else if (amount <= 10000f)
+
+            _rt = transform as RectTransform;
+            if (_group == null)
             {
-                color = new Color(1f, 0.88f, 0.2f, 1f);
-                scale = 1.2f;
+                _group = GetComponent<CanvasGroup>();
             }
-            else
+        }
+
+        void ResolveStyle(
+            bool isCritical,
+            CombatElement element,
+            out Color color,
+            out float scale,
+            out float fontSize)
+        {
+            float baseFont = normalFontSize > 1f
+                ? normalFontSize
+                : (txtNumber != null ? txtNumber.fontSize : 36f);
+            if (baseFont < 1f)
             {
-                color = new Color(1f, 0.25f, 0.2f, 1f);
-                scale = 1.6f;
+                baseFont = 36f;
+            }
+
+            if (isCritical)
+            {
+                color = CritColor;
+                scale = 1.35f;
+                fontSize = baseFont * 2f;
+                return;
+            }
+
+            color = ColorForElement(element);
+            scale = 1f;
+            fontSize = baseFont;
+        }
+
+        public static Color ColorForElement(CombatElement element)
+        {
+            switch (element)
+            {
+                case CombatElement.Dark:
+                    return DarkColor;
+                case CombatElement.Thunder:
+                    return ThunderColor;
+                case CombatElement.Ice:
+                    return IceColor;
+                case CombatElement.Fire:
+                    return FireColor;
+                default:
+                    return LightColor;
             }
         }
     }

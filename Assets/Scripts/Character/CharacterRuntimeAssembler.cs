@@ -137,8 +137,8 @@ namespace AttackSkill.Character
                 health = actorRoot.AddComponent<Health>();
             }
 
-            health.Configure(20000f, destroyWhenDead: false);
             health.ConfigureDefense(enableIFrames: true, iFrames: 0.5f, stun: 0.18f, enableHitStun: true);
+            ApplyDefaultCombatStats(actorRoot, avatar);
 
             Animator animator = avatar != null ? avatar.Animator : actorRoot.GetComponentInChildren<Animator>(true);
             if (animator != null)
@@ -178,6 +178,96 @@ namespace AttackSkill.Character
             return character;
         }
 
+        /// <summary>按 Prefab/Avatar 名猜肖像并注入属性；Party 切人后会再按槽位覆盖。</summary>
+        public static void ApplyCombatStatsForPortrait(GameObject actorRoot, PartyPortraitId portraitId)
+        {
+            if (actorRoot == null)
+            {
+                return;
+            }
+
+            CombatStats stats = CombatStats.Ensure(actorRoot);
+            CharacterCombatStatsDefinition def = CombatStatsCatalog.LoadCharacter(portraitId);
+            if (def != null)
+            {
+                stats.ApplyCharacterDefinition(def, refillHp: true);
+                return;
+            }
+
+            CombatElement element = ElementForPortrait(portraitId);
+            stats.ApplyBlock(CombatStatBlock.DefaultCharacter(element), refillHp: true);
+        }
+
+        static void ApplyDefaultCombatStats(GameObject actorRoot, CharacterAvatar avatar)
+        {
+            PartyPortraitId portrait = PartyPortraitId.Unknown;
+            if (avatar != null)
+            {
+                portrait = ResolvePortraitFromName(avatar.DisplayName);
+            }
+
+            if (portrait == PartyPortraitId.Unknown && actorRoot != null)
+            {
+                portrait = ResolvePortraitFromName(actorRoot.name);
+            }
+
+            ApplyCombatStatsForPortrait(actorRoot, portrait != PartyPortraitId.Unknown
+                ? portrait
+                : PartyPortraitId.WandererFemale);
+        }
+
+        static PartyPortraitId ResolvePortraitFromName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return PartyPortraitId.Unknown;
+            }
+
+            string n = name;
+            if (ContainsIgnoreCase(n, "Qianxiao") || n.Contains("千咲"))
+            {
+                return PartyPortraitId.Qianxiao;
+            }
+
+            if (ContainsIgnoreCase(n, "Coletta") || ContainsIgnoreCase(n, "Kelaita") || n.Contains("柯莱塔"))
+            {
+                return PartyPortraitId.Coletta;
+            }
+
+            if (ContainsIgnoreCase(n, "Female") || n.Contains("女"))
+            {
+                return PartyPortraitId.WandererFemale;
+            }
+
+            if (ContainsIgnoreCase(n, "Male") || n.Contains("男") || ContainsIgnoreCase(n, "Wanderer") ||
+                n.Contains("漂泊"))
+            {
+                return PartyPortraitId.WandererMale;
+            }
+
+            return PartyPortraitId.Unknown;
+        }
+
+        static CombatElement ElementForPortrait(PartyPortraitId id)
+        {
+            switch (id)
+            {
+                case PartyPortraitId.Qianxiao:
+                    return CombatElement.Dark;
+                case PartyPortraitId.Coletta:
+                    return CombatElement.Ice;
+                case PartyPortraitId.WandererMale:
+                case PartyPortraitId.WandererFemale:
+                default:
+                    return CombatElement.Light;
+            }
+        }
+
+        static bool ContainsIgnoreCase(string source, string value)
+        {
+            return source.IndexOf(value, System.StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
         static void WireHitRelay(AttackHitRelay relay, Transform ownerRoot, CharacterAvatar avatar)
         {
             if (relay == null)
@@ -199,10 +289,28 @@ namespace AttackSkill.Character
             Transform chestL = avatar != null ? avatar.Hits?.ChestL : null;
             Transform hitRoot = avatar != null ? avatar.Hits?.Root : null;
             SkillHitProfile profile = null;
+            TimedHitProfile timedProfile = null;
             var settings = CharacterRuntimeSettings.Get();
             if (settings != null)
             {
                 profile = settings.GetPlayerSkillHitProfile();
+                PartyPortraitId portrait = PartyPortraitId.WandererFemale;
+                if (avatar != null)
+                {
+                    portrait = ResolvePortraitFromName(avatar.DisplayName);
+                }
+
+                if (portrait == PartyPortraitId.Unknown && ownerRoot != null)
+                {
+                    portrait = ResolvePortraitFromName(ownerRoot.name);
+                }
+
+                if (portrait == PartyPortraitId.Unknown)
+                {
+                    portrait = PartyPortraitId.WandererFemale;
+                }
+
+                timedProfile = settings.GetTimedHitProfile(portrait);
             }
 
             relay.ConfigurePresentation(
@@ -217,6 +325,11 @@ namespace AttackSkill.Character
                 snow,
                 aoe,
                 profile);
+
+            if (timedProfile != null)
+            {
+                relay.SetTimedHitProfile(timedProfile);
+            }
         }
 
         static void FitCharacterController(CharacterController cc)

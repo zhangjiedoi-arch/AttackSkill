@@ -815,6 +815,10 @@ namespace AttackSkill.Character
                 return null;
             }
 
+            CharacterRuntimeAssembler.ApplyCombatStatsForPortrait(
+                character.gameObject,
+                GetPortraitId(index));
+
             _spawned.Add(character);
             return character;
         }

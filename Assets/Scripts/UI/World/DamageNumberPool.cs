@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using AttackSkill.Combat;
 
 namespace AttackSkill.UI.World
 {
@@ -33,7 +34,8 @@ namespace AttackSkill.UI.World
             }
         }
 
-        public void Spawn(float amount, Vector3 worldPosition, float lifetime, Transform ignoreRoot)
+        public void Spawn(float amount, Vector3 worldPosition, float lifetime, Transform ignoreRoot,
+            bool isCritical = false, CombatElement element = CombatElement.Light)
         {
             if (_prefab == null || _ui == null)
             {
@@ -55,7 +57,7 @@ namespace AttackSkill.UI.World
                 view = Create();
             }
 
-            view.Play(amount, worldPosition, lifetime, _ui, ignoreRoot, Return);
+            view.Play(amount, worldPosition, lifetime, _ui, ignoreRoot, Return, isCritical, element);
         }
 
         public void Dispose() => _free.Clear();

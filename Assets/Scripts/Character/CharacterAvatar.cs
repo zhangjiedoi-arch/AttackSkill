@@ -20,6 +20,8 @@ namespace AttackSkill.Character
         public const string HitChestRName = "Hit_Chest_R";
         public const string HitChestLName = "Hit_Chest_L";
         public const string HitRootName = "Hit_Root";
+        public const string SkillRHitRootName = "R_Hit_Root";
+        public const string WeaponPosName = "Weapon_Pos";
 
         [System.Serializable]
         public class ToolSockets
@@ -43,6 +45,15 @@ namespace AttackSkill.Character
             public Transform Root;
         }
 
+        [System.Serializable]
+        public class SkillRSockets
+        {
+            [Tooltip("R 技能 AOE 挂点（R_Hit_Root）")]
+            public Transform RHitRoot;
+            [Tooltip("R 技能武器挂点（Weapon_Pos）；普攻期间显示，平时隐藏")]
+            public Transform WeaponPos;
+        }
+
         [Header("Presentation")]
         [SerializeField] Animator animator;
         [SerializeField] Transform weapon;
@@ -56,6 +67,9 @@ namespace AttackSkill.Character
 
         [Header("Hit Sockets")]
         [SerializeField] HitSockets hitSockets = new HitSockets();
+
+        [Header("Skill R Sockets（全角色预留；漂泊者已接线）")]
+        [SerializeField] SkillRSockets skillRSockets = new SkillRSockets();
 
         [Header("Flight Airflow Vfx")]
         [Tooltip("勾选后用下方偏移覆盖 CharacterRuntimeSettings 全局值")]
@@ -74,6 +88,7 @@ namespace AttackSkill.Character
         public Transform HitOrigin => hitOrigin != null ? hitOrigin : (weapon != null ? weapon : transform);
         public ToolSockets Tools => toolSockets;
         public HitSockets Hits => hitSockets;
+        public SkillRSockets SkillR => skillRSockets;
         public bool OverrideAirflowOffset => overrideAirflowOffset;
         public Vector3 AirflowLocalOffset => airflowLocalOffset;
         public float AirflowFallbackLocalY => airflowFallbackLocalY;
@@ -94,7 +109,10 @@ namespace AttackSkill.Character
                 hitSockets == null ||
                 hitSockets.ChestR == null ||
                 hitSockets.ChestL == null ||
-                hitSockets.Root == null)
+                hitSockets.Root == null ||
+                skillRSockets == null ||
+                skillRSockets.RHitRoot == null ||
+                skillRSockets.WeaponPos == null)
             {
                 AutoBind();
             }
@@ -165,6 +183,21 @@ namespace AttackSkill.Character
             if (hitSockets.Root == null)
             {
                 hitSockets.Root = FindChildExact(transform, HitRootName);
+            }
+
+            if (skillRSockets == null)
+            {
+                skillRSockets = new SkillRSockets();
+            }
+
+            if (skillRSockets.RHitRoot == null)
+            {
+                skillRSockets.RHitRoot = FindChildExact(transform, SkillRHitRootName);
+            }
+
+            if (skillRSockets.WeaponPos == null)
+            {
+                skillRSockets.WeaponPos = FindChildExact(transform, WeaponPosName);
             }
 
             if (animator != null)

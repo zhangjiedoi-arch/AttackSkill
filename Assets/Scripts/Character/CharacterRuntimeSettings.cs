@@ -22,8 +22,16 @@ namespace AttackSkill.Character
         public GameObject snowHitVfxPrefab;
         [Tooltip("Assets/Prefabs/VFX/Ground AOE explosion.prefab — Hit_Root")]
         public GameObject groundAoeExplosionVfxPrefab;
-        [Tooltip("玩家 E 技能多段出伤表；空则用运行时默认")]
+        [Tooltip("玩家 E 技能多段出伤表；空则用运行时默认（legacy，优先 TimedHit）")]
         public SkillHitProfile playerSkillHitProfile;
+
+        [Header("Timed Hit Profiles（普攻/E/R，按角色）")]
+        [Tooltip("Assets/HitProfile/HitProfile_漂泊者")]
+        public TimedHitProfile timedHitWanderer;
+        [Tooltip("Assets/HitProfile/HitProfile_千咲")]
+        public TimedHitProfile timedHitQianxiao;
+        [Tooltip("Assets/HitProfile/HitProfile_柯莱塔")]
+        public TimedHitProfile timedHitColetta;
 
         [Header("Skill Hit SFX")]
         [Tooltip("Assets/Audio/FatKick_R.wav — Hit_Chest_R")]
@@ -56,6 +64,10 @@ namespace AttackSkill.Character
         public GameObject swordPrefab;
         [Tooltip("挂到 wings_pos：Prefabs/Tools/哥伦比亚的翅膀")]
         public GameObject wingsPrefab;
+
+        [Header("Skill R")]
+        [Tooltip("Assets/Prefabs/VFX/AoE slash orange.prefab — 挂到 R_Hit_Root")]
+        public GameObject skillRAoeVfxPrefab;
 
         [Header("Flight Airflow Vfx")]
         [Tooltip("Prefabs/VFX/Sparks blue — 翅膀/御剑飞行气流")]
@@ -126,6 +138,41 @@ namespace AttackSkill.Character
         public GameObject GetDamageNumberPrefab() => damageNumberPrefab;
         public GameObject GetEnemyBloodPrefab() => enemyBloodPrefab;
         public GameObject GetObtainRemainsPrefab() => obtainRemainsPrefab;
+        public GameObject GetSkillRAoeVfx() => skillRAoeVfxPrefab;
+
+        public TimedHitProfile GetTimedHitProfile(PartyPortraitId portraitId)
+        {
+            EnsureTimedHitProfilesLoaded();
+            switch (portraitId)
+            {
+                case PartyPortraitId.Qianxiao:
+                    return timedHitQianxiao != null ? timedHitQianxiao : timedHitWanderer;
+                case PartyPortraitId.Coletta:
+                    return timedHitColetta != null ? timedHitColetta : timedHitWanderer;
+                case PartyPortraitId.WandererMale:
+                case PartyPortraitId.WandererFemale:
+                default:
+                    return timedHitWanderer;
+            }
+        }
+
+        void EnsureTimedHitProfilesLoaded()
+        {
+            if (timedHitWanderer == null)
+            {
+                timedHitWanderer = Resources.Load<TimedHitProfile>("HitProfile/HitProfile_漂泊者");
+            }
+
+            if (timedHitQianxiao == null)
+            {
+                timedHitQianxiao = Resources.Load<TimedHitProfile>("HitProfile/HitProfile_千咲");
+            }
+
+            if (timedHitColetta == null)
+            {
+                timedHitColetta = Resources.Load<TimedHitProfile>("HitProfile/HitProfile_柯莱塔");
+            }
+        }
 
         public SkillHitProfile GetPlayerSkillHitProfile()
         {
@@ -230,6 +277,12 @@ namespace AttackSkill.Character
                     "Assets/Prefabs/Tools/哥伦比亚的翅膀.prefab");
             }
 
+            if (skillRAoeVfxPrefab == null)
+            {
+                skillRAoeVfxPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/VFX/AoE slash orange.prefab");
+            }
+
             if (snowHitVfxPrefab == null)
             {
                 snowHitVfxPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
@@ -246,6 +299,24 @@ namespace AttackSkill.Character
             {
                 playerSkillHitProfile = UnityEditor.AssetDatabase.LoadAssetAtPath<SkillHitProfile>(
                     "Assets/Resources/Combat/SkillHit_Player_E.asset");
+            }
+
+            if (timedHitWanderer == null)
+            {
+                timedHitWanderer = UnityEditor.AssetDatabase.LoadAssetAtPath<TimedHitProfile>(
+                    "Assets/HitProfile/HitProfile_漂泊者.asset");
+            }
+
+            if (timedHitQianxiao == null)
+            {
+                timedHitQianxiao = UnityEditor.AssetDatabase.LoadAssetAtPath<TimedHitProfile>(
+                    "Assets/HitProfile/HitProfile_千咲.asset");
+            }
+
+            if (timedHitColetta == null)
+            {
+                timedHitColetta = UnityEditor.AssetDatabase.LoadAssetAtPath<TimedHitProfile>(
+                    "Assets/HitProfile/HitProfile_柯莱塔.asset");
             }
 
             if (flightAirflowVfxPrefab == null)

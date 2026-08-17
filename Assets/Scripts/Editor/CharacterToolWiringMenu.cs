@@ -14,6 +14,7 @@ namespace AttackSkill.EditorTools
         const string MotorcyclePath = "Assets/Prefabs/Tools/摩托.prefab";
         const string SwordPath = "Assets/Prefabs/Tools/脆刃.prefab";
         const string WingsPath = "Assets/Prefabs/Tools/哥伦比亚的翅膀.prefab";
+        const string SkillRAoePath = "Assets/Prefabs/VFX/AoE slash orange.prefab";
 
         [MenuItem("AttackSkill/Character/Assign Tool Prefabs To Runtime Settings")]
         public static void AssignToolPrefabs()
@@ -28,6 +29,7 @@ namespace AttackSkill.EditorTools
             settings.motorcyclePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MotorcyclePath);
             settings.swordPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SwordPath);
             settings.wingsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(WingsPath);
+            settings.skillRAoeVfxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SkillRAoePath);
             EditorUtility.SetDirty(settings);
             AssetDatabase.SaveAssets();
 
@@ -35,7 +37,8 @@ namespace AttackSkill.EditorTools
                 $"[CharacterToolWiring] RuntimeSettings Tools → " +
                 $"moto={(settings.motorcyclePrefab != null ? settings.motorcyclePrefab.name : "null")}, " +
                 $"sword={(settings.swordPrefab != null ? settings.swordPrefab.name : "null")}, " +
-                $"wings={(settings.wingsPrefab != null ? settings.wingsPrefab.name : "null")}");
+                $"wings={(settings.wingsPrefab != null ? settings.wingsPrefab.name : "null")}, " +
+                $"skillRAoe={(settings.skillRAoeVfxPrefab != null ? settings.skillRAoeVfxPrefab.name : "null")}");
             Selection.activeObject = settings;
         }
 

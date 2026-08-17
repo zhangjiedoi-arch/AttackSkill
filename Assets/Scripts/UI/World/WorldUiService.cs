@@ -1,4 +1,5 @@
 using AttackSkill.Character;
+using AttackSkill.Combat;
 using AttackSkill.Core;
 using AttackSkill.Enemy;
 using UnityEngine;
@@ -201,14 +202,19 @@ namespace AttackSkill.UI.World
             return WorldUiScreen.IsOccluded(WorldCamera, worldPos, occlusionMask, ignoreA, ignoreB);
         }
 
-        public void SpawnDamageNumber(float amount, Vector3 worldPosition, Transform ignoreRoot)
+        public void SpawnDamageNumber(
+            float amount,
+            Vector3 worldPosition,
+            Transform ignoreRoot,
+            bool isCritical = false,
+            CombatElement element = CombatElement.Light)
         {
             if (_damagePool == null)
             {
                 Bootstrap();
             }
 
-            _damagePool?.Spawn(amount, worldPosition, damageNumberLifetime, ignoreRoot);
+            _damagePool?.Spawn(amount, worldPosition, damageNumberLifetime, ignoreRoot, isCritical, element);
         }
 
         public EnemyBloodHud AttachEnemyBlood(EnemyAgent agent)
@@ -390,7 +396,7 @@ namespace AttackSkill.UI.World
                 pos += Vector3.up * 0.25f;
             }
 
-            _svc.SpawnDamageNumber(info.Amount, pos, enemyRoot);
+            _svc.SpawnDamageNumber(info.Amount, pos, enemyRoot, info.IsCritical, info.AttackElement);
         }
     }
 }

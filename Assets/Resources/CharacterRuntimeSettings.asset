@@ -26,9 +26,22 @@ MonoBehaviour:
     type: 3}
   playerSkillHitProfile: {fileID: 11400000, guid: 9b6e48e8716840b6801bd5ba0819544a,
     type: 2}
+  timedHitWanderer: {fileID: 11400000, guid: CHJN5CioACpSM+Nml82ZZeebEKqL5em6mfiLGJ0GMTANdTDWgmyPdc0=,
+    type: 2}
+  timedHitQianxiao: {fileID: 11400000, guid: XX8c43urAHmIcT8uO6okTNF2wt2W3PgBcLn3Sd1DqJMRkgHNlW4oRSQ=,
+    type: 2}
+  timedHitColetta: {fileID: 11400000, guid: XH9Jty2sBSiPWtJt/DC+7SWYLsLhRadYfhrNwCRes9q2KdwZ5WA5pac=,
+    type: 2}
   skillHitFatKickR: {fileID: 8300000, guid: 62ba94affe7a32742a764d31e61d68b7, type: 3}
   skillHitFatKickL: {fileID: 8300000, guid: 38015c63fc212a642bcc0d4ac492107e, type: 3}
   skillHitRootLand: {fileID: 8300000, guid: ee88ac78e641f5d47904a38324f2b78c, type: 3}
+  damageNumberPrefab: {fileID: 4973724643811855906, guid: a176988c80c3dac46ac96bdb418696a3,
+    type: 3}
+  enemyBloodPrefab: {fileID: 1648314220535259565, guid: af35d3ddaaa28004dbdc140a4cfa4860,
+    type: 3}
+  obtainRemainsPrefab: {fileID: 1372692002714160953, guid: 546e1d01dd899a046b24eaaa10d9c1f9,
+    type: 3}
+  enemyBloodVisibleRange: 20
   maleWandererPrefab: {fileID: 7639974735270619696, guid: 1bbfbf904b0d73c40871f648dfd8a942,
     type: 3}
   femaleWandererPrefab: {fileID: 3366788020637224096, guid: 160f0cc8b612538458ac93ed24dabefe,
@@ -42,6 +55,8 @@ MonoBehaviour:
   swordPrefab: {fileID: 3308759044084556827, guid: 4027efd4216cbac48a6f915799fde5bf,
     type: 3}
   wingsPrefab: {fileID: 7399971807165125139, guid: 84ea7250336d3694499d8dccd978b12f,
+    type: 3}
+  skillRAoeVfxPrefab: {fileID: 689667626583958020, guid: e063914682f20e549bbd9b0f779c0b2d,
     type: 3}
   flightAirflowVfxPrefab: {fileID: 7045889733438899885, guid: 89b00483afac5f541be3373c7b436aba,
     type: 3}

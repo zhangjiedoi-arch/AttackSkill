@@ -10,6 +10,10 @@ namespace AttackSkill.Combat
         public float Knockback;
         public int ComboIndex;
         public GameObject Attacker;
+        /// <summary>结算后是否暴击（DamageCalculator 写入）。</summary>
+        public bool IsCritical;
+        /// <summary>攻击方元素（DamageCalculator 写入）。</summary>
+        public CombatElement AttackElement;
 
         public DamageInfo(float amount, Vector3 hitPoint, Vector3 hitDirection, float knockback, int comboIndex, GameObject attacker)
         {
@@ -19,6 +23,8 @@ namespace AttackSkill.Combat
             Knockback = knockback;
             ComboIndex = comboIndex;
             Attacker = attacker;
+            IsCritical = false;
+            AttackElement = CombatElement.Light;
         }
     }
 

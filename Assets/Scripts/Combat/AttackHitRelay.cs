@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using AttackSkill.Character;
 
@@ -5,8 +6,8 @@ namespace AttackSkill.Combat
 {    [System.Serializable]
     public class AttackSwingConfig
     {
-        [Tooltip("本段伤害")]
-        public float Damage = 10f;
+        [Tooltip("本段伤害倍率%（100=100%攻击力）；无 TimedHitProfile 时以 Profile 为准")]
+        public float Damage = 100f;
         [Tooltip("扇形半径")]
         public float HitRadius = 2.2f;
         [Tooltip("扇形全角（度），以角色朝向为中心")]
@@ -27,8 +28,8 @@ namespace AttackSkill.Combat
     }
 
     /// <summary>
-    /// 接收动画事件，负责出刀特效与扇形伤害检测。
-    /// 必须挂在带 Animator 的同一物体上（Animation Event 才能调到）。
+    /// 普攻/技能出伤：HSM 驱动 TimedHitProfile（normalizedTime），经形状检测与 HitResolver。
+    /// 挂在带 Animator 的同一物体上以便读动画进度。
     /// </summary>
     public class AttackHitRelay : MonoBehaviour
     {
@@ -43,15 +44,18 @@ namespace AttackSkill.Combat
         [SerializeField] LayerMask hurtboxMask = ~0;
         [SerializeField] bool drawDebug = false;
 
-        [Header("Combo 0/1/2 = attack1/2/3")]
+        [Header("Combo 0/1/2 fallback（无 TimedHit 段时）")]
         [SerializeField] AttackSwingConfig[] swings =
         {
-            new AttackSwingConfig { Damage = 10f, HitRadius = 2.0f, FanAngle = 80f, Knockback = 1.2f },
-            new AttackSwingConfig { Damage = 14f, HitRadius = 2.3f, FanAngle = 100f, Knockback = 1.6f },
-            new AttackSwingConfig { Damage = 22f, HitRadius = 2.6f, FanAngle = 120f, Knockback = 2.4f }
+            new AttackSwingConfig { Damage = 100f, HitRadius = 2.0f, FanAngle = 80f, Knockback = 1.2f },
+            new AttackSwingConfig { Damage = 120f, HitRadius = 2.3f, FanAngle = 100f, Knockback = 1.6f },
+            new AttackSwingConfig { Damage = 150f, HitRadius = 2.6f, FanAngle = 120f, Knockback = 2.4f }
         };
 
-        [Header("Skill Hit Profile (E 技能等)")]
+        [Header("Timed Hit Profile（normalizedTime，无动画 Event）")]
+        [SerializeField] TimedHitProfile timedHitProfile;
+
+        [Header("Skill Hit Profile (legacy / Gizmo 兜底)")]
         [SerializeField] SkillHitProfile skillHitProfile;
         [SerializeField] Transform hitChestR;
         [SerializeField] Transform hitChestL;
@@ -70,12 +74,19 @@ namespace AttackSkill.Combat
         };
 
         readonly HitSession _hitSession = new HitSession();
+        readonly HashSet<int> _timedFiredKeys = new HashSet<int>();
         int _activeCombo = -1;
         int _swingSerial;
         Collider[] _overlapBuffer = new Collider[32];
         Collider[] _overlapScratch = new Collider[32];
         bool _suppressAnimHits;
         bool _socketVfxPrewarmed;
+        bool _timedActive;
+        int _timedCombo = -1;
+        string _timedPhaseId;
+        float _prevNormalized;
+        bool _hasTimedSample;
+        Animator _animator;
 
         struct SocketGizmoFlash
         {
@@ -208,11 +219,24 @@ namespace AttackSkill.Combat
             EnsureSkillHitProfile();
         }
 
+        public void SetTimedHitProfile(TimedHitProfile profile)
+        {
+            timedHitProfile = profile;
+        }
+
+        public TimedHitProfile TimedHitProfile => timedHitProfile;
+
         void Awake()
         {
             if (ownerRoot == null)
             {
                 ownerRoot = transform.root;
+            }
+
+            _animator = GetComponent<Animator>();
+            if (_animator == null)
+            {
+                _animator = GetComponentInParent<Animator>();
             }
 
             // Everything / 未指定 → 玩家进攻用层（含 Default，避免只扫 Enemy 漏检）
@@ -244,61 +268,13 @@ namespace AttackSkill.Combat
                 Debug.Log($"[AttackHit] weapon={weapon.name} parent={(weapon.parent != null ? weapon.parent.name : "null")}", weapon);
             }
 
-            // 大剑默认隐藏，仅普攻三段期间显示
+            // 大剑 / Weapon_Pos 默认隐藏，仅普攻期间显示 Weapon_Pos
             SetWeaponVisible(false);
         }
 
-        /// <summary>
-        /// 推荐动画 Event：只传段下标（与 SkillHitProfile.segments 对齐）。
-        /// </summary>
-        public void SkillHit(int segmentIndex)
+        void Update()
         {
-            if (_suppressAnimHits)
-            {
-                return;
-            }
-
-            EnsureHitSockets();
-            SkillHitProfile profile = EnsureSkillHitProfile();
-            if (profile == null || !profile.TryGetSegment(segmentIndex, out SkillHitSegment segment))
-            {
-                Debug.LogWarning($"[AttackHit] SkillHit({segmentIndex}) 无有效段配置。", this);
-                return;
-            }
-
-            PulseSegmentGizmo(segment);
-            int hit = SkillHitExecutor.Execute(segment, BuildSkillHitContext(comboIndex: 100 + segmentIndex));
-            if (drawDebug)
-            {
-                Debug.Log(
-                    $"[AttackHit] SkillHit({segmentIndex}) id={segment.id} socket={segment.socket} applied={hit}",
-                    this);
-            }
-        }
-
-        /// <summary>兼容旧 Event 名：按挂点查段表。</summary>
-        public void Hit_Chest_R() => SkillHitBySocket(HitSocketId.Hit_Chest_R);
-
-        public void Hit_Chest_L() => SkillHitBySocket(HitSocketId.Hit_Chest_L);
-
-        public void Hit_Root() => SkillHitBySocket(HitSocketId.Hit_Root);
-
-        void SkillHitBySocket(HitSocketId socket)
-        {
-            SkillHitProfile profile = EnsureSkillHitProfile();
-            if (profile == null)
-            {
-                return;
-            }
-
-            int index = profile.FindIndexBySocket(socket);
-            if (index < 0)
-            {
-                Debug.LogWarning($"[AttackHit] Profile 中无 socket={socket} 的段。", this);
-                return;
-            }
-
-            SkillHit(index);
+            TickTimedHits();
         }
 
         SkillHitExecutor.Context BuildSkillHitContext(int comboIndex)
@@ -315,7 +291,7 @@ namespace AttackSkill.Combat
                 Scratch = _overlapScratch,
                 PlanarForward = GetPlanarForward(),
                 ComboIndex = comboIndex,
-                ClearSession = true,
+                ClearSession = false,
                 DrawDebug = drawDebug,
                 LogContext = this,
             };
@@ -734,32 +710,96 @@ namespace AttackSkill.Combat
             return null;
         }
 
-        /// <summary>显示/隐藏大剑（及其渲染物体）。</summary>
+        /// <summary>显示/隐藏 <c>Weapon_Pos</c>（普攻期间显示，结束隐藏）。</summary>
         public void SetWeaponVisible(bool visible)
         {
-            if (weapon == null)
-            {
-                weapon = FindWeaponTransform(OwnerRoot);
-            }
-
-            if (weapon == null)
+            Transform weaponPos = ResolveWeaponPos();
+            if (weaponPos == null)
             {
                 return;
             }
 
-            if (weapon.gameObject.activeSelf != visible)
+            if (weaponPos.gameObject.activeSelf != visible)
             {
-                weapon.gameObject.SetActive(visible);
+                weaponPos.gameObject.SetActive(visible);
             }
         }
 
-        /// <summary>HSM 每段攻击开始时调用，清空本段命中记录。</summary>
+        Transform ResolveWeaponPos()
+        {
+            Transform root = OwnerRoot != null ? OwnerRoot : transform;
+            var avatar = root.GetComponent<CharacterAvatar>();
+            if (avatar == null)
+            {
+                avatar = root.GetComponentInChildren<CharacterAvatar>(true);
+            }
+
+            if (avatar != null)
+            {
+                if (avatar.SkillR == null || avatar.SkillR.WeaponPos == null)
+                {
+                    avatar.AutoBind();
+                }
+
+                if (avatar.SkillR?.WeaponPos != null)
+                {
+                    return avatar.SkillR.WeaponPos;
+                }
+            }
+
+            return FindChildExact(root, CharacterAvatar.WeaponPosName);
+        }
+
+        /// <summary>HSM 每段普攻开始：清命中表并按 attack1/2/3 启动 TimedHit。</summary>
         public void BeginSwing(int comboIndex)
         {
-            _activeCombo = Mathf.Clamp(comboIndex, 0, Mathf.Max(0, swings.Length - 1));
-            _hitSession.Begin();
+            _activeCombo = Mathf.Clamp(comboIndex, 0, 2);
             _swingSerial++;
             SetWeaponVisible(true);
+
+            string phaseId = "attack1";
+            if (_activeCombo == 1)
+            {
+                phaseId = "attack2";
+            }
+            else if (_activeCombo == 2)
+            {
+                phaseId = "attack3";
+            }
+
+            BeginTimedPhase(phaseId, _activeCombo);
+        }
+
+        /// <summary>HSM 进入 skill / Skill_R 等：按 phase id 启动 TimedHit。</summary>
+        public void BeginTimedPhase(string phaseId, int comboIndex = -1)
+        {
+            if (string.IsNullOrEmpty(phaseId))
+            {
+                EndTimedPhase();
+                return;
+            }
+
+            _hitSession.Begin();
+            _timedPhaseId = phaseId;
+            _timedCombo = comboIndex;
+            _prevNormalized = 0f;
+            _hasTimedSample = false;
+            _timedFiredKeys.Clear();
+            _timedActive = timedHitProfile != null;
+            if (drawDebug && !_timedActive)
+            {
+                Debug.LogWarning($"[AttackHit] BeginTimedPhase({phaseId}) 但 TimedHitProfile 为空。", this);
+            }
+        }
+
+        public void EndTimedPhase()
+        {
+            _timedActive = false;
+            _timedPhaseId = null;
+            _timedCombo = -1;
+            _hasTimedSample = false;
+            _prevNormalized = 0f;
+            _timedFiredKeys.Clear();
         }
 
         public void EndCombat()
@@ -767,55 +807,7 @@ namespace AttackSkill.Combat
             _activeCombo = -1;
             _hitSession.Clear();
             SetWeaponVisible(false);
-        }
-
-        /// <summary>
-        /// 动画 Event：出刀帧调用。可无参（用当前 BeginSwing 的 combo），或传 0/1/2。
-        /// </summary>
-        public void OnAttackHit()
-        {
-            if (_suppressAnimHits)
-            {
-                return;
-            }
-
-            DoHit(_activeCombo >= 0 ? _activeCombo : 0);
-        }
-
-        public void OnAttackHit(int comboIndex)
-        {
-            if (_suppressAnimHits)
-            {
-                return;
-            }
-
-            DoHit(comboIndex);
-        }
-
-        /// <summary>
-        /// 动画 Event：出刀特效。可无参或传 comboIndex。
-        /// </summary>
-        public void OnAttackVfx()
-        {
-            if (_suppressAnimHits)
-            {
-                return;
-            }
-
-            int combo = _activeCombo >= 0 ? _activeCombo : 0;
-            PlaySwingSfx(combo <= 0 ? 0 : 1);
-            SpawnSlashVfx(_activeCombo >= 0 ? _activeCombo : 0);
-        }
-
-        public void OnAttackVfx(int comboIndex)
-        {
-            if (_suppressAnimHits)
-            {
-                return;
-            }
-
-            PlaySwingSfx(comboIndex);
-            SpawnSlashVfx(comboIndex);
+            EndTimedPhase();
         }
 
         /// <summary>脚本主动播刀光（不受 SuppressAnimHits 影响）。</summary>
@@ -824,34 +816,145 @@ namespace AttackSkill.Combat
             SpawnSlashVfx(comboIndex);
         }
 
-        /// <summary>同帧出伤+特效（动画只挂一个 Event 时用）。</summary>
-        public void OnAttackStrike()
+        void TickTimedHits()
         {
-            if (_suppressAnimHits)
+            if (!_timedActive || timedHitProfile == null || _suppressAnimHits)
             {
                 return;
             }
 
-            int combo = _activeCombo >= 0 ? _activeCombo : 0;
-            PlaySwingSfx(combo <= 0 ? 0 : 1);
-            SpawnSlashVfx(combo);
-            DoHit(combo);
+            if (_animator == null)
+            {
+                _animator = GetComponent<Animator>();
+                if (_animator == null)
+                {
+                    return;
+                }
+            }
+
+            if (!timedHitProfile.TryGetPhaseById(_timedPhaseId, out TimedAttackPhase phase) || phase == null)
+            {
+                return;
+            }
+
+            // 必须等 Animator 真正进入本 phase 状态（或正在过渡进去），
+            // 否则会误用上一状态的 normalizedTime，E 等技能会双播特效/出伤。
+            if (!TryGetPhaseNormalized(phase, out float curr))
+            {
+                return;
+            }
+
+            float prev = _hasTimedSample ? _prevNormalized : 0f;
+            if (curr + 0.0001f < prev)
+            {
+                // 过渡结束切 Current 时进度可能回跳：只同步进度，不从 0 重放 cue
+                _prevNormalized = curr;
+                _hasTimedSample = true;
+                return;
+            }
+
+            if (phase.cues != null)
+            {
+                for (int i = 0; i < phase.cues.Length; i++)
+                {
+                    TimedHitCue cue = phase.cues[i];
+                    if (cue == null)
+                    {
+                        continue;
+                    }
+
+                    bool wantPres = cue.ShouldPlayPresentation(prev, curr);
+                    bool wantHit = cue.ShouldSampleHit(prev, curr);
+                    if (!wantPres && !wantHit)
+                    {
+                        continue;
+                    }
+
+                    // 一次性 cue 防重入（进度回跳 / 双源采样）
+                    bool playPres = wantPres && TryMarkTimedFire(i, isPresentation: true);
+                    bool sampleHit = wantHit &&
+                                     (cue.continuousHitSampling || TryMarkTimedFire(i, isPresentation: false));
+                    if (!playPres && !sampleHit)
+                    {
+                        continue;
+                    }
+
+                    SkillHitExecuteFlags flags = SkillHitExecuteFlags.None;
+                    if (playPres)
+                    {
+                        flags |= SkillHitExecuteFlags.Presentation;
+                    }
+
+                    if (sampleHit)
+                    {
+                        flags |= SkillHitExecuteFlags.Hit;
+                    }
+
+                    if (cue.segment != null)
+                    {
+                        PulseSegmentGizmo(cue.segment);
+                        int combo = _timedCombo >= 0 ? _timedCombo : phase.comboIndex;
+                        SkillHitExecutor.Execute(cue.segment, BuildSkillHitContext(combo), flags);
+                    }
+                }
+            }
+
+            _prevNormalized = curr;
+            _hasTimedSample = true;
         }
 
-        /// <summary>
-        /// 动画 Event：int 参数 0=swinging，1=large-sword-swing；伤害/刀光仍用当前连段。
-        /// </summary>
-        public void OnAttackStrike(int swingType)
+        bool TryGetPhaseNormalized(TimedAttackPhase phase, out float normalized)
         {
-            if (_suppressAnimHits)
+            normalized = 0f;
+            AnimatorStateInfo current = _animator.GetCurrentAnimatorStateInfo(0);
+            bool inTransition = _animator.IsInTransition(0);
+            AnimatorStateInfo next = inTransition
+                ? _animator.GetNextAnimatorStateInfo(0)
+                : default;
+
+            string stateName = !string.IsNullOrEmpty(phase.animatorStateName)
+                ? phase.animatorStateName
+                : phase.id;
+
+            if (!string.IsNullOrEmpty(stateName))
             {
-                return;
+                if (inTransition && next.fullPathHash != 0 && next.IsName(stateName))
+                {
+                    normalized = Mathf.Clamp01(next.normalizedTime);
+                    return true;
+                }
+
+                if (current.IsName(stateName))
+                {
+                    normalized = Mathf.Clamp01(current.normalizedTime);
+                    return true;
+                }
+
+                // 尚未进入目标状态：不采样
+                return false;
             }
 
-            PlaySwingSfx(swingType);
-            int combo = _activeCombo >= 0 ? _activeCombo : 0;
-            SpawnSlashVfx(combo);
-            DoHit(combo);
+            // 未配置状态名：退回当前（过渡中优先 Next）
+            if (inTransition && next.fullPathHash != 0)
+            {
+                normalized = Mathf.Clamp01(next.normalizedTime);
+                return true;
+            }
+
+            normalized = Mathf.Clamp01(current.normalizedTime);
+            return true;
+        }
+
+        bool TryMarkTimedFire(int cueIndex, bool isPresentation)
+        {
+            int key = isPresentation ? cueIndex : cueIndex + 10000;
+            if (_timedFiredKeys.Contains(key))
+            {
+                return false;
+            }
+
+            _timedFiredKeys.Add(key);
+            return true;
         }
 
         void PlaySwingSfx(int swingType)

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "\u67EF\u83B1\u5854"
+  m_Controller: {fileID: 9100000, guid: 1265f03fda6f1524aa17f959e1ac0b71, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 3625414872004886998, guid: 30509cc5bf472d84fad321c6ef9db963,
+      type: 3}
+    m_OverrideClip: {fileID: 2564068224262579217, guid: c521a2fee74030f4cbcfae5db057a5d1,
+      type: 3}
+  - m_OriginalClip: {fileID: -1662512729948635066, guid: 30509cc5bf472d84fad321c6ef9db963,
+      type: 3}
+    m_OverrideClip: {fileID: 2564068224262579217, guid: c521a2fee74030f4cbcfae5db057a5d1,
+      type: 3}
+  - m_OriginalClip: {fileID: 543990450412311274, guid: 30509cc5bf472d84fad321c6ef9db963,
+      type: 3}
+    m_OverrideClip: {fileID: 2564068224262579217, guid: c521a2fee74030f4cbcfae5db057a5d1,
+      type: 3}
+  - m_OriginalClip: {fileID: 8990922676025542795, guid: 30509cc5bf472d84fad321c6ef9db963,
+      type: 3}
+    m_OverrideClip: {fileID: -3042448386402017758, guid: c521a2fee74030f4cbcfae5db057a5d1,
+      type: 3}
