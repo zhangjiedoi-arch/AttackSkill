@@ -473,7 +473,7 @@ namespace AttackSkill.UI
             UIChangeScenePanel loading = null;
             if (ui != null)
             {
-                loading = ui.OpenPanel(UIId.ChangeScene, LocalizationService.Get(LocalizationTableType.UI, "change_scene_story_1")) as UIChangeScenePanel;
+                loading = ui.OpenPanel(UIId.ChangeScene, LocalizationService.Get(LocalizationTableType.Story, "change_scene_story_1")) as UIChangeScenePanel;
                 loading?.SetProgress(0f);
             }
 

@@ -123,7 +123,7 @@ MonoBehaviour:
           type: 3}
         vfxLife: 1.2
         parentVfxToSocket: 0
-        sfxClip: {fileID: 8300000, guid: ee88ac78e641f5d47904a38324f2b78c, type: 3}
+        sfxClip: {fileID: 8300000, guid: d2c2547514c0e244983d48f41cb50fd1, type: 3}
         sfxVolume: 1
   - id: Skill_R
     comboIndex: 0

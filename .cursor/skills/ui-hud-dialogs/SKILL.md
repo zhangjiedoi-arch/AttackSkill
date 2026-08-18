@@ -9,14 +9,14 @@ description: >-
 
 ## 方案
 
-单 Canvas 分层（Panel / Dialog / Tip）；`UIManager.Open(UIId)` 实例化。战斗 HUD 一次打开四个面板。文案走 `LocalizationService` + `LocalizedText`。
+单 Canvas 分层（Panel / Dialog / Tip）；`UIManager.Open(UIId)` 实例化。战斗 HUD 一次打开五个面板。文案走 `LocalizationService` + `LocalizedText`。
 
 ## 关键文件
 
 - 框架：`UIManager` / `UIBase` / `UIBootstrap` / `UILayer` / `UIId` / `UIPrefabEntry`
-- 战斗：`UIBattlePartyPanel` / `UIBattleCombatPanel` / `UIBattleVitalsPanel` / `UIBattleSystemPanel`
+- 战斗：`UIBattlePartyPanel` / `UIBattleCombatPanel` / `UIBattleVitalsPanel` / `UIBattleSystemPanel` / `UITaskPanel`
 - 轮盘：`UISkillWheelDialog` / `BattleSkillWheelState`
-- 其它：`UIPauseMenuDialog` / `UISettingDialog` / `UILogInDialog` / `UIChooseGenderDialog` / Tip&Sure
+- 其它：`UIPauseMenuDialog` / `UIGameOverDialog` / `UISettingDialog` / `UILogInDialog` / `UIChooseGenderDialog` / Tip&Sure
 - Generated：`Assets/Scripts/UI/Views/Generated/*.Bindings.g.cs`
 - Loc：`LocalizationService` / `LocalizationCatalog` / `LocalizedText` / `LocalizationBootstrap`
 - Resources：`Localization/`（Catalog、Tables、Json Bundle）
@@ -26,7 +26,7 @@ description: >-
 ```text
 UIManager.Open(UIId) → 按层实例化 → partial 视图 + Bindings
 Localization 启动载 Bundle → LocaleChanged → LocalizedText 刷新
-OpenBattleHud() → 四面板
+OpenBattleHud() → 五面板（编队 / 系统 / 战斗键 / 生存 / 任务）
 Tab 轮盘 → SoftBlock + Commit 装备索引
 ```
 
@@ -36,10 +36,10 @@ Tab 轮盘 → SoftBlock + Commit 装备索引
 2. 编辑器可 `EnsureEntry` 自动补 Prefab 路径。
 3. 文案：表 key + Json Bundle；挂 `LocalizedText`。
 4. ActiveLocales 当前 ZhHans / En。
-5. 阻塞玩法 UI：配对 `GameplayInputGate` Push/Pop（参考轮盘）。
+5. 阻塞玩法 UI：配对 `GameplayInputGate` Push/Pop（参考轮盘 / GameOver）。
 6. **勿手改** Generated Bindings；走生成管线。
 7. Tip 用独立层，避免被 Dialog 盖住。
-8. 暂停：`UIPauseMenuDialog` + `GamePause`。
+8. 暂停：`UIPauseMenuDialog` + `GamePause`。全灭：`UIGameOverDialog`（`UIId.GameOver`），ESC 不关。
 9. HUD E/R 按钮走 `CombatSkillInput` / `CombatSkillRInput`；T/Q/E/R 冷却见 `PartySkillCooldown` + `CombatStats`；`imgFill`：0=进 CD、1=可用；`txtFill` 显示剩余秒（&lt;1s 为 0.x）。
 10. 占位技能键可能只 Tip（README 已说明），加功能时接真实输入。
 

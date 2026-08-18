@@ -68,17 +68,22 @@ namespace AttackSkill.Combat
 
             if ((flags & HitResolveFlags.SkipFriendlyPlayerCharacters) != 0 &&
                 hint != null &&
-                hint.GetComponentInParent<GenshinLikeCharacter>() != null)
+                (hint.GetComponentInParent<GenshinLikeCharacter>() != null ||
+                 RougeDecoyTree.IsDecoy(hint)))
             {
                 reject = HitRejectReason.FriendlyPlayerCharacter;
                 return false;
             }
 
-            if ((flags & HitResolveFlags.ActivePlayerOnly) != 0 &&
-                (hint == null || !PlayerTargetLocator.IsActivePlayer(hint)))
+            if ((flags & HitResolveFlags.ActivePlayerOnly) != 0)
             {
-                reject = HitRejectReason.NotActivePlayer;
-                return false;
+                bool isActivePlayer = hint != null && PlayerTargetLocator.IsActivePlayer(hint);
+                bool isDecoy = hint != null && RougeDecoyTree.IsDecoy(hint);
+                if (!isActivePlayer && !isDecoy)
+                {
+                    reject = HitRejectReason.NotActivePlayer;
+                    return false;
+                }
             }
 
             if (request.Session != null)
@@ -93,11 +98,27 @@ namespace AttackSkill.Combat
 
             DamageInfo resolved = ResolveDamage(request);
             ApplyIncomingRougeMods(ref resolved, request);
+
+            bool aliveBefore = request.Target.IsAlive;
             request.Target.TakeDamage(resolved);
             TryApplyLifesteal(resolved);
+
+            if (aliveBefore &&
+                !request.Target.IsAlive &&
+                IsPlayerAttacker(resolved.Attacker))
+            {
+                RougePassiveEffects.NotifyEnemyKilledByPlayer();
+            }
+
             SpawnHitVfx(request);
             Applied?.Invoke(resolved, request.Target);
             return true;
+        }
+
+        static bool IsPlayerAttacker(GameObject attacker)
+        {
+            return attacker != null &&
+                   attacker.GetComponentInParent<GenshinLikeCharacter>() != null;
         }
 
         static void ApplyIncomingRougeMods(ref DamageInfo resolved, in HitRequest request)
@@ -143,9 +164,11 @@ namespace AttackSkill.Combat
         {
             CombatStats attackerStats = CombatStats.Find(request.Damage.Attacker);
             CombatStats defenderStats = null;
+            Health defenderHealth = null;
             if (request.TargetHint != null)
             {
                 defenderStats = CombatStats.Find(request.TargetHint);
+                defenderHealth = request.TargetHint.GetComponentInParent<Health>();
             }
 
             if (defenderStats == null && request.Target is Component targetComp)
@@ -153,7 +176,16 @@ namespace AttackSkill.Combat
                 defenderStats = CombatStats.Find(targetComp);
             }
 
-            return DamageCalculator.Resolve(request.Damage, attackerStats, defenderStats);
+            if (defenderHealth == null && request.Target is Component healthComp)
+            {
+                defenderHealth = healthComp as Health ?? healthComp.GetComponentInParent<Health>();
+            }
+
+            return DamageCalculator.Resolve(
+                request.Damage,
+                attackerStats,
+                defenderStats,
+                defenderHealth);
         }
 
         /// <summary>

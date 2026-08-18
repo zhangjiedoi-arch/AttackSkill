@@ -33,6 +33,13 @@ namespace AttackSkill.Enemy
             // 目标失效（切人销毁/残留）时清掉
             if (_target != null)
             {
+                var health = _target.GetComponentInParent<AttackSkill.Combat.Health>();
+                if (health != null && !health.IsAlive)
+                {
+                    Clear();
+                    return;
+                }
+
                 var character = _target.GetComponentInParent<Character.HSM.GenshinLikeCharacter>();
                 if (character != null && !character.IsActive)
                 {

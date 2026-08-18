@@ -54,15 +54,20 @@ MonoBehaviour:
   motorcycleGoOn: {fileID: 8300000, guid: 93dd9bb2a9843d94db7a15013df3269f, type: 3}
   motorcycleJump: {fileID: 8300000, guid: 3dad4c5dfa6f31643818fd8a251c3b4e, type: 3}
   seaBgm: {fileID: 8300000, guid: c853e282f048a054f8bf20c7b9164744, type: 3}
+  droneBgm: {fileID: 8300000, guid: 82d12234ee72fd948bac09da4c1cd93e, type: 3}
   healingCirclePrefab: {fileID: 4725640929471047566, guid: ea025e38db27a9c4a919fdbee358bf3b,
     type: 3}
   healingAuraPrefab: {fileID: 6208152671289787366, guid: cc1598632b395c94f955c6d0772923b6,
     type: 3}
-  enemyHealDropChance: 0.3
+  enemyHealDropChance: 0.1
   healingCircleRadius: 3
   healingCircleHealPerSecond: 100
   healingCircleLifetime: 4
   expOrbPrefab: {fileID: 2090106336891284076, guid: 9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b,
+    type: 3}
+  fireOrbitBladePrefab: {fileID: 4959712587288522256, guid: 0d39657d8e92699469a3e89c41e61f73,
+    type: 3}
+  windOrbitBladePrefab: {fileID: 5860371448336946613, guid: 8559f10472e387c45a3ff676f50f429e,
     type: 3}
   iconPlayerFemale: {fileID: 21300000, guid: eb014200e43cb28468b762a4e2be3feb, type: 3}
   iconPlayerMale: {fileID: 21300000, guid: c683f4a40b91c7e4ba559b5209624e4d, type: 3}

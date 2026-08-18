@@ -32,6 +32,7 @@ MonoImporter:
   - motorcycleGoOn: {instanceID: 0}
   - motorcycleJump: {instanceID: 0}
   - seaBgm: {instanceID: 0}
+  - droneBgm: {instanceID: 0}
   - iconPlayerFemale: {instanceID: 0}
   - iconPlayerMale: {instanceID: 0}
   - iconQianxiao: {instanceID: 0}

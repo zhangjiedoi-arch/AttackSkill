@@ -62,6 +62,7 @@ namespace AttackSkill.UI
         void OnRougeChanged()
         {
             RefreshLevelAndExp();
+            RefreshHp();
         }
 
         void RefreshLevelAndExp()

@@ -11,6 +11,7 @@ using AttackSkill.Core;
 using AttackSkill.Enemy;
 using AttackSkill.Game;
 using AttackSkill.Localization;
+using AttackSkill.Rouge;
 using AttackSkill.UI;
 
 namespace AttackSkill.Character
@@ -38,7 +39,7 @@ namespace AttackSkill.Character
 
         [Header("Spawn")]
         [Tooltip("开局 / 单人死亡重生坐标")]
-        [SerializeField] Vector3 spawnPosition = new Vector3(-497.5f, 0.1f, -21.5f);
+        [SerializeField] Vector3 spawnPosition = new Vector3(35f, 0f, 15f);
         [Tooltip("开局时把 PartyController 物体也移到 spawnPosition")]
         [SerializeField] bool syncTransformToSpawn = true;
         [Tooltip("有 GameProgress 时由进度系统驱动开局生成，避免与读档抢跑")]
@@ -71,8 +72,11 @@ namespace AttackSkill.Character
         bool _soloRespawning;
         bool _playStarted;
         bool _genderRosterApplied;
+        bool _gameOverShown;
+        bool _restarting;
         Coroutine _soloRespawnCoroutine;
         readonly List<GenshinLikeCharacter> _spawned = new List<GenshinLikeCharacter>();
+        bool[] _fallen;
 
         /// <summary>最近一次有效玩法位姿（切人/重生时沿用，避免回到默认出生点）。</summary>
         Vector3 _lastGameplayPos;
@@ -83,6 +87,13 @@ namespace AttackSkill.Character
         public int ActiveIndex { get; private set; } = -1;
         public int MemberCount => characterPrefabs != null ? characterPrefabs.Length : 0;
         public bool PlayStarted => _playStarted;
+        public bool IsGameOverShown => _gameOverShown;
+
+        public bool IsSlotFallen(int index)
+        {
+            EnsureFallenArray();
+            return _fallen != null && index >= 0 && index < _fallen.Length && _fallen[index];
+        }
 
         /// <summary>当前队伍槽位对应的 Prefab（未组队时可能为空）。</summary>
         public GameObject GetMemberPrefab(int index)
@@ -191,6 +202,9 @@ namespace AttackSkill.Character
 
         /// <summary>切人成功（含开局首次生成）后触发，参数为新 Active 槽位下标。</summary>
         public event Action<int> ActiveChanged;
+
+        /// <summary>本局阵亡槽位变化（头像置灰 / 禁止切人）。</summary>
+        public event Action FallenChanged;
 
         void Awake()
         {
@@ -399,6 +413,7 @@ namespace AttackSkill.Character
                 return;
             }
 
+            ClearFallen(notify: false);
             SyncGenderFromPendingIfNeeded();
             EnsureGenderRoster();
 
@@ -555,8 +570,11 @@ namespace AttackSkill.Character
                                            UIManager.Instance.IsOpen(UIId.BattleCombat);
             if (!tabReservedForSkillWheel && GameInput.GetKeyDown(nextMemberKey))
             {
-                int next = ActiveIndex < 0 ? 0 : (ActiveIndex + 1) % MemberCount;
-                TrySwitchTo(next);
+                int next = FindNextLivingIndex(ActiveIndex);
+                if (next >= 0)
+                {
+                    TrySwitchTo(next);
+                }
             }
 
             if (slotKeys != null)
@@ -583,12 +601,18 @@ namespace AttackSkill.Character
                 return false;
             }
 
+            if (IsSlotFallen(index))
+            {
+                return false;
+            }
+
             if (ActiveIndex >= 0 && index == ActiveIndex)
             {
                 return false;
             }
 
-            if (ActiveIndex >= 0 && Time.time < _lastSwitchTime + switchCooldown)
+            if (ActiveIndex >= 0 &&
+                Time.time < _lastSwitchTime + AttackSkill.Rouge.RougePassiveEffects.GetSwitchCooldown(switchCooldown))
             {
                 return false;
             }
@@ -602,6 +626,11 @@ namespace AttackSkill.Character
         bool SwitchTo(int index, Vector3 worldPos, Quaternion worldRot, bool force, bool applySpawnOffset = true)
         {
             if (!force && ActiveIndex >= 0 && index == ActiveIndex)
+            {
+                return false;
+            }
+
+            if (!_restarting && IsSlotFallen(index))
             {
                 return false;
             }
@@ -681,6 +710,7 @@ namespace AttackSkill.Character
             RememberPose(spawnPos, worldRot);
             PlayerTargetLocator.InvalidateCache();
             AttackSkill.Rouge.RougePassiveEffects.ApplyAbyssPactToActiveParty();
+            AttackSkill.Rouge.RougeOrbitWeaponDriver.BindToActiveImmediate();
 
             if (old != null)
             {
@@ -839,6 +869,7 @@ namespace AttackSkill.Character
             CharacterRuntimeAssembler.ApplyCombatStatsForPortrait(
                 character.gameObject,
                 GetPortraitId(index));
+            AttackSkill.Rouge.RougePassiveEffects.ApplyMaxHpMul(character);
 
             PlayerHurtbox.Ensure(character.gameObject);
 
@@ -869,7 +900,7 @@ namespace AttackSkill.Character
 
         void OnActiveCharacterDied(GenshinLikeCharacter character)
         {
-            if (character == null || character != _active)
+            if (_restarting || character == null || character != _active)
             {
                 return;
             }
@@ -880,24 +911,190 @@ namespace AttackSkill.Character
             Quaternion deathRot = character.transform.rotation;
             RememberPose(deathPos, deathRot);
 
-            // 多人队：立刻切到下一名（新实例满血，继承死亡点）
-            if (MemberCount > 1)
+            int deadIndex = ActiveIndex;
+            MarkFallen(deadIndex);
+
+            int next = FindNextLivingIndex(deadIndex);
+            if (next >= 0)
             {
-                int next = (ActiveIndex + 1) % MemberCount;
                 SwitchTo(next, deathPos, deathRot, force: true, applySpawnOffset: false);
                 return;
             }
 
-            // 单人队：延迟在上次位置重生
-            if (!_soloRespawning)
+            ShowGameOver();
+        }
+
+        /// <summary>全灭后重新开始：清等级/被动、复活全员、回到肉鸽出生点。</summary>
+        public void RestartRougeRun()
+        {
+            if (_restarting)
             {
-                if (_soloRespawnCoroutine != null)
+                return;
+            }
+
+            _restarting = true;
+            try
+            {
+            _gameOverShown = false;
+
+            if (_soloRespawnCoroutine != null)
+            {
+                StopCoroutine(_soloRespawnCoroutine);
+                _soloRespawnCoroutine = null;
+                _soloRespawning = false;
+            }
+
+            ClearFallen(notify: false);
+            PartyRougeProgress.ResetRun();
+
+            if (_residual != null)
+            {
+                DespawnResidual(_residual);
+            }
+
+            Vector3 pos = spawnPosition;
+            Quaternion rot = transform.rotation;
+            var rouge = RouGeLikeFlowController.Instance;
+            if (rouge == null || !rouge.TryGetPlayerSpawnPose(out Vector3 spawnPos, out Quaternion spawnRot))
+            {
+                Debug.LogWarning("[PartyController] 未找到 PlayerSpawn，回退默认出生点。", this);
+            }
+            else
+            {
+                pos = spawnPos;
+                rot = spawnRot;
+            }
+
+            if (syncTransformToSpawn)
+            {
+                transform.position = pos;
+            }
+
+            if (_active != null)
+            {
+                DespawnCharacter(_active);
+            }
+
+            int idx = Mathf.Clamp(startIndex, 0, Mathf.Max(0, MemberCount - 1));
+            SwitchTo(idx, pos, rot, force: true, applySpawnOffset: false);
+            rouge?.ResetEncounterForRestart();
+
+            var ui = UIManager.Instance;
+            if (ui != null)
+            {
+                if (ui.IsOpen(UIId.GameOver))
                 {
-                    StopCoroutine(_soloRespawnCoroutine);
+                    ui.Close(UIId.GameOver);
                 }
 
-                _soloRespawnCoroutine = StartCoroutine(SoloRespawnRoutine(ActiveIndex >= 0 ? ActiveIndex : 0));
+                if (ui.IsOpen(UIId.SkillSelect))
+                {
+                    ui.Close(UIId.SkillSelect);
+                }
+
+                if (ui.IsOpen(UIId.SkillWheel))
+                {
+                    ui.Close(UIId.SkillWheel);
+                }
             }
+
+            FallenChanged?.Invoke();
+            }
+            finally
+            {
+                _restarting = false;
+            }
+        }
+
+        void ShowGameOver()
+        {
+            if (_gameOverShown)
+            {
+                return;
+            }
+
+            _gameOverShown = true;
+            FallenChanged?.Invoke();
+
+            var ui = UIManager.Instance;
+            if (ui == null)
+            {
+                Debug.LogError("[PartyController] 全灭但无 UIManager，无法打开结算。", this);
+                return;
+            }
+
+            if (ui.Open(UIId.GameOver) == null)
+            {
+                Debug.LogError("[PartyController] 无法打开 UI_GameOver_Dialog。", this);
+            }
+        }
+
+        void MarkFallen(int index)
+        {
+            EnsureFallenArray();
+            if (_fallen == null || index < 0 || index >= _fallen.Length)
+            {
+                return;
+            }
+
+            _fallen[index] = true;
+            FallenChanged?.Invoke();
+        }
+
+        void ClearFallen(bool notify)
+        {
+            EnsureFallenArray();
+            if (_fallen != null)
+            {
+                for (int i = 0; i < _fallen.Length; i++)
+                {
+                    _fallen[i] = false;
+                }
+            }
+
+            if (notify)
+            {
+                FallenChanged?.Invoke();
+            }
+        }
+
+        void EnsureFallenArray()
+        {
+            int n = Mathf.Max(0, MemberCount);
+            if (_fallen != null && _fallen.Length == n)
+            {
+                return;
+            }
+
+            var next = n > 0 ? new bool[n] : Array.Empty<bool>();
+            if (_fallen != null && n > 0)
+            {
+                int copy = Mathf.Min(_fallen.Length, n);
+                Array.Copy(_fallen, next, copy);
+            }
+
+            _fallen = next;
+        }
+
+        int FindNextLivingIndex(int fromIndex)
+        {
+            EnsureFallenArray();
+            if (MemberCount <= 0)
+            {
+                return -1;
+            }
+
+            int start = fromIndex < 0 ? -1 : fromIndex;
+            for (int i = 1; i <= MemberCount; i++)
+            {
+                int idx = (start + i) % MemberCount;
+                if (!IsSlotFallen(idx))
+                {
+                    return idx;
+                }
+            }
+
+            return -1;
         }
 
         IEnumerator SoloRespawnRoutine(int index)
@@ -979,6 +1176,7 @@ namespace AttackSkill.Character
                 _active = null;
             }
 
+            AttackSkill.Rouge.RougeOrbitWeaponDriver.DetachFromCharacter(character);
             Destroy(character.gameObject);
             PlayerTargetLocator.InvalidateCache();
         }

@@ -19,9 +19,11 @@ namespace AttackSkill.UI
         PauseMenu = 18,
         SkillWheel = 19,
         SkillSelect = 20,
+        GameOver = 21,
         BattleParty = 30,
         BattleSystem = 31,
         BattleCombat = 32,
-        BattleVitals = 33
+        BattleVitals = 33,
+        BattleTask = 34
     }
 }

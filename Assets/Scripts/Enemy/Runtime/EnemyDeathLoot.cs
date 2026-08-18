@@ -55,7 +55,7 @@ namespace AttackSkill.Enemy
 
         public static void TryDropExpOrb(EnemyAgent agent)
         {
-            if (agent == null)
+            if (agent == null || !IsRougeLootSource(agent))
             {
                 return;
             }
@@ -88,6 +88,11 @@ namespace AttackSkill.Enemy
             Debug.LogWarning(
                 "[EnemyDeathLoot] expOrbPrefab 缺失，已用兜底球体。请配置 CharacterRuntimeSettings.expOrbPrefab 或 Resources/Rouge/Exp。",
                 agent);
+        }
+
+        static bool IsRougeLootSource(EnemyAgent agent)
+        {
+            return agent.IsRougeEncounter || RouGeLikeFlowController.ContainsWorldPoint(agent.transform.position);
         }
     }
 }

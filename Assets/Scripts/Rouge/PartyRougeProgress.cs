@@ -57,6 +57,7 @@ namespace AttackSkill.Rouge
             _passives.Clear();
             _pendingLevelUps = 0;
             _selectUiOpen = false;
+            RougePassiveEffects.OnRunReset();
             Changed?.Invoke();
         }
 
@@ -95,6 +96,7 @@ namespace AttackSkill.Rouge
             if (gained > 0)
             {
                 _pendingLevelUps += gained;
+                RougePassiveEffects.ApplyAbyssPactToActiveParty();
                 TryOpenSkillSelect();
             }
 

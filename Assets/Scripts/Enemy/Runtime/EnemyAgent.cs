@@ -43,6 +43,8 @@ namespace AttackSkill.Enemy
         public Vector3 HomePosition { get; private set; }
         public Quaternion HomeRotation { get; private set; }
         public EnemySpawnPoint OwnerPoint { get; private set; }
+        /// <summary>肉鸽平面刷出的敌人：掉经验球、死亡只溶解不留金色声骸。</summary>
+        public bool IsRougeEncounter { get; set; }
         public bool IsHibernating => _hibernating;
         public bool IsDead => _health != null && !_health.IsAlive;
 
@@ -119,6 +121,7 @@ namespace AttackSkill.Enemy
             OwnerPoint = owner;
             HomePosition = home;
             HomeRotation = homeRot;
+            IsRougeEncounter = false;
             _deadNotified = false;
             _deathDirector?.ResetForReuse();
 
@@ -151,6 +154,45 @@ namespace AttackSkill.Enemy
             _brain.Start();
 
             AttackSkill.UI.World.WorldUiService.EnsureExists()?.AttachEnemyBlood(this);
+        }
+
+        /// <summary>回收进对象池前：停 AI、还原表现、藏血条。</summary>
+        public void PrepareForPool()
+        {
+            CancelInvoke();
+            StopAllCoroutines();
+
+            if (_combat != null)
+            {
+                _combat.Interrupt();
+            }
+
+            _aggro?.Clear();
+            _motor?.Stop();
+            _deadNotified = false;
+            IsRougeEncounter = false;
+            _hibernating = true;
+            PerceivedPlayerThisFrame = false;
+            PerceivedPlayer = null;
+
+            _deathDirector?.ResetForReuse();
+            EnemyDeathVisualUtil.EnableBlockingColliders(gameObject);
+
+            var interact = GetComponent<AttackSkill.UI.World.EchoRemainInteract>();
+            interact?.Deactivate();
+
+            var bloodHost = GetComponent<AttackSkill.UI.World.EnemyBloodHudHost>();
+            if (bloodHost != null && bloodHost.Hud != null)
+            {
+                bloodHost.Hud.gameObject.SetActive(false);
+            }
+
+            if (_controller != null)
+            {
+                _controller.enabled = false;
+            }
+
+            enabled = false;
         }
 
         void ApplyCombatStats(EnemyDefinition def)
@@ -230,7 +272,18 @@ namespace AttackSkill.Enemy
                 }
             }
 
-            _aggro.Tick(Time.deltaTime, PerceivedPlayerThisFrame);
+            bool tauntHeld = false;
+            if (AttackSkill.Rouge.RougeDecoyTree.TryGetTauntTarget(transform.position, out Transform decoy))
+            {
+                _aggro.SetTarget(decoy);
+                tauntHeld = true;
+                if (_brain.Current == _brain.Idle || _brain.Current == _brain.Return)
+                {
+                    _brain.SetState(_brain.Chase);
+                }
+            }
+
+            _aggro.Tick(Time.deltaTime, PerceivedPlayerThisFrame || tauntHeld);
             _brain.Tick(Time.deltaTime);
         }
 

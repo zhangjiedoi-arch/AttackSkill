@@ -27,6 +27,7 @@ description: >-
 | 翅膀 | `wings_pos`（小写 w） |
 | 出伤 | `Hit_Chest_R` / `Hit_Chest_L` / `Hit_Root` 等 |
 | R 技能 AOE | `R_Hit_Root`（`HitSocketId.R_Hit_Root`） |
+| 肉鸽环绕刃 | 挂到 Active 的 `R_Hit_Root`；切人时先改挂再销毁旧角色（`RougeOrbitWeaponDriver.BindToActiveImmediate`） |
 | 普攻可见武器 | `Weapon_Pos`（`AttackHitRelay.SetWeaponVisible`） |
 
 ## 数据流

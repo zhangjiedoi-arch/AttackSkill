@@ -9,7 +9,7 @@ description: >-
 
 ## 方案
 
-- 场景 BGM：`SceneBgmPlayer` DDOL，监听 `sceneLoaded`，GameScene 播 SeaBGM  
+- 场景 BGM：`SceneBgmPlayer` DDOL，监听 `sceneLoaded`，GameScene 播 SeaBGM；肉鸽传送后切 `drone` 
 - 角色 SFX：`CharacterAudio`（OneShot + 独立 Loop Source）  
 - Clip 多挂在 `CharacterRuntimeSettings` / Profile.segment
 
@@ -25,12 +25,13 @@ description: >-
 ```text
 Progress EnsureExists → SceneBgmPlayer
 → GameScene 循环 seaBgm
+→ 肉鸽传送 `RouGeLikeFlowController` → `SceneBgmPlayer.PlayRougeDrone`（drone.mp3）
 角色状态 / Relay / 工具 → CharacterAudio Play*
 ```
 
 ## 实现步骤
 
-1. BGM：Settings `seaBgm` 或 Inspector 指定。
+1. BGM：Settings `seaBgm` / `droneBgm` 或 Inspector 指定。
 2. 新场景规则：扩 `ApplyForActiveScene`。
 3. 角色 clip 空：Assembler/Settings 回填路径。
 4. 探索循环：进状态 PlayLoop，出 Stop（勿反复 Create AudioSource）。

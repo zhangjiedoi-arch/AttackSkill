@@ -1,5 +1,6 @@
 using UnityEngine;
 using AttackSkill.Combat;
+using AttackSkill.Rouge;
 
 namespace AttackSkill.Character.HSM
 {
@@ -166,6 +167,7 @@ namespace AttackSkill.Character.HSM
         public override void OnFixedUpdate(float deltaTime)
         {
             float speed = Ctx.Input.Move.magnitude > 0.7f ? Ctx.Settings.RunSpeed : Ctx.Settings.WalkSpeed;
+            speed *= RougePassiveEffects.EffectiveMoveSpeedMul;
             Ctx.Motor.SetPlanarFromInput(Ctx.Input.Move, Ctx.CameraYaw, speed, deltaTime);
             Ctx.Motor.FacePlanarVelocity(Ctx.Transform, deltaTime);
             Ctx.Motor.ApplyGravity(deltaTime, Ctx.Settings.Gravity);
@@ -207,7 +209,8 @@ namespace AttackSkill.Character.HSM
 
         public override void OnFixedUpdate(float deltaTime)
         {
-            Ctx.Motor.SetPlanarFromInput(Ctx.Input.Move, Ctx.CameraYaw, Ctx.Settings.SprintSpeed, deltaTime);
+            float speed = Ctx.Settings.SprintSpeed * RougePassiveEffects.EffectiveMoveSpeedMul;
+            Ctx.Motor.SetPlanarFromInput(Ctx.Input.Move, Ctx.CameraYaw, speed, deltaTime);
             Ctx.Motor.FacePlanarVelocity(Ctx.Transform, deltaTime);
             Ctx.Motor.ApplyGravity(deltaTime, Ctx.Settings.Gravity);
             Ctx.Motor.TickMove(deltaTime);

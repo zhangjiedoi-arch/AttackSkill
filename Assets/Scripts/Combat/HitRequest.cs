@@ -15,7 +15,7 @@ namespace AttackSkill.Combat
         SkipOwnerHierarchy = 1 << 2,
         /// <summary>跳过带 GenshinLikeCharacter 的目标（防友伤）。</summary>
         SkipFriendlyPlayerCharacters = 1 << 3,
-        /// <summary>仅当前 Active 玩家可受伤（敌人打人）。</summary>
+        /// <summary>仅当前 Active 玩家可受伤（敌人打人）；诱敌之树等生成物也可受击。</summary>
         ActivePlayerOnly = 1 << 4,
     }
 

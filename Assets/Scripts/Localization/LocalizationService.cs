@@ -227,6 +227,14 @@ namespace AttackSkill.Localization
                 "获取功能尚未实现",
                 "Obtain feature not yet implemented",
                 "取得機能は未実装です");
+            Add(LocalizationTableType.UI, "task_camp",
+                "击败海边的敌人",
+                "Defeat the enemies by the sea",
+                "海岸の敵を倒せ");
+            Add(LocalizationTableType.UI, "task_abyss",
+                "在深渊的怒火中活下去",
+                "Survive the wrath of the Abyss",
+                "深淵の怒りを生き抜け");
             Add(LocalizationTableType.Common, "ok", "确定", "OK", "OK");
             Add(LocalizationTableType.Common, "cancel", "取消", "Cancel", "キャンセル");
             Add(LocalizationTableType.Common, "confirm", "确认", "Confirm", "確認");

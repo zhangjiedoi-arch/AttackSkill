@@ -532,7 +532,12 @@ namespace AttackSkill.Character.HSM
                 _health = gameObject.AddComponent<Health>();
             }
 
-            _health.Configure(20000f, destroyWhenDead: false);
+            // CombatStats 已按角色表/肉鸽等级写入生命时，不要再盖成 20000
+            if (GetComponent<CombatStats>() == null)
+            {
+                _health.Configure(20000f, destroyWhenDead: false);
+            }
+
             _health.ConfigureDefense(enableIFrames: true, iFrames: 0.5f, stun: 0.18f, enableHitStun: true);
             _health.Died += OnHealthDied;
 

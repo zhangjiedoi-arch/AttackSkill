@@ -22,7 +22,7 @@ namespace AttackSkill.Enemy
         [Tooltip("发现/追击玩家的视觉距离（米）")]
         public float sightRange = 20f;
         [Range(10f, 180f)] public float sightAngle = 90f;
-        public float hearRange = 6f;
+        public float hearRange = 20f;
         [Tooltip("视线遮挡检测层；默认 Everything")]
         public LayerMask losMask = ~0;
 

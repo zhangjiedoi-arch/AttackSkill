@@ -106,7 +106,7 @@ namespace AttackSkill.Rouge
 
         public static void EnsureLoaded()
         {
-            if (_levels != null && _passives != null)
+            if (_levels != null && _passives != null && _byId != null)
             {
                 return;
             }
@@ -121,16 +121,32 @@ namespace AttackSkill.Rouge
                 ? JsonUtility.FromJson<RougePassiveTableData>(passiveAsset.text)
                 : new RougePassiveTableData { passives = Array.Empty<RougePassiveDefData>() };
 
+            RebuildPassiveIndex();
+        }
+
+        /// <summary>编辑器改表后可强制重载。</summary>
+        public static void Reload()
+        {
+            _levels = null;
+            _passives = null;
+            _byId = null;
+            EnsureLoaded();
+        }
+
+        static void RebuildPassiveIndex()
+        {
             _byId = new Dictionary<string, RougePassiveDefData>(32);
-            if (_passives.passives != null)
+            if (_passives?.passives == null)
             {
-                for (int i = 0; i < _passives.passives.Length; i++)
+                return;
+            }
+
+            for (int i = 0; i < _passives.passives.Length; i++)
+            {
+                var p = _passives.passives[i];
+                if (p != null && !string.IsNullOrEmpty(p.id))
                 {
-                    var p = _passives.passives[i];
-                    if (p != null && !string.IsNullOrEmpty(p.id))
-                    {
-                        _byId[p.id] = p;
-                    }
+                    _byId[p.id] = p;
                 }
             }
         }

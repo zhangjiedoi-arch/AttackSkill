@@ -35,17 +35,14 @@
       "mods": [{ "type": "damageTakenMul", "perStack": -0.08 }]
     },
     {
-      "id": "medicine",
+      "id": "quickstep",
       "rarity": "common",
       "maxStack": 3,
-      "nameZh": "药引",
-      "nameEn": "Medicine",
-      "descZh": "治疗圈回血每层 +20/秒，掉落率 +5%",
-      "descEn": "Healing circle +20 HP/s and +5% drop chance per stack",
-      "mods": [
-        { "type": "healCircleBonusPerSecond", "perStack": 20 },
-        { "type": "healCircleDropChanceAdd", "perStack": 0.05 }
-      ]
+      "nameZh": "快步",
+      "nameEn": "Quickstep",
+      "descZh": "移动速度每层 +6%",
+      "descEn": "+6% move speed per stack",
+      "mods": [{ "type": "moveSpeedMul", "perStack": 0.06 }]
     },
     {
       "id": "lifesteal",
@@ -58,14 +55,24 @@
       "mods": [{ "type": "lifestealRatio", "perStack": 0.04 }]
     },
     {
-      "id": "hunter",
+      "id": "ember",
       "rarity": "rare",
       "maxStack": 3,
-      "nameZh": "猎手直觉",
-      "nameEn": "Hunter Instinct",
-      "descZh": "贴身搜索距离每层 +0.6m（基础 2m）",
-      "descEn": "+0.6m engage search radius per stack (base 2m)",
-      "mods": [{ "type": "engageRadiusAdd", "perStack": 0.6 }]
+      "nameZh": "余火",
+      "nameEn": "Ember",
+      "descZh": "E 技能伤害每层 +15%",
+      "descEn": "+15% E skill damage per stack",
+      "mods": [{ "type": "skillEDamageMul", "perStack": 0.15 }]
+    },
+    {
+      "id": "execute",
+      "rarity": "epic",
+      "maxStack": 2,
+      "nameZh": "处决",
+      "nameEn": "Execute",
+      "descZh": "目标生命低于 25% 时伤害每层 +40%",
+      "descEn": "+40% damage vs targets below 25% HP per stack",
+      "mods": [{ "type": "executeDamageMul", "perStack": 0.4 }]
     },
     {
       "id": "abyss_pact",
@@ -79,6 +86,66 @@
         { "type": "attackMul", "perStack": 0.25 },
         { "type": "maxHpMul", "perStack": -0.15 }
       ]
+    },
+    {
+      "id": "fire_blade",
+      "rarity": "rare",
+      "maxStack": 5,
+      "nameZh": "火之刃",
+      "nameEn": "Fire Blade",
+      "descZh": "环绕火刃：伤害为攻击力的 2 倍，不暴击；每层伤害 +20%（满 5 层）",
+      "descEn": "Orbiting fire blade: 2x ATK, no crit; +20% damage per extra stack (max 5)",
+      "mods": [{ "type": "orbitFireBlade", "perStack": 1 }]
+    },
+    {
+      "id": "wind_blade",
+      "rarity": "rare",
+      "maxStack": 5,
+      "nameZh": "风之刃",
+      "nameEn": "Wind Blade",
+      "descZh": "环绕风刃：伤害为攻击力的 1.5 倍，不暴击，附带击退；每层伤害 +20%（满 5 层）",
+      "descEn": "Orbiting wind blade: 1.5x ATK, no crit, knocks back; +20% damage per extra stack (max 5)",
+      "mods": [{ "type": "orbitWindBlade", "perStack": 1 }]
+    },
+{
+      "id": "ice_sorrow",
+      "rarity": "rare",
+      "maxStack": 5,
+      "nameZh": "冰之哀伤",
+      "nameEn": "Ice Sorrow",
+      "descZh": "在角色 5–10m 随机生成冰领域，持续 2 秒：每秒造成攻击力 120% 冰伤；每层 +10%（满 5 层）",
+      "descEn": "Spawn an ice field 5–10m away for 2s: 120% ATK ice damage per second; +10% per extra stack (max 5)",
+      "mods": [{ "type": "constructIceSorrow", "perStack": 1 }]
+    },
+    {
+      "id": "fire_joy",
+      "rarity": "rare",
+      "maxStack": 5,
+      "nameZh": "火之高兴",
+      "nameEn": "Fire Joy",
+      "descZh": "在角色 5–10m 随机生成火领域，持续 5 秒：每秒造成攻击力 120% 火伤；每层 +10%（满 5 层）",
+      "descEn": "Spawn a fire field 5–10m away for 5s: 120% ATK fire damage per second; +10% per extra stack (max 5)",
+      "mods": [{ "type": "constructFireJoy", "perStack": 1 }]
+    },
+    {
+      "id": "snow_frost",
+      "rarity": "rare",
+      "maxStack": 5,
+      "nameZh": "雪之哀霜",
+      "nameEn": "Snow Frost",
+      "descZh": "在角色 5–10m 随机生成暗领域，持续 4 秒：每秒造成攻击力 120% 暗伤；每层 +10%（满 5 层）",
+      "descEn": "Spawn a dark field 5–10m away for 4s: 120% ATK dark damage per second; +10% per extra stack (max 5)",
+      "mods": [{ "type": "constructSnowFrost", "perStack": 1 }]
+    },
+    {
+      "id": "decoy_tree",
+      "rarity": "rare",
+      "maxStack": 5,
+      "nameZh": "诱敌之树",
+      "nameEn": "Decoy Tree",
+      "descZh": "在角色 10–20m 随机生成诱敌之树：10m 内敌人优先攻击它；生命 2000，每层 +10%（满 5 层）",
+      "descEn": "Spawn a decoy tree 10–20m away: enemies within 10m prefer it; 2000 HP, +10% per extra stack (max 5)",
+      "mods": [{ "type": "constructDecoyTree", "perStack": 1 }]
     }
   ]
 }

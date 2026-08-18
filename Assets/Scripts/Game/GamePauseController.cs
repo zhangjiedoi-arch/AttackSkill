@@ -62,6 +62,12 @@ namespace AttackSkill.Game
                 return;
             }
 
+            // 全灭结算期间禁止 ESC 开暂停
+            if (ui.IsOpen(UIId.GameOver))
+            {
+                return;
+            }
+
             // 技能轮盘优先关闭（不进入暂停菜单）
             if (ui.IsOpen(UIId.SkillWheel))
             {
@@ -194,7 +200,7 @@ namespace AttackSkill.Game
             }
         }
 
-        static void QuitGame()
+        public static void QuitGame()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;

@@ -39,7 +39,7 @@ R：SkillRState → BeginTimedPhase("Skill_R")
 1. 改时机/倍率/形状：编辑对应角色 `TimedHitProfile`（`damage` = ATK%，100=100%）。
 2. 改角色/怪基础属性：`Resources/Combat/Stats/...`
 3. 新挂点：扩 `HitSocketId` + Avatar + Resolver。
-4. 层级：玩家打 `PlayerOffenseHurtboxMask`；敌人打 `DefaultPlayerHurtboxMask`（玩家需 `PlayerHurtbox` Trigger，纯 CC 扫不到）。
+4. 层级：玩家打 `PlayerOffenseHurtboxMask`；敌人打 `DefaultPlayerHurtboxMask`（玩家需 `PlayerHurtbox` Trigger；诱敌之树也可受击）。
 5. 同段去重：`HitSession`（每次 BeginSwing/BeginTimedPhase 重置）；键为 `EnemyAgent` / 角色单位 Id，**勿用** `transform.root`（肉鸽怪共挂 EnemyGroup 时会一刀只能打一只）。
 6. Timeline 大招窗口仍可用 `SuppressAnimHits` 抑制 TimedTick。
 7. Relay 与 Animator 同物体（读 `normalizedTime`）。

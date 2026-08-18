@@ -60,6 +60,7 @@ namespace AttackSkill.UI
             EnsureEntry(UIId.PauseMenu, UILayer.Dialog, "UI_PauseMenu_Dialog");
             EnsureEntry(UIId.SkillWheel, UILayer.Dialog, "BattleHUD/UI_SkillWheel_Dialog");
             EnsureEntry(UIId.SkillSelect, UILayer.Dialog, "BattleHUD/UI_SkillSelect_Panel");
+            EnsureEntry(UIId.GameOver, UILayer.Dialog, "UI_GameOver_Dialog");
             EnsureBattleHudEntries();
 #endif
         }
@@ -75,6 +76,7 @@ namespace AttackSkill.UI
             Open(UIId.BattleSystem);
             Open(UIId.BattleCombat);
             Open(UIId.BattleVitals);
+            Open(UIId.BattleTask);
         }
 
         /// <summary>兼容旧调用：打开完整战斗 HUD。</summary>
@@ -143,6 +145,12 @@ namespace AttackSkill.UI
                 UIId.BattleVitals,
                 UILayer.Panel,
                 "BattleHUD/UI_BattleVitals_Panel",
+                stretchToParent: false,
+                closesOtherPanels: false);
+            EnsureEntry(
+                UIId.BattleTask,
+                UILayer.Panel,
+                "BattleHUD/UI_Task_Panel",
                 stretchToParent: false,
                 closesOtherPanels: false);
         }
@@ -471,10 +479,12 @@ namespace AttackSkill.UI
                 case UIId.PauseMenu: return typeof(UIPauseMenuDialog);
                 case UIId.SkillWheel: return typeof(UISkillWheelDialog);
                 case UIId.SkillSelect: return typeof(UISkillSelectPanel);
+                case UIId.GameOver: return typeof(UIGameOverDialog);
                 case UIId.BattleParty: return typeof(UIBattlePartyPanel);
                 case UIId.BattleSystem: return typeof(UIBattleSystemPanel);
                 case UIId.BattleCombat: return typeof(UIBattleCombatPanel);
                 case UIId.BattleVitals: return typeof(UIBattleVitalsPanel);
+                case UIId.BattleTask: return typeof(UITaskPanel);
                 default: return typeof(UIGenericView);
             }
         }

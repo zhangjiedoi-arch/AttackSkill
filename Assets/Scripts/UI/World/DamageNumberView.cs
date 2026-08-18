@@ -14,6 +14,7 @@ namespace AttackSkill.UI.World
         static readonly Color ThunderColor = new Color(0.72f, 0.35f, 1f, 1f);   // 紫
         static readonly Color IceColor = new Color(0.75f, 0.92f, 1f, 1f);       // 蓝白
         static readonly Color FireColor = new Color(1f, 0.28f, 0.18f, 1f);      // 红
+        static readonly Color WindColor = new Color(0.35f, 0.92f, 0.55f, 1f);   // 绿
 
         [SerializeField] TextMeshProUGUI txtNumber;
         [SerializeField] float worldRiseSpeed = 1.35f;
@@ -213,6 +214,8 @@ namespace AttackSkill.UI.World
                     return IceColor;
                 case CombatElement.Fire:
                     return FireColor;
+                case CombatElement.Wind:
+                    return WindColor;
                 default:
                     return LightColor;
             }

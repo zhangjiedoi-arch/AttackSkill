@@ -580,6 +580,30 @@
           "ja": "深淵を怒らせ、未知の地へ連れ去られた..."
         },
         {
+          "key": "task_camp",
+          "zhHans": "击败海边的敌人",
+          "en": "Defeat the enemies by the sea",
+          "ja": "海岸の敵を倒せ"
+        },
+        {
+          "key": "task_abyss",
+          "zhHans": "在深渊的怒火中活下去",
+          "en": "Survive the wrath of the Abyss",
+          "ja": "深淵の怒りを生き抜け"
+        },
+        {
+          "key": "game_over_title",
+          "zhHans": "您被深渊吞噬了！",
+          "en": "You were swallowed by the Abyss!",
+          "ja": "深淵に呑まれた！"
+        },
+        {
+          "key": "game_over_reset",
+          "zhHans": "重新开始",
+          "en": "Restart",
+          "ja": "やり直す"
+        },
+        {
           "key": "echo_obtain_wip",
           "zhHans": "获取功能尚未实现",
           "en": "Obtain feature not yet implemented",

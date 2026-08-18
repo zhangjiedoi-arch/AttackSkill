@@ -120,11 +120,13 @@ namespace AttackSkill.Editor
             changed += AttachOne("UI_LogIn_Dialog", typeof(UILogInDialog)) ? 1 : 0;
             changed += AttachOne("UI_ChooseGender_Dialog", typeof(UIChooseGenderDialog)) ? 1 : 0;
             changed += AttachOne("UI_PauseMenu_Dialog", typeof(UIPauseMenuDialog)) ? 1 : 0;
+            changed += AttachOne("UI_GameOver_Dialog", typeof(UIGameOverDialog)) ? 1 : 0;
             changed += AttachOne("BattleHUD/UI_SkillWheel_Dialog", typeof(UISkillWheelDialog)) ? 1 : 0;
             changed += AttachOne("BattleHUD/UI_BattleParty_Panel", typeof(UIBattlePartyPanel)) ? 1 : 0;
             changed += AttachOne("BattleHUD/UI_BattleSystem_Panel", typeof(UIBattleSystemPanel)) ? 1 : 0;
             changed += AttachOne("BattleHUD/UI_BattleCombat_Panel", typeof(UIBattleCombatPanel)) ? 1 : 0;
             changed += AttachOne("BattleHUD/UI_BattleVitals_Panel", typeof(UIBattleVitalsPanel)) ? 1 : 0;
+            changed += AttachOne("BattleHUD/UI_Task_Panel", typeof(UITaskPanel)) ? 1 : 0;
             AssetDatabase.SaveAssets();
             EditorUtility.DisplayDialog("UI", $"安全挂载完成，更新 {changed} 个 Prefab。", "OK");
         }
@@ -283,6 +285,7 @@ namespace AttackSkill.Editor
             TryAdd(list, UIId.LogIn, UILayer.Dialog, "UI_LogIn_Dialog", typeof(UILogInDialog), attachViews);
             TryAdd(list, UIId.ChooseGender, UILayer.Dialog, "UI_ChooseGender_Dialog", typeof(UIChooseGenderDialog), attachViews);
             TryAdd(list, UIId.PauseMenu, UILayer.Dialog, "UI_PauseMenu_Dialog", typeof(UIPauseMenuDialog), attachViews);
+            TryAdd(list, UIId.GameOver, UILayer.Dialog, "UI_GameOver_Dialog", typeof(UIGameOverDialog), attachViews);
             TryAdd(list, UIId.SkillWheel, UILayer.Dialog, "BattleHUD/UI_SkillWheel_Dialog", typeof(UISkillWheelDialog), attachViews);
             TryAdd(
                 list,
@@ -317,6 +320,15 @@ namespace AttackSkill.Editor
                 UILayer.Panel,
                 "BattleHUD/UI_BattleVitals_Panel",
                 typeof(UIBattleVitalsPanel),
+                attachViews,
+                stretchToParent: false,
+                closesOtherPanels: false);
+            TryAdd(
+                list,
+                UIId.BattleTask,
+                UILayer.Panel,
+                "BattleHUD/UI_Task_Panel",
+                typeof(UITaskPanel),
                 attachViews,
                 stretchToParent: false,
                 closesOtherPanels: false);

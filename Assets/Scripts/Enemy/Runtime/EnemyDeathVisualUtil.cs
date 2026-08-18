@@ -154,6 +154,30 @@ namespace AttackSkill.Enemy
             }
         }
 
+        /// <summary>对象池复用前重新打开碰撞。</summary>
+        public static void EnableBlockingColliders(GameObject root)
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            var cc = root.GetComponent<CharacterController>();
+            if (cc != null)
+            {
+                cc.enabled = true;
+            }
+
+            var cols = root.GetComponentsInChildren<Collider>(true);
+            for (int i = 0; i < cols.Length; i++)
+            {
+                if (cols[i] != null)
+                {
+                    cols[i].enabled = true;
+                }
+            }
+        }
+
         public static void CollectMeshRenderers(GameObject root, List<Renderer> dst)
         {
             dst.Clear();

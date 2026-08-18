@@ -19,18 +19,27 @@ namespace AttackSkill.Combat
             CombatStats attacker,
             CombatStats defender)
         {
+            return Resolve(raw, attacker, defender, defenderHealth: null);
+        }
+
+        public static DamageInfo Resolve(
+            in DamageInfo raw,
+            CombatStats attacker,
+            CombatStats defender,
+            Health defenderHealth)
+        {
             DamageInfo result = raw;
             float skillPower = Mathf.Max(0f, raw.Amount);
             float atk = attacker != null ? Mathf.Max(0f, attacker.Attack) : skillPower;
             float def = defender != null ? Mathf.Max(0f, defender.Defense) : 0f;
-            CombatElement atkElement = attacker != null ? attacker.Element : CombatElement.Light;
+            CombatElement atkElement = raw.OverrideAttackElement
+                ? raw.AttackElement
+                : (attacker != null ? attacker.Element : CombatElement.Light);
             CombatElement defElement = defender != null ? defender.Element : CombatElement.Light;
 
-            // skillPower 为倍率百分比：10 → 10% ATK
             float skillRatio = skillPower * 0.01f;
             float damage = atk * skillRatio;
 
-            // 无属性组件时退化：仍用表内数值当绝对伤害
             if (attacker == null)
             {
                 damage = skillPower;
@@ -38,32 +47,51 @@ namespace AttackSkill.Combat
 
             float defenseMul = DefenseConstant / (DefenseConstant + def);
             damage *= defenseMul;
-
-            // 自带元素造成伤害：+20%
             damage *= 1f + ElementOffenseBonus;
 
-            // 同属性基础免伤：-20%
             if (atkElement == defElement)
             {
                 damage *= 1f - SameElementResist;
             }
 
             bool isCrit = false;
-            float critRate = attacker != null ? attacker.CritRate : 0f;
-            float critDamage = attacker != null ? attacker.CritDamage : 1.5f;
-            if (critRate > 0f && Random.value < critRate)
+            if (!raw.SkipCritical)
             {
-                isCrit = true;
-                damage *= Mathf.Max(1f, critDamage);
+                float critRate = attacker != null ? attacker.CritRate : 0f;
+                float critDamage = attacker != null ? attacker.CritDamage : 1.5f;
+                if (critRate > 0f && Random.value < critRate)
+                {
+                    isCrit = true;
+                    damage *= Mathf.Max(1f, critDamage);
+                }
             }
 
-            // 玩家出伤：深渊契约攻击倍率；普攻再叠锋刃
             if (IsPlayerAttacker(raw.Attacker))
             {
                 damage *= RougePassiveEffects.AttackMul;
-                if (IsBasicAttack(raw.Attacker))
+
+                var relay = FindRelay(raw.Attacker);
+                if (relay != null && relay.IsBasicAttackActive)
                 {
                     damage *= RougePassiveEffects.AttackDamageMul;
+                }
+
+                if (relay != null && relay.IsSkillEActive)
+                {
+                    damage *= RougePassiveEffects.SkillEDamageMul;
+                }
+
+                Health hp = defenderHealth;
+                if (hp == null && defender != null)
+                {
+                    hp = defender.GetComponent<Health>();
+                }
+
+                if (hp != null &&
+                    hp.MaxHp > 0.01f &&
+                    hp.CurrentHp / hp.MaxHp < RougePassiveEffects.ExecuteHpThreshold)
+                {
+                    damage *= RougePassiveEffects.ExecuteDamageMul;
                 }
             }
 
@@ -75,28 +103,19 @@ namespace AttackSkill.Combat
 
         static bool IsPlayerAttacker(GameObject attacker)
         {
-            if (attacker == null)
-            {
-                return false;
-            }
-
-            return attacker.GetComponentInParent<GenshinLikeCharacter>() != null;
+            return attacker != null &&
+                   attacker.GetComponentInParent<GenshinLikeCharacter>() != null;
         }
 
-        static bool IsBasicAttack(GameObject attacker)
+        static AttackHitRelay FindRelay(GameObject attacker)
         {
             if (attacker == null)
             {
-                return false;
+                return null;
             }
 
             var relay = attacker.GetComponentInParent<AttackHitRelay>();
-            if (relay == null)
-            {
-                relay = attacker.GetComponentInChildren<AttackHitRelay>();
-            }
-
-            return relay != null && relay.IsBasicAttackActive;
+            return relay != null ? relay : attacker.GetComponentInChildren<AttackHitRelay>();
         }
     }
 }

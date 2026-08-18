@@ -1,9 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 namespace AttackSkill.Enemy
 {
     /// <summary>
     /// 死亡表现分流：声骸（金色透明残留）/ 飘散溶解。
+    /// 肉鸽池化实例表现结束后回收，非池化实例仍 Destroy。
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class EnemyDeathDirector : MonoBehaviour
@@ -11,6 +13,7 @@ namespace AttackSkill.Enemy
         EnemyAgent _agent;
         EnemyDeathGoldVisual _gold;
         EnemyDeathDissolveVisual _dissolve;
+        Coroutine _despawnRoutine;
 
         public EnemyDeathOutcome LastOutcome { get; private set; } = EnemyDeathOutcome.Echo;
         public bool HasBegun { get; private set; }
@@ -24,10 +27,12 @@ namespace AttackSkill.Enemy
 
         public void ResetForReuse()
         {
+            CancelDespawn();
             HasBegun = false;
             LastOutcome = EnemyDeathOutcome.Echo;
             _gold?.Restore();
             _dissolve?.Restore();
+            EnemyDeathVisualUtil.EnableBlockingColliders(gameObject);
             if (_agent != null)
             {
                 var interact = _agent.GetComponent<AttackSkill.UI.World.EchoRemainInteract>();
@@ -52,7 +57,7 @@ namespace AttackSkill.Enemy
             // 无论分支，先关碰撞，避免尸体挡路
             EnemyDeathVisualUtil.DisableBlockingColliders(gameObject, includeTriggers: true);
 
-            LastOutcome = Roll(def);
+            LastOutcome = ShouldForceDissolve(_agent) ? EnemyDeathOutcome.Dissolve : Roll(def);
             switch (LastOutcome)
             {
                 case EnemyDeathOutcome.Dissolve:
@@ -65,18 +70,28 @@ namespace AttackSkill.Enemy
             }
         }
 
+        static bool ShouldForceDissolve(EnemyAgent agent)
+        {
+            if (agent == null)
+            {
+                return false;
+            }
+
+            return agent.IsRougeEncounter || RouGeLikeFlowController.ContainsWorldPoint(agent.transform.position);
+        }
+
         void BeginEcho(EnemyDefinition def)
         {
             _dissolve?.Restore();
             if (_gold != null && _gold.Play())
             {
                 LastOutcome = EnemyDeathOutcome.Echo;
-                ScheduleEchoDespawn(def);
+                ScheduleDespawn(def != null ? Mathf.Max(0.5f, def.echoCorpseLifetime) : 20f);
                 EnableEchoInteract();
                 return;
             }
 
-            // 金透失败：尽量改走溶解；再失败则短延时销毁
+            // 金透失败：尽量改走溶解；再失败则短延时回收/销毁
             if (_dissolve != null && _dissolve.Play(OnDissolveFinished))
             {
                 LastOutcome = EnemyDeathOutcome.Dissolve;
@@ -84,7 +99,7 @@ namespace AttackSkill.Enemy
             }
 
             LastOutcome = EnemyDeathOutcome.Echo;
-            Destroy(gameObject, 0.5f);
+            ScheduleDespawn(0.5f);
         }
 
         void BeginDissolve(EnemyDefinition def)
@@ -135,15 +150,53 @@ namespace AttackSkill.Enemy
             return Random.value <= 0.35f ? EnemyDeathOutcome.Echo : EnemyDeathOutcome.Dissolve;
         }
 
-        void ScheduleEchoDespawn(EnemyDefinition def)
+        void ScheduleDespawn(float delay)
         {
-            float life = def != null ? Mathf.Max(0.5f, def.echoCorpseLifetime) : 20f;
-            Destroy(gameObject, life);
+            CancelDespawn();
+            _despawnRoutine = StartCoroutine(DespawnAfter(delay));
+        }
+
+        IEnumerator DespawnAfter(float delay)
+        {
+            if (delay > 0f)
+            {
+                yield return new WaitForSeconds(delay);
+            }
+
+            _despawnRoutine = null;
+            FinishDespawn();
         }
 
         void OnDissolveFinished()
         {
+            FinishDespawn();
+        }
+
+        void FinishDespawn()
+        {
+            CancelDespawn();
+            if (EnemyObjectPool.TryRelease(gameObject))
+            {
+                return;
+            }
+
             Destroy(gameObject);
+        }
+
+        void CancelDespawn()
+        {
+            if (_despawnRoutine == null)
+            {
+                return;
+            }
+
+            StopCoroutine(_despawnRoutine);
+            _despawnRoutine = null;
+        }
+
+        void OnDisable()
+        {
+            CancelDespawn();
         }
     }
 }

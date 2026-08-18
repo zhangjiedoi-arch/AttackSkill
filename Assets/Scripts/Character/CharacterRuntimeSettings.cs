@@ -79,6 +79,8 @@ namespace AttackSkill.Character
         [Header("Scene BGM")]
         [Tooltip("GameScene 海滩 BGM")]
         public AudioClip seaBgm;
+        [Tooltip("肉鸽区域 BGM（Assets/Audio/drone.mp3）")]
+        public AudioClip droneBgm;
 
         [Header("Enemy Drops")]
         [Tooltip("Prefabs/VFX/Healing circle")]
@@ -91,6 +93,22 @@ namespace AttackSkill.Character
         public float healingCircleLifetime = 20f;
         [Tooltip("Prefabs/Tools/Exp — 经验球")]
         public GameObject expOrbPrefab;
+
+        [Header("Rouge Orbit Weapons")]
+        [Tooltip("Prefabs/Weapon/火之刃")]
+        public GameObject fireOrbitBladePrefab;
+        [Tooltip("Prefabs/Weapon/风之刃")]
+        public GameObject windOrbitBladePrefab;
+
+        [Header("Rouge Constructs")]
+        [Tooltip("Prefabs/Weapon/冰之哀伤")]
+        public GameObject iceSorrowPrefab;
+        [Tooltip("Prefabs/Weapon/火之高兴")]
+        public GameObject fireJoyPrefab;
+        [Tooltip("Prefabs/Weapon/雪之哀霜")]
+        public GameObject snowFrostPrefab;
+        [Tooltip("Prefabs/Weapon/诱敌之树")]
+        public GameObject decoyTreePrefab;
 
         [Header("Party Portraits (Battle HUD)")]
         [Tooltip("IconPlayerFemale")]
@@ -134,6 +152,82 @@ namespace AttackSkill.Character
             }
 #endif
             return expOrbPrefab;
+        }
+
+        public GameObject GetFireOrbitBladePrefab()
+        {
+            if (fireOrbitBladePrefab == null)
+            {
+                fireOrbitBladePrefab = LoadWeaponPrefab("火之刃");
+            }
+
+            return fireOrbitBladePrefab;
+        }
+
+        public GameObject GetWindOrbitBladePrefab()
+        {
+            if (windOrbitBladePrefab == null)
+            {
+                windOrbitBladePrefab = LoadWeaponPrefab("风之刃");
+            }
+
+            return windOrbitBladePrefab;
+        }
+
+        public GameObject GetIceSorrowPrefab()
+        {
+            if (iceSorrowPrefab == null)
+            {
+                iceSorrowPrefab = LoadWeaponPrefab("冰之哀伤");
+            }
+
+            return iceSorrowPrefab;
+        }
+
+        public GameObject GetFireJoyPrefab()
+        {
+            if (fireJoyPrefab == null)
+            {
+                fireJoyPrefab = LoadWeaponPrefab("火之高兴");
+            }
+
+            return fireJoyPrefab;
+        }
+
+        public GameObject GetSnowFrostPrefab()
+        {
+            if (snowFrostPrefab == null)
+            {
+                snowFrostPrefab = LoadWeaponPrefab("雪之哀霜");
+            }
+
+            return snowFrostPrefab;
+        }
+
+        public GameObject GetDecoyTreePrefab()
+        {
+            if (decoyTreePrefab == null)
+            {
+                decoyTreePrefab = LoadWeaponPrefab("诱敌之树");
+            }
+
+            return decoyTreePrefab;
+        }
+
+        static GameObject LoadWeaponPrefab(string fileName)
+        {
+            var fromResources = Resources.Load<GameObject>("Weapon/" + fileName);
+            if (fromResources != null)
+            {
+                return fromResources;
+            }
+
+#if UNITY_EDITOR
+            return UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                $"Assets/Prefabs/Weapon/{fileName}.prefab");
+#else
+            return null;
+#endif
         }
 
         public TimedHitProfile GetTimedHitProfile(PartyPortraitId portraitId)
@@ -285,6 +379,48 @@ namespace AttackSkill.Character
             {
                 expOrbPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
                     "Assets/Prefabs/Tools/Exp.prefab");
+            }
+
+            if (fireOrbitBladePrefab == null)
+            {
+                fireOrbitBladePrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Weapon/火之刃.prefab");
+            }
+
+            if (windOrbitBladePrefab == null)
+            {
+                windOrbitBladePrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Weapon/风之刃.prefab");
+            }
+
+            if (iceSorrowPrefab == null)
+            {
+                iceSorrowPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Weapon/冰之哀伤.prefab");
+            }
+
+            if (fireJoyPrefab == null)
+            {
+                fireJoyPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Weapon/火之高兴.prefab");
+            }
+
+            if (snowFrostPrefab == null)
+            {
+                snowFrostPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Weapon/雪之哀霜.prefab");
+            }
+
+            if (decoyTreePrefab == null)
+            {
+                decoyTreePrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    "Assets/Prefabs/Weapon/诱敌之树.prefab");
+            }
+
+            if (droneBgm == null)
+            {
+                droneBgm = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(
+                    "Assets/Audio/drone.mp3");
             }
         }
 #endif

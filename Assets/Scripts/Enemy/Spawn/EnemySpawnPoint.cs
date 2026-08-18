@@ -131,41 +131,14 @@ namespace AttackSkill.Enemy
             return agent;
         }
 
-        /// <summary>在指定世界坐标生成（肉鸽随机点）。</summary>
+        /// <summary>在指定世界坐标生成（肉鸽随机点，走对象池）。</summary>
         public static EnemyAgent SpawnAt(
             EnemyDefinition definition,
             Vector3 position,
             Quaternion rotation,
             Transform parent = null)
         {
-            if (definition == null || definition.prefab == null)
-            {
-                return null;
-            }
-
-            var go = Instantiate(definition.prefab, position, rotation, parent);
-            go.name = $"{definition.name}_Rouge";
-            var agent = go.GetComponent<EnemyAgent>();
-            if (agent == null)
-            {
-                agent = go.AddComponent<EnemyAgent>();
-            }
-
-            if (go.GetComponent<CharacterController>() == null)
-            {
-                var cc = go.AddComponent<CharacterController>();
-                cc.center = new Vector3(0f, 1f, 0f);
-                cc.height = 2f;
-                cc.radius = 0.4f;
-            }
-
-            if (go.GetComponent<Combat.Health>() == null)
-            {
-                go.AddComponent<Combat.Health>();
-            }
-
-            agent.Initialize(definition, position, rotation, owner: null);
-            return agent;
+            return EnemyObjectPool.Spawn(definition, position, rotation, parent);
         }
 
         public void DespawnAlive()

@@ -8,17 +8,19 @@ using UnityEditor;
 namespace AttackSkill.Audio
 {
     /// <summary>
-    /// GameScene 背景音乐（SeaBGM）。进 GameScene 播放，离开停止。
+    /// GameScene 背景音乐。进 GameScene 播 SeaBGM；传送进肉鸽平面后切 drone。
     /// </summary>
     public class SceneBgmPlayer : MonoBehaviour
     {
         public const string GameSceneName = "GameScene";
 
         [SerializeField] AudioClip seaBgm;
+        [SerializeField] AudioClip droneBgm;
         [SerializeField, Range(0f, 1f)] float volume = 0.4f;
         [SerializeField] bool dontDestroyOnLoad = true;
 
         AudioSource _source;
+        bool _rougeDrone;
         static SceneBgmPlayer _instance;
 
         public static SceneBgmPlayer EnsureExists()
@@ -47,6 +49,12 @@ namespace AttackSkill.Audio
             player.ApplyForActiveScene();
         }
 
+        /// <summary>肉鸽传送后切 drone，直到离开 GameScene。</summary>
+        public static void PlayRougeDrone()
+        {
+            EnsureExists().SwitchToRougeDrone();
+        }
+
         void Awake()
         {
             if (_instance != null && _instance != this)
@@ -73,7 +81,7 @@ namespace AttackSkill.Audio
             _source.volume = volume;
             _source.ignoreListenerPause = false;
 
-            ResolveClip();
+            ResolveClips();
             SceneManager.sceneLoaded += OnSceneLoaded;
             ApplyForActiveScene();
         }
@@ -87,22 +95,29 @@ namespace AttackSkill.Audio
             }
         }
 
-        void ResolveClip()
+        void ResolveClips()
         {
-            if (seaBgm != null)
-            {
-                return;
-            }
-
             var settings = CharacterRuntimeSettings.Get();
-            if (settings != null && settings.seaBgm != null)
+            if (seaBgm == null && settings != null && settings.seaBgm != null)
             {
                 seaBgm = settings.seaBgm;
-                return;
+            }
+
+            if (droneBgm == null && settings != null && settings.droneBgm != null)
+            {
+                droneBgm = settings.droneBgm;
             }
 
 #if UNITY_EDITOR
-            seaBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SeaBGM.wav");
+            if (seaBgm == null)
+            {
+                seaBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SeaBGM.wav");
+            }
+
+            if (droneBgm == null)
+            {
+                droneBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/drone.mp3");
+            }
 #endif
         }
 
@@ -120,10 +135,18 @@ namespace AttackSkill.Audio
         {
             if (IsGameScene(sceneName))
             {
-                Play();
+                if (_rougeDrone)
+                {
+                    SwitchToRougeDrone();
+                }
+                else
+                {
+                    Play();
+                }
             }
             else
             {
+                _rougeDrone = false;
                 Stop();
             }
         }
@@ -141,28 +164,52 @@ namespace AttackSkill.Audio
 
         public void Play()
         {
-            ResolveClip();
-            if (_source == null || seaBgm == null)
+            ResolveClips();
+            PlayClip(seaBgm, "SeaBGM");
+        }
+
+        void SwitchToRougeDrone()
+        {
+            _rougeDrone = true;
+            ResolveClips();
+            if (droneBgm == null)
             {
-                Debug.LogWarning("[SceneBgmPlayer] SeaBGM 未配置。请在 CharacterRuntimeSettings.seaBgm 指定。", this);
+                Debug.LogWarning(
+                    "[SceneBgmPlayer] drone BGM 未配置。请在 CharacterRuntimeSettings.droneBgm 指定 Assets/Audio/drone.mp3。",
+                    this);
+                return;
+            }
+
+            PlayClip(droneBgm, "drone");
+        }
+
+        void PlayClip(AudioClip clip, string label)
+        {
+            if (_source == null || clip == null)
+            {
+                if (clip == null)
+                {
+                    Debug.LogWarning($"[SceneBgmPlayer] {label} 未配置。", this);
+                }
+
                 return;
             }
 
             // 导入设置 preloadAudioData=0 时，不显式加载会静音
-            if (seaBgm.loadState == AudioDataLoadState.Unloaded)
+            if (clip.loadState == AudioDataLoadState.Unloaded)
             {
-                seaBgm.LoadAudioData();
+                clip.LoadAudioData();
             }
 
             AudioListener.pause = false;
             _source.mute = false;
             _source.volume = volume;
-            if (_source.clip != seaBgm)
+            if (_source.clip != clip)
             {
-                _source.clip = seaBgm;
+                _source.clip = clip;
+                _source.Play();
             }
-
-            if (!_source.isPlaying)
+            else if (!_source.isPlaying)
             {
                 _source.Play();
             }
@@ -170,7 +217,7 @@ namespace AttackSkill.Audio
             if (!_source.isPlaying)
             {
                 Debug.LogWarning(
-                    $"[SceneBgmPlayer] Play 后仍未播放。clip={seaBgm.name} loadState={seaBgm.loadState}",
+                    $"[SceneBgmPlayer] Play 后仍未播放。clip={clip.name} loadState={clip.loadState}",
                     this);
             }
         }
@@ -189,6 +236,11 @@ namespace AttackSkill.Audio
             if (seaBgm == null)
             {
                 seaBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SeaBGM.wav");
+            }
+
+            if (droneBgm == null)
+            {
+                droneBgm = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/drone.mp3");
             }
         }
 #endif

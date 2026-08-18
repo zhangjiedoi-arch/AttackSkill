@@ -85,6 +85,7 @@ namespace AttackSkill.Combat
         int _timedCombo = -1;
         string _timedPhaseId;
         bool _isBasicAttackPhase;
+        bool _isSkillEPhase;
         float _prevNormalized;
         bool _hasTimedSample;
         Animator _animator;
@@ -105,6 +106,9 @@ namespace AttackSkill.Combat
 
         /// <summary>当前是否处于普攻连段出伤（锋刃等被动用）。</summary>
         public bool IsBasicAttackActive => _isBasicAttackPhase;
+
+        /// <summary>当前是否处于 E 技能出伤（余火等被动用）。</summary>
+        public bool IsSkillEActive => _isSkillEPhase;
 
         /// <summary>大招由 SkillHitWindow 出伤时打开，避免动画 Event 重复结算。</summary>
         public bool SuppressAnimHits
@@ -761,6 +765,7 @@ namespace AttackSkill.Combat
             _timedPhaseId = phaseId;
             _timedCombo = comboIndex;
             _isBasicAttackPhase = phaseId.StartsWith("attack", System.StringComparison.OrdinalIgnoreCase);
+            _isSkillEPhase = string.Equals(phaseId, "skill", System.StringComparison.OrdinalIgnoreCase);
             _prevNormalized = 0f;
             _hasTimedSample = false;
             _timedFiredKeys.Clear();
@@ -777,6 +782,7 @@ namespace AttackSkill.Combat
             _timedPhaseId = null;
             _timedCombo = -1;
             _isBasicAttackPhase = false;
+            _isSkillEPhase = false;
             _hasTimedSample = false;
             _prevNormalized = 0f;
             _timedFiredKeys.Clear();

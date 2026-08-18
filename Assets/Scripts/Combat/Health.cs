@@ -37,7 +37,7 @@ namespace AttackSkill.Combat
         public float MaxHp => maxHp;
         public float CurrentHp => currentHp;
         public bool IsAlive => currentHp > 0f;
-        public bool IsInvulnerable => useIFrames && Time.time < _iFrameUntil;
+        public bool IsInvulnerable => Time.time < _iFrameUntil;
         public bool IsHitStunned => useHitStun && Time.time < _stunUntil;
         public Vector3 KnockVelocity => _knockVelocity;
 
@@ -71,6 +71,17 @@ namespace AttackSkill.Combat
             iFrameDuration = Mathf.Max(0f, iFrames);
             useHitStun = enableHitStun && stun > 0f;
             hitStunDuration = Mathf.Max(0f, stun);
+        }
+
+        /// <summary>临时无敌（二次心跳等）；不改 ConfigureDefense 配置。</summary>
+        public void GrantIFrames(float duration)
+        {
+            if (duration <= 0f)
+            {
+                return;
+            }
+
+            _iFrameUntil = Mathf.Max(_iFrameUntil, Time.time + duration);
         }
 
         public void ReviveFull()
@@ -118,7 +129,22 @@ namespace AttackSkill.Combat
                 return;
             }
 
-            currentHp = Mathf.Max(0f, currentHp - info.Amount);
+            float nextHp = currentHp - info.Amount;
+            if (nextHp <= 0f &&
+                AttackSkill.Rouge.RougePassiveEffects.TryTriggerSecondHeart(this))
+            {
+                onDamaged?.Invoke();
+                Damaged?.Invoke();
+                HpChanged?.Invoke();
+                if (info.Knockback > 0.01f)
+                {
+                    ApplyKnockback(info.HitDirection, info.Knockback);
+                }
+
+                return;
+            }
+
+            currentHp = Mathf.Max(0f, nextHp);
             onDamaged?.Invoke();
             Damaged?.Invoke();
             HpChanged?.Invoke();

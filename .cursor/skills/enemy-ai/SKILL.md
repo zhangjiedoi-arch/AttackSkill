@@ -34,7 +34,7 @@ SpawnGroup 距玩家激活 → SpawnPoint 生成
 
 肉鸽：
 初始 EnemySpawnGroup 清场 → RouGeLikeFlowController 传送至 PlayerSpawn
-→ 仅玩家在 RouGeLikePlane 内时，EnemyGroup 子节点随机刷怪
+→ 仅玩家在 RouGeLikePlane 内时，于玩家 10m 半径内随机刷怪
 ```
 
 ## 实现步骤
@@ -55,19 +55,21 @@ SpawnGroup 距玩家激活 → SpawnPoint 生成
 
 - Agent 会递归设 Enemy 层。
 - 本帧感知结果缓存，Brain 内勿重复 Raycast。
+- 发现范围：`sightRange` 20m（扇形）+ `hearRange` 20m（全向），20m 内即可发现角色。
 - Profile 空则运行时默认球形出伤。
 - **出伤**：`EnemyCombat` 进入 Active 时 `EnemyHitbox.EnableHit`；动画若再绑 `SkillHit` 会双倍，勿两套同时开。
 - 玩家需 `PlayerHurtbox`（Overlap 路径）或可被 Trigger 扫到的 CharacterController。
 - 肉鸽：初始波 `InitialWaveClearedEvent` 后关刷新并传送；刷怪仅 `IsPlayerInArea`。`PlayerSpawn` / `EnemyGroup` 与 `RouGeLikePlane` 同级。
 - **肉鸽刷怪池按角色等级解锁**（`RougeEnemySpawnCatalog` / `Resources/Rouge/RougeEnemySpawnCatalog`）：  
   1–3 云海妖精/铲子布偶/流放者女/流放者男；4+ 卡迪安特；5+ 朔雷之麟；6+ 荣耀狮像；7+ 踏光兽；8+ 鳞人。菜单：`工具/Rouge/重建肉鸽刷怪等级表`。
-- **肉鸽批量刷怪**：每波在多个空闲 `EnemyGroup` 子节点同时生成（默认 2–4，受 `maxAlive` 限制），不再逐个刷。
-- **掉落**：死亡 30% 掉 `Healing circle`（`EnemyDeathLoot`）；圈内 Active 玩家每秒回 100；`Hit_Root` 挂池化 `Healing` 特效，离圈回收。
+- **肉鸽批量刷怪**：每波在玩家 10m 半径内随机落点同时生成（默认 8–16，场上最多 100），走 `EnemyObjectPool`；点会夹在平面内，并避开贴身/已有怪。传送后 BGM 切 `drone`。
+- **掉落**：死亡 30% 掉 `Healing circle`（`EnemyDeathLoot`）；圈内 Active 玩家每秒回 100；`Hit_Root` 挂池化 `Healing` 特效，离圈回收。经验球仅肉鸽区域 / `IsRougeEncounter` 敌人掉落。
 - **死亡表现分流**：`EnemyDeathDirector` 按 `EnemyDefinition.echoChance` 掷骰  
-  - **Echo**：`EnemyDeathGoldVisual` 金色透明残留（后续 F 吸收）  
-  - **Dissolve**：`EnemyDeathDissolveVisual` 噪声溶解 + 上浮后隐藏网格  
-  - 调试：`deathForceMode` 强制 Echo / Dissolve  
+  - **Echo**：`EnemyDeathGoldVisual` 金色透明残留（后续 F 吸收）；肉鸽区域强制不走此分支  
+  - **Dissolve**：`EnemyDeathDissolveVisual` 噪声溶解 + 上浮后隐藏网格；肉鸽敌人一律溶解  
+  - 调试：`deathForceMode` 强制 Echo / Dissolve（肉鸽区域仍强制溶解）  
   - 材质：`Resources/Enemy/Mat_EnemyDeathGold|Dissolve` + Always Included Shaders；贴图兼容 `_MainTex/_BaseMap`  
   - 死亡立即关碰撞；金透 `Play()` 失败不挂 F 交互，改溶解/短销毁  
+- **肉鸽生成物**：`RougeConstructDriver` 不跟身。冰之哀伤/火之高兴/雪之哀霜在角色 5–10m 随机落点，持续 2/5/4 秒后换点，按 Prefab 碰撞体每秒 120% ATK 元素伤（每层 +10%，满 5）。诱敌之树在 10–20m 随机生成，10m 嘲讽、2000 血（每层 +10%），死后 5 秒在新位置重生。
 - 初始化后挂 `WorldUiService.AttachEnemyBlood`。
-- 尸体销毁由 `EnemyDeathDirector`：声骸 `echoCorpseLifetime`（默认 20s）；飘散结束立刻 `Destroy`。
+- 尸体生命周期由 `EnemyDeathDirector`：声骸 `echoCorpseLifetime`（默认 20s）；飘散结束立刻回收/销毁。

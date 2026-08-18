@@ -73,6 +73,7 @@ namespace AttackSkill.UI
                 }
 
                 party.ActiveChanged += OnActiveChanged;
+                party.FallenChanged += OnFallenChanged;
                 _partySubscribed = true;
                 return;
             }
@@ -83,10 +84,16 @@ namespace AttackSkill.UI
             }
 
             party.ActiveChanged -= OnActiveChanged;
+            party.FallenChanged -= OnFallenChanged;
             _partySubscribed = false;
         }
 
         void OnActiveChanged(int _)
+        {
+            Refresh();
+        }
+
+        void OnFallenChanged()
         {
             Refresh();
         }
@@ -100,6 +107,11 @@ namespace AttackSkill.UI
             }
 
             if (index < 0 || index >= party.MemberCount)
+            {
+                return;
+            }
+
+            if (party.IsSlotFallen(index))
             {
                 return;
             }
@@ -129,24 +141,25 @@ namespace AttackSkill.UI
             {
                 bool exists = i < memberCount;
                 bool isActive = exists && i == activeIndex;
+                bool fallen = exists && party != null && party.IsSlotFallen(i);
 
                 Button btn = _slotButtons != null && i < _slotButtons.Length ? _slotButtons[i] : null;
                 if (btn != null)
                 {
                     btn.gameObject.SetActive(exists);
-                    btn.interactable = exists && !isActive && !paused;
+                    btn.interactable = exists && !isActive && !paused && !fallen;
                 }
 
                 if (imgKeyBadge != null && i < imgKeyBadge.Length && imgKeyBadge[i] != null)
                 {
-                    imgKeyBadge[i].gameObject.SetActive(exists && !isActive);
+                    imgKeyBadge[i].gameObject.SetActive(exists && !isActive && !fallen);
                 }
 
-                ApplyAvatarIcon(i, exists, party, settings);
+                ApplyAvatarIcon(i, exists, fallen, party, settings);
             }
         }
 
-        void ApplyAvatarIcon(int slot, bool exists, PartyController party, CharacterRuntimeSettings settings)
+        void ApplyAvatarIcon(int slot, bool exists, bool fallen, PartyController party, CharacterRuntimeSettings settings)
         {
             Image avatar = ResolveAvatarImage(slot);
             if (avatar == null)
@@ -165,14 +178,13 @@ namespace AttackSkill.UI
             if (sprite == null)
             {
                 avatar.enabled = avatar.sprite != null;
+                avatar.color = fallen ? new Color(0.35f, 0.35f, 0.35f, 1f) : Color.white;
                 return;
             }
 
             avatar.sprite = sprite;
             avatar.enabled = true;
-            Color c = avatar.color;
-            c.a = 1f;
-            avatar.color = c;
+            avatar.color = fallen ? new Color(0.35f, 0.35f, 0.35f, 1f) : Color.white;
         }
 
         Image ResolveAvatarImage(int slot)

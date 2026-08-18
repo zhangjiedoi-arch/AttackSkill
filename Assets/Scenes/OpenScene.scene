@@ -22427,6 +22427,13 @@ MonoBehaviour:
     singleton: 1
     stretchToParent: 1
     closesOtherPanels: 1
+  - id: 21
+    layer: 1
+    prefab: {fileID: 5562566404932460882, guid: CX1Oty+tAXvgafhKNb7+pdNF6y67CCW6c9TijEYK8JjszKyZ3p4oqPc=,
+      type: 3}
+    singleton: 1
+    stretchToParent: 1
+    closesOtherPanels: 1
   - id: 30
     layer: 0
     prefab: {fileID: 7254446122732284150, guid: 50d14418c8411fd4caf05c1236b769f6,

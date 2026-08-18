@@ -273,6 +273,17 @@ namespace AttackSkill.Editor.UIBinding
                     new UIBindingField("palCard2", typeof(UnityEngine.UI.Button)),
                 }
             },
+            new UIBindingViewSpec
+            {
+                ClassName = "UITaskPanel",
+                PrefabName = "UI_Task_Panel",
+                PrefabPath = "Assets/Prefabs/UI/BattleHUD/UI_Task_Panel.prefab",
+                Fields = new[]
+                {
+                    new UIBindingField("imgBg", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("txtDesc", typeof(UnityEngine.UI.Text)),
+                }
+            },
         };
     }
 }
