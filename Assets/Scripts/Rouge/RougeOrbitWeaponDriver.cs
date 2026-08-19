@@ -43,6 +43,23 @@ namespace AttackSkill.Rouge
             Instance.BindToActive(snap: true);
         }
 
+        /// <summary>按当前被动叠层同步或拆除环绕刃。</summary>
+        public static void SyncFromProgress()
+        {
+            bool any = PartyRougeProgress.GetStack(FireBladeId) > 0 ||
+                       PartyRougeProgress.GetStack(WindBladeId) > 0;
+            if (any)
+            {
+                Ensure();
+            }
+
+            if (Instance != null)
+            {
+                Instance.SyncBlades();
+                Instance.BindToActive(snap: true);
+            }
+        }
+
         /// <summary>销毁角色前先从该角色上摘下环绕刃，避免跟着被 Destroy。</summary>
         public static void DetachFromCharacter(GenshinLikeCharacter character)
         {

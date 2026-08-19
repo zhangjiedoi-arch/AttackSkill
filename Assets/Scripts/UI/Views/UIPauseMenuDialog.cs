@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using AttackSkill.Character;
 using AttackSkill.Localization;
 
 namespace AttackSkill.UI
@@ -9,17 +10,19 @@ namespace AttackSkill.UI
     {
         public Action onContinue;
         public Action onOpenSettings;
+        public Action onReset;
         public Action onQuit;
     }
 
     /// <summary>
-    /// 独立暂停菜单：继续 / 设置 / 退出。文案统一走 LocalizedText。
+    /// 独立暂停菜单：继续 / 设置 / 返回海滩 / 退出。文案统一走 LocalizedText。
     /// </summary>
     public class UIPauseMenuDialog : UIBase
     {
         [Header("UI Bindings")]
         [SerializeField] Button btnContinue;
         [SerializeField] Button btnSettings;
+        [SerializeField] Button btnReset;
         [SerializeField] Button btnQuit;
         [SerializeField] Text txtTitle;
 
@@ -39,6 +42,7 @@ namespace AttackSkill.UI
                 cb?.Invoke();
             });
             BindClick(btnSettings, () => _args?.onOpenSettings?.Invoke());
+            BindClick(btnReset, OnClickReset);
             BindClick(btnQuit, () =>
             {
                 var cb = _args?.onQuit;
@@ -52,6 +56,19 @@ namespace AttackSkill.UI
             });
         }
 
+        void OnClickReset()
+        {
+            var cb = _args?.onReset;
+            CloseSelf();
+            if (cb != null)
+            {
+                cb.Invoke();
+                return;
+            }
+
+            PartyController.Instance?.ResetToBeachRun();
+        }
+
         void BindLocalizedTexts()
         {
             LocalizationService.EnsureInitialized();
@@ -59,10 +76,12 @@ namespace AttackSkill.UI
 
             Text continueLabel = btnContinue != null ? btnContinue.GetComponentInChildren<Text>(true) : null;
             Text settingsLabel = btnSettings != null ? btnSettings.GetComponentInChildren<Text>(true) : null;
+            Text resetLabel = btnReset != null ? btnReset.GetComponentInChildren<Text>(true) : null;
             Text quitLabel = btnQuit != null ? btnQuit.GetComponentInChildren<Text>(true) : null;
 
             LocalizedText.EnsureOn(continueLabel, "pause_continue");
             LocalizedText.EnsureOn(settingsLabel, "setting");
+            LocalizedText.EnsureOn(resetLabel, "pause_reset");
             LocalizedText.EnsureOn(quitLabel, "pause_quit_game");
         }
 
@@ -78,7 +97,8 @@ namespace AttackSkill.UI
 
         void EnsureBuilt()
         {
-            if (_built && btnContinue != null)
+            ResolveButtonsFromHierarchy();
+            if (_built && btnContinue != null && btnQuit != null)
             {
                 return;
             }
@@ -108,17 +128,57 @@ namespace AttackSkill.UI
             var panelRt = panel;
             panelRt.anchorMin = new Vector2(0.5f, 0.5f);
             panelRt.anchorMax = new Vector2(0.5f, 0.5f);
-            panelRt.sizeDelta = new Vector2(420f, 360f);
+            panelRt.sizeDelta = new Vector2(420f, 440f);
             panelRt.anchoredPosition = Vector2.zero;
             var panelImg = panel.gameObject.AddComponent<Image>();
             panelImg.color = new Color(0.12f, 0.14f, 0.18f, 0.96f);
 
-            txtTitle = CreateLabel(panel, "txtTitle", 36, new Vector2(0f, 120f), new Vector2(360f, 48f));
-            btnContinue = CreateButton(panel, "btnContinue", new Vector2(0f, 40f));
-            btnSettings = CreateButton(panel, "btnSettings", new Vector2(0f, -40f));
-            btnQuit = CreateButton(panel, "btnQuit", new Vector2(0f, -120f));
+            txtTitle = CreateLabel(panel, "txtTitle", 36, new Vector2(0f, 160f), new Vector2(360f, 48f));
+            btnContinue = CreateButton(panel, "btnContinue", new Vector2(0f, 70f));
+            btnSettings = CreateButton(panel, "btnSettings", new Vector2(0f, -10f));
+            btnReset = CreateButton(panel, "btnReset", new Vector2(0f, -90f));
+            btnQuit = CreateButton(panel, "btnQuit", new Vector2(0f, -170f));
 
             _built = true;
+        }
+
+        void ResolveButtonsFromHierarchy()
+        {
+            if (btnContinue == null)
+            {
+                btnContinue = FindChildButton("btnContinue");
+            }
+
+            if (btnSettings == null)
+            {
+                btnSettings = FindChildButton("btnSettings");
+            }
+
+            Button reset = FindChildButton("btnReset");
+            if (reset != null)
+            {
+                btnReset = reset;
+            }
+
+            Button quit = FindChildButton("btnQuit");
+            if (quit != null)
+            {
+                btnQuit = quit;
+            }
+        }
+
+        Button FindChildButton(string nodeName)
+        {
+            var all = GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < all.Length; i++)
+            {
+                if (all[i] != null && all[i].name == nodeName)
+                {
+                    return all[i].GetComponent<Button>();
+                }
+            }
+
+            return null;
         }
 
         static RectTransform CreateChild(string name, Transform parent)

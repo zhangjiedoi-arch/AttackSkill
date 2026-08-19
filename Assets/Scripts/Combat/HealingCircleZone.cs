@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using AttackSkill.Character;
 using AttackSkill.Character.HSM;
 using AttackSkill.Enemy;
-using AttackSkill.Rouge;
 using UnityEngine;
 
 namespace AttackSkill.Combat
@@ -20,6 +20,26 @@ namespace AttackSkill.Combat
         bool _playerInside;
         GameObject _auraInstance;
         bool _ownedByPool;
+
+        static readonly List<HealingCircleZone> Live = new List<HealingCircleZone>(32);
+
+        public static void ClearAll()
+        {
+            if (Live.Count == 0)
+            {
+                return;
+            }
+
+            var snap = Live.ToArray();
+            Live.Clear();
+            for (int i = 0; i < snap.Length; i++)
+            {
+                if (snap[i] != null)
+                {
+                    snap[i].DespawnSelf();
+                }
+            }
+        }
 
         public static HealingCircleZone Spawn(
             Vector3 worldPos,
@@ -100,8 +120,7 @@ namespace AttackSkill.Combat
             var health = player.GetComponentInParent<Health>();
             if (health != null && health.IsAlive)
             {
-                float rate = healPerSecond + RougePassiveEffects.HealCircleBonusPerSecond;
-                health.Heal(Mathf.Max(0f, rate) * Time.deltaTime);
+                health.Heal(Mathf.Max(0f, healPerSecond) * Time.deltaTime);
             }
         }
 
@@ -177,7 +196,17 @@ namespace AttackSkill.Combat
                 return;
             }
 
-            VfxObjectPool.RecycleNow(_auraInstance);
+            var member = _auraInstance.GetComponent<VfxPoolMember>();
+            if (member != null)
+            {
+                // 常由 OnDisable 调用：强制 unsafe，禁止新建池根
+                VfxObjectPool.ReturnFromDisable(member);
+            }
+            else
+            {
+                Destroy(_auraInstance);
+            }
+
             _auraInstance = null;
         }
 
@@ -194,8 +223,17 @@ namespace AttackSkill.Combat
             }
         }
 
+        void OnEnable()
+        {
+            if (!Live.Contains(this))
+            {
+                Live.Add(this);
+            }
+        }
+
         void OnDisable()
         {
+            Live.Remove(this);
             ClearAura();
             _playerInside = false;
         }

@@ -22421,16 +22421,16 @@ MonoBehaviour:
     singleton: 1
     stretchToParent: 1
     closesOtherPanels: 1
-  - id: 19
+  - id: 21
     layer: 1
-    prefab: {fileID: 482679581741038393, guid: 2f93322271a3ddb45ada9b4bbd61c408, type: 3}
+    prefab: {fileID: 5562566404932460882, guid: 67a250b062c591a4ab54c906ec0ed128,
+      type: 3}
     singleton: 1
     stretchToParent: 1
     closesOtherPanels: 1
-  - id: 21
+  - id: 19
     layer: 1
-    prefab: {fileID: 5562566404932460882, guid: CX1Oty+tAXvgafhKNb7+pdNF6y67CCW6c9TijEYK8JjszKyZ3p4oqPc=,
-      type: 3}
+    prefab: {fileID: 482679581741038393, guid: 2f93322271a3ddb45ada9b4bbd61c408, type: 3}
     singleton: 1
     stretchToParent: 1
     closesOtherPanels: 1
@@ -22462,6 +22462,27 @@ MonoBehaviour:
     singleton: 1
     stretchToParent: 0
     closesOtherPanels: 0
+  - id: 34
+    layer: 0
+    prefab: {fileID: 7088986758941047418, guid: f61332be745bc224fac408f063dd036d,
+      type: 3}
+    singleton: 1
+    stretchToParent: 0
+    closesOtherPanels: 0
+  - id: 35
+    layer: 0
+    prefab: {fileID: 6010817158676288707, guid: 3866fc3abb3f82741be548af798ad485,
+      type: 3}
+    singleton: 1
+    stretchToParent: 0
+    closesOtherPanels: 0
+  - id: 20
+    layer: 1
+    prefab: {fileID: 6152538216415943228, guid: 1a1745470001a6e49b454da2919d5338,
+      type: 3}
+    singleton: 1
+    stretchToParent: 1
+    closesOtherPanels: 1
 --- !u!4 &1299948500
 Transform:
   m_ObjectHideFlags: 0

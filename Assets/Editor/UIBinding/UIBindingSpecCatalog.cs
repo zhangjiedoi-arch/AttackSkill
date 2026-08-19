@@ -235,6 +235,14 @@ namespace AttackSkill.Editor.UIBinding
                     new UIBindingField("imgSkillT", typeof(UnityEngine.UI.Image)),
                     new UIBindingField("imgSkill", typeof(UnityEngine.UI.Image), collectAll: true),
                     new UIBindingField("txtSkill", typeof(UnityEngine.UI.Text), collectAll: true),
+                    new UIBindingField("imgFillT", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("imgFillQ", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("imgFillE", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("imgFillR", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("txtFillT", typeof(UnityEngine.UI.Text)),
+                    new UIBindingField("txtFillQ", typeof(UnityEngine.UI.Text)),
+                    new UIBindingField("txtFillE", typeof(UnityEngine.UI.Text)),
+                    new UIBindingField("txtFillR", typeof(UnityEngine.UI.Text)),
                 }
             },
             new UIBindingViewSpec

@@ -33,8 +33,8 @@ GameProgress（可 defer）→ Party 按性别组装 [漂泊者, 千咲, 柯莱�
 2. 新角色：Prefab + `CharacterAvatar` 挂点，确保 Assembler 可 Spawn。
 3. 头像：`PartyPortraitId` + Settings 四个 Sprite + `UIBattlePartyPanel`。
 4. 调 `switchCooldown` / `residualTimeout` / 继承坐标（无横向偏移）。
-5. 单局死亡：槽位 `fallen` 后不可切回、头像置灰；全灭弹出 `UI_GameOver_Dialog`。重新开始：等级/被动重置、全员复活、传送 `PlayerSpawn`。
-6. 读档：对齐 `GameSaveData.activeIndex` + pending restore。
+5. 单局死亡：槽位 `fallen` 后不可切回、头像置灰；全灭弹出 `UI_GameOver_Dialog`。重新开始肉鸽：等级/被动重置、全员复活、传送 `PlayerSpawn`。暂停返回海滩：`ResetToBeachRun` 回 `spawnPosition`、删档重写。
+6. 读档：Awake 挂 Pending；`BeginPlayFromSaveOrDefault` 即使已出生也强制恢复。先 `ApplyRestoredEntry` 再 `SwitchTo(..., useRequestedPose)`。
 7. 实现/保持 `IPlayerTargetProvider` 供敌人索敌。
 8. 切人时探索工具注意 `SuppressEnterSfx`。
 9. 验证：技能中切人 Residual 不抢相机；`SnapToFollowTarget`。

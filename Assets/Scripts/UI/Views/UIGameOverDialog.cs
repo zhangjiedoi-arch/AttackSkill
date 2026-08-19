@@ -7,19 +7,34 @@ using UnityEngine.UI;
 
 namespace AttackSkill.UI
 {
+    public sealed class UIGameOverDialogArgs
+    {
+        public string titleKey;
+    }
+
     /// <summary>全灭结算：重新开始肉鸽 / 退出游戏。</summary>
     public class UIGameOverDialog : UIBase
     {
+        public const string DefaultTitleKey = "game_over_title";
+        public const string RescueTitleKey = "game_over_rescue_title";
+
         [Header("UI Bindings")]
         [SerializeField] Text txtTitle;
         [SerializeField] Button btnReset;
         [SerializeField] Button btnQuit;
 
         bool _softBlockPushed;
+        string _titleKey = DefaultTitleKey;
 
         public override void OnOpen(object args)
         {
             EnsureBound();
+            _titleKey = DefaultTitleKey;
+            if (args is UIGameOverDialogArgs goArgs && !string.IsNullOrEmpty(goArgs.titleKey))
+            {
+                _titleKey = goArgs.titleKey;
+            }
+
             BindLocalizedTexts();
             BindClick(btnReset, OnClickReset);
             BindClick(btnQuit, OnClickQuit);
@@ -65,7 +80,11 @@ namespace AttackSkill.UI
         void BindLocalizedTexts()
         {
             LocalizationService.EnsureInitialized();
-            LocalizedText.EnsureOn(txtTitle, "game_over_title");
+            LocalizedText.EnsureOn(txtTitle, _titleKey);
+            if (txtTitle != null)
+            {
+                txtTitle.text = LocalizationService.Get(LocalizationTableType.UI, _titleKey);
+            }
 
             Text resetLabel = btnReset != null ? btnReset.GetComponentInChildren<Text>(true) : null;
             Text quitLabel = btnQuit != null ? btnQuit.GetComponentInChildren<Text>(true) : null;

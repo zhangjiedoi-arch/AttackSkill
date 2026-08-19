@@ -44,10 +44,8 @@ namespace AttackSkill.Rouge
         public string id;
         public string rarity;
         public int maxStack = 1;
-        public string nameZh;
-        public string nameEn;
-        public string descZh;
-        public string descEn;
+        public string nameKey;
+        public string descKey;
         public RougePassiveModData[] mods;
     }
 

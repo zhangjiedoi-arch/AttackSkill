@@ -38,6 +38,15 @@ namespace AttackSkill.Enemy
             _groupDef = groupDef;
         }
 
+        /// <summary>暂停重置海滩波：清掉活怪，允许再次在 20m 内生成。</summary>
+        public void ResetForReplay()
+        {
+            DespawnAlive();
+            _waitingRespawn = false;
+            _respawnAt = -1f;
+            allowRespawn = true;
+        }
+
         public void Tick(float deltaTime, Vector3 playerPos, bool groupActive)
         {
             if (!groupActive)

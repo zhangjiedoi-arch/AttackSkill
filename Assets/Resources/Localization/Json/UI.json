@@ -428,6 +428,12 @@
       "ja": "ゲーム終了"
     },
     {
+      "key": "pause_reset",
+      "zhHans": "返回海滩",
+      "en": "Return to Beach",
+      "ja": "海岸に戻る"
+    },
+    {
       "key": "entering_game",
       "zhHans": "正在进入游戏…",
       "en": "Entering game…",
@@ -470,6 +476,12 @@
       "ja": "深淵を怒らせ、未知の地へ連れ去られた..."
     },
     {
+      "key": "rouge_skill_current_stack",
+      "zhHans": "当前 {0}/{1} 层",
+      "en": "Current stacks: {0}/{1}",
+      "ja": "現在 {0}/{1} スタック"
+    },
+    {
       "key": "task_camp",
       "zhHans": "击败海边的敌人",
       "en": "Defeat the enemies by the sea",
@@ -486,6 +498,18 @@
       "zhHans": "您被深渊吞噬了！",
       "en": "You were swallowed by the Abyss!",
       "ja": "深淵に呑まれた！"
+    },
+    {
+      "key": "game_over_rescue_title",
+      "zhHans": "派蒙拯救了你！",
+      "en": "Paimon saved you!",
+      "ja": "パイモンがあなたを救った！"
+    },
+    {
+      "key": "battle_time_rescue",
+      "zhHans": "即将获救：{0}",
+      "en": "Rescue incoming: {0}",
+      "ja": "もうすぐ救出：{0}"
     },
     {
       "key": "game_over_reset",

@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: "\u6D41\u653E\u8005\u7537"
   prefab: {fileID: 8930181836949831308, guid: 309b2dc713b42ab45ade0109b035db3c, type: 3}
   combatStats: {fileID: 0}
-  maxHp: 400
+  maxHp: 760
   level: 80
   moveSpeed: 3.5
   turnSpeed: 8
@@ -28,7 +28,7 @@ MonoBehaviour:
   attackRange: 1.8
   disengageRange: 22
   returnHomeRange: 28
-  attackDamage: 50
+  attackDamage: 48
   attackKnockback: 1.2
   attackWindup: 0.35
   attackActive: 0.15

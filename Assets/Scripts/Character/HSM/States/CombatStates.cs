@@ -1,6 +1,5 @@
 using UnityEngine;
 using AttackSkill.Combat;
-using AttackSkill.Rouge;
 
 namespace AttackSkill.Character.HSM
 {
@@ -51,9 +50,7 @@ namespace AttackSkill.Character.HSM
         {
             // 连段索引由上一段结束时预写好；只有离开战斗后才会在 Return/Combat.OnExit 清零。
             // 不要用 ComboResetTime 在这里清零，否则第一段动画一长过重置时间，第二段会被打回 attack1。
-            CombatEngageUtility.TrySnapToNearestEnemy(
-                Ctx.Owner,
-                RougePassiveEffects.EngageRadius);
+            CombatEngageUtility.TrySnapToNearestEnemy(Ctx.Owner);
 
             _playingCombo = Mathf.Clamp(Ctx.AttackComboIndex, 0, Ctx.Settings.MaxAttackCombo - 1);
             Ctx.LastAttackTime = Time.time;
@@ -195,9 +192,7 @@ namespace AttackSkill.Character.HSM
 
         public override void OnEnter()
         {
-            CombatEngageUtility.TrySnapToNearestEnemy(
-                Ctx.Owner,
-                RougePassiveEffects.EngageRadius);
+            CombatEngageUtility.TrySnapToNearestEnemy(Ctx.Owner);
 
             Ctx.Motor.PlanarVelocity = Vector3.zero;
             Ctx.Motor.Velocity.x = 0f;

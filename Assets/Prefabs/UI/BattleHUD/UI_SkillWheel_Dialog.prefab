@@ -70,7 +70,7 @@ MonoBehaviour:
   palSkill7: {fileID: 9191137588315436162}
   palSkill8: {fileID: 592415652506190131}
   txtName: {fileID: 6121811455833910654}
-  txtTip: {fileID: 0}
+  txtTip: {fileID: 3548718946804848735}
   imgMask: {fileID: 612342050412160316}
   imgBg: {fileID: 8725560100587206904}
 --- !u!1 &820842950838021406

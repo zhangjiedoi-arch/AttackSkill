@@ -26,9 +26,10 @@ description: >-
 ## 数据流
 
 ```text
-OpenScene → GameBoot.SetIntent(NewGame|Continue)
+OpenScene 连接 → 有档 Continue / 无档 NewGame
 GameScene Progress.ConsumeIntent → Load / Clear → Party 恢复
-F5 / 退出 / 定时 → 写档
+F5 / 退出(暂停·结算) / OnDestroy / 定时 → 写档
+暂停 btnReset → 删档并写海滩新档
 UI SoftBlock Push → 角色/相机输入变 default → OnClose Pop
 ```
 
@@ -38,13 +39,16 @@ UI SoftBlock Push → 角色/相机输入变 default → OnClose Pop
 2. 账号/性别只用 `LocalAccountStore`，不要写入 `GameSaveData`。
 3. 打开阻塞玩法的 UI：严格 `PushSoftBlock` / `PopSoftBlock`（`OnClose` 必 Pop）。
 4. 退出 Play：注意 `ForceClear`，避免编辑器 `timeScale=0` 残留。
-5. NewGame：清 pending + `BattleSkillWheelState.ResetToDefault`。
-6. Continue：场景名不一致则 `LoadSceneAsync`。
-7. 直接进 GameScene：配 `defaultSceneName` / `loadSaveOnStart`。
-8. 校验 `equippedSkillIndex` 与轮盘一致；HP `<0` 表示未记录。
+5. NewGame：清 pending + `BattleSkillWheelState.ResetToDefault` + `PartyRougeProgress.ResetRun`。开场连接仅在无档时走这条。
+6. Continue：Awake 即 TryLoad 挂 Pending（早于 Party.Start）。恢复 `rougeRun`。已进平面则先 `ApplyRestoredEntry` 再生成，避免海滩 intro `ResetRun`。读档坐标不贴地、不继承当前位姿。
+7. `TrySave` 失败必须打 Warning；F5 成功用 Tip `progress_saved_at`。`QuitGame` 先写档再退出。
+8. 直接进 GameScene：配 `defaultSceneName` / `loadSaveOnStart`。
+9. 校验 `equippedSkillIndex` 与轮盘一致；HP `<0` 表示未记录。
 
 ## 约定与坑
 
 - SoftBlock ≠ `GamePause.IsPaused`（轮盘是软阻塞）。
+- 存档 v4 起含 `rougeRun`（`PartyRougeProgress` + 是否已进肉鸽平面 + 阵亡槽）。
+- 存档 v5 起含 `rougeRun.battleTimeRemaining`（肉鸽获救倒计时剩余秒；未进战斗为 -1）。
 - 存档 v3 起含 `equippedSkillIndex`。
 - 输入后端抽象为 `GameInput`，优先 Input System。

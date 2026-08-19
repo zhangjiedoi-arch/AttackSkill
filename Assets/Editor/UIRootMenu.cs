@@ -127,6 +127,8 @@ namespace AttackSkill.Editor
             changed += AttachOne("BattleHUD/UI_BattleCombat_Panel", typeof(UIBattleCombatPanel)) ? 1 : 0;
             changed += AttachOne("BattleHUD/UI_BattleVitals_Panel", typeof(UIBattleVitalsPanel)) ? 1 : 0;
             changed += AttachOne("BattleHUD/UI_Task_Panel", typeof(UITaskPanel)) ? 1 : 0;
+            changed += AttachOne("BattleHUD/UI_BattleTime_Panel", typeof(UIBattleTimePanel)) ? 1 : 0;
+            changed += AttachOne("BattleHUD/UI_SkillSelect_Panel", typeof(UISkillSelectPanel)) ? 1 : 0;
             AssetDatabase.SaveAssets();
             EditorUtility.DisplayDialog("UI", $"安全挂载完成，更新 {changed} 个 Prefab。", "OK");
         }
@@ -332,6 +334,22 @@ namespace AttackSkill.Editor
                 attachViews,
                 stretchToParent: false,
                 closesOtherPanels: false);
+            TryAdd(
+                list,
+                UIId.BattleTime,
+                UILayer.Panel,
+                "BattleHUD/UI_BattleTime_Panel",
+                typeof(UIBattleTimePanel),
+                attachViews,
+                stretchToParent: false,
+                closesOtherPanels: false);
+            TryAdd(
+                list,
+                UIId.SkillSelect,
+                UILayer.Dialog,
+                "BattleHUD/UI_SkillSelect_Panel",
+                typeof(UISkillSelectPanel),
+                attachViews);
             return list;
         }
 

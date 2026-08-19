@@ -99,26 +99,12 @@ namespace AttackSkill.Combat
             DamageInfo resolved = ResolveDamage(request);
             ApplyIncomingRougeMods(ref resolved, request);
 
-            bool aliveBefore = request.Target.IsAlive;
             request.Target.TakeDamage(resolved);
             TryApplyLifesteal(resolved);
-
-            if (aliveBefore &&
-                !request.Target.IsAlive &&
-                IsPlayerAttacker(resolved.Attacker))
-            {
-                RougePassiveEffects.NotifyEnemyKilledByPlayer();
-            }
 
             SpawnHitVfx(request);
             Applied?.Invoke(resolved, request.Target);
             return true;
-        }
-
-        static bool IsPlayerAttacker(GameObject attacker)
-        {
-            return attacker != null &&
-                   attacker.GetComponentInParent<GenshinLikeCharacter>() != null;
         }
 
         static void ApplyIncomingRougeMods(ref DamageInfo resolved, in HitRequest request)

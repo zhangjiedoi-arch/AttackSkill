@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using AttackSkill.CameraSystem;
 using AttackSkill.Core;
 using AttackSkill.Game;
+using AttackSkill.Localization;
 using AttackSkill.Rouge;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ using UnityEngine.UI;
 namespace AttackSkill.UI
 {
     /// <summary>升级三选一：点卡片高亮，确认后写入共享被动。</summary>
-    public class UISkillSelectPanel : UIBase
+    public partial class UISkillSelectPanel : UIBase
     {
         struct CardView
         {
@@ -43,15 +44,8 @@ namespace AttackSkill.UI
 
             FillCards(list);
 
-            if (_txtTitle != null)
-            {
-                _txtTitle.text = "选择技能";
-            }
-
-            if (_txtSelect != null)
-            {
-                _txtSelect.text = "确认";
-            }
+            BindLocale();
+            RefreshStaticTexts();
 
             RefreshSelectionVisual();
 
@@ -66,6 +60,7 @@ namespace AttackSkill.UI
 
         public override void OnClose()
         {
+            UnbindLocale();
             if (_softBlockPushed)
             {
                 GameplayInputGate.PopSoftBlock();
@@ -116,7 +111,8 @@ namespace AttackSkill.UI
 
                 if (_cards[i].txtDesc != null)
                 {
-                    _cards[i].txtDesc.text = RougePassiveText.Desc(data);
+                    _cards[i].txtDesc.text = FormatCardDesc(data);
+                    _cards[i].txtDesc.verticalOverflow = VerticalWrapMode.Overflow;
                 }
 
                 if (_cards[i].imgBg != null)
@@ -226,6 +222,82 @@ namespace AttackSkill.UI
             }
 
             BindClick(_btnSelect, OnConfirmClicked);
+        }
+
+        void BindLocale()
+        {
+            LocalizationService.LocaleChanged -= OnLocaleChanged;
+            LocalizationService.LocaleChanged += OnLocaleChanged;
+        }
+
+        void UnbindLocale()
+        {
+            LocalizationService.LocaleChanged -= OnLocaleChanged;
+        }
+
+        void OnLocaleChanged(GameLocale _)
+        {
+            RefreshStaticTexts();
+            RefreshCardTexts();
+        }
+
+        void RefreshStaticTexts()
+        {
+            if (_txtTitle != null)
+            {
+                _txtTitle.text = "选择技能";
+            }
+
+            if (_txtSelect != null)
+            {
+                _txtSelect.text = "确认";
+            }
+        }
+
+        void RefreshCardTexts()
+        {
+            for (int i = 0; i < _cards.Length; i++)
+            {
+                var data = _cards[i].data;
+                if (data == null)
+                {
+                    continue;
+                }
+
+                if (_cards[i].txtName != null)
+                {
+                    _cards[i].txtName.text = RougePassiveText.Name(data);
+                }
+
+                if (_cards[i].txtDesc != null)
+                {
+                    _cards[i].txtDesc.text = FormatCardDesc(data);
+                    _cards[i].txtDesc.verticalOverflow = VerticalWrapMode.Overflow;
+                }
+            }
+        }
+
+        static string FormatCardDesc(RougePassiveDefData data)
+        {
+            string desc = RougePassiveText.Desc(data);
+            if (data == null)
+            {
+                return desc;
+            }
+
+            int cur = PartyRougeProgress.GetStack(data.id);
+            int max = Mathf.Max(1, data.maxStack);
+            string stackLine = LocalizationService.Format(
+                LocalizationTableType.UI,
+                "rouge_skill_current_stack",
+                cur,
+                max);
+            if (string.IsNullOrEmpty(desc))
+            {
+                return stackLine;
+            }
+
+            return desc + "\n" + stackLine;
         }
 
         static T FindChildComponent<T>(Transform root, string name) where T : Component

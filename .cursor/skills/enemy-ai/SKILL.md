@@ -59,11 +59,13 @@ SpawnGroup 距玩家激活 → SpawnPoint 生成
 - Profile 空则运行时默认球形出伤。
 - **出伤**：`EnemyCombat` 进入 Active 时 `EnemyHitbox.EnableHit`；动画若再绑 `SkillHit` 会双倍，勿两套同时开。
 - 玩家需 `PlayerHurtbox`（Overlap 路径）或可被 Trigger 扫到的 CharacterController。
-- 肉鸽：初始波 `InitialWaveClearedEvent` 后关刷新并传送；刷怪仅 `IsPlayerInArea`。`PlayerSpawn` / `EnemyGroup` 与 `RouGeLikePlane` 同级。
+- 肉鸽：初始波 `InitialWaveClearedEvent` 后关刷新并传送；刷怪仅 `IsPlayerInArea`。`PlayerSpawn` / `EnemyGroup` 与 `RouGeLikePlane` 同级。读档若 `hasTeleported` 或坐标已在平面内，走 `ApplyRestoredEntry`（不 ResetRun、关掉海滩 intro 组）。暂停 `btnReset` 走 `ResetToCamp`：开 intro 组、任务回到海滩清波。
+- **海滩 intro 刷怪**：按**最近 SpawnPoint** 20m 激活（`SpawnGroup_Wild.activateRadius`）；`Start` / 重置后立刻 `EvaluateActivation`，玩家已在范围内也会生成。
 - **肉鸽刷怪池按角色等级解锁**（`RougeEnemySpawnCatalog` / `Resources/Rouge/RougeEnemySpawnCatalog`）：  
   1–3 云海妖精/铲子布偶/流放者女/流放者男；4+ 卡迪安特；5+ 朔雷之麟；6+ 荣耀狮像；7+ 踏光兽；8+ 鳞人。菜单：`工具/Rouge/重建肉鸽刷怪等级表`。
-- **肉鸽批量刷怪**：每波在玩家 10m 半径内随机落点同时生成（默认 8–16，场上最多 100），走 `EnemyObjectPool`；点会夹在平面内，并避开贴身/已有怪。传送后 BGM 切 `drone`。
-- **掉落**：死亡 30% 掉 `Healing circle`（`EnemyDeathLoot`）；圈内 Active 玩家每秒回 100；`Hit_Root` 挂池化 `Healing` 特效，离圈回收。经验球仅肉鸽区域 / `IsRougeEncounter` 敌人掉落。
+- **肉鸽批量刷怪**：每波在玩家 10m 半径内随机落点同时生成（默认 8–16）。场上上限 `30 + 5*(Level-1)`，封顶 100（`RouGeLikeFlowController.MaxAliveNow`）。走 `EnemyObjectPool`；点会夹在平面内，并避开贴身/已有怪。传送后 BGM 切 `drone`，并打开 `UIBattleTimePanel` 3 分钟获救倒计时。
+- **等级缩放**：敌人 `CombatStats` 攻/防/血与玩家相同，乘 `RougePassiveEffects.LevelStatMul`（每级 +10%）。`EnemyDefinition.maxHp` / `attackDamage` 是 1 级表内值（当前表内 HP 已按一倍加强，如云海妖精 400、鳞人 1800）。升级时 `CombatStats.RefreshAllHealthForRougeLevel` 同步场上血量。
+- **掉落**：死亡 30% 掉 `Healing circle`（`EnemyDeathLoot`）；圈内 Active 玩家每秒回 100；`Hit_Root` 挂池化 `Healing` 特效，离圈回收。经验球仅肉鸽区域 / `IsRougeEncounter` 敌人掉落。生成时向下射线贴地（略抬 0.28m），不持续上浮。`PartyRougeProgress.ResetRun` → `OnRunReset` 会 `ExpOrbPickup.ClearAll` + `HealingCircleZone.ClearAll`（重开/回海滩一并清掉落）。
 - **死亡表现分流**：`EnemyDeathDirector` 按 `EnemyDefinition.echoChance` 掷骰  
   - **Echo**：`EnemyDeathGoldVisual` 金色透明残留（后续 F 吸收）；肉鸽区域强制不走此分支  
   - **Dissolve**：`EnemyDeathDissolveVisual` 噪声溶解 + 上浮后隐藏网格；肉鸽敌人一律溶解  

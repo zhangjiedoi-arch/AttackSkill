@@ -4,6 +4,7 @@ using AttackSkill.CameraSystem;
 using AttackSkill.Character;
 using AttackSkill.Character.HSM;
 using AttackSkill.Core;
+using AttackSkill.Game;
 using AttackSkill.Localization;
 using AttackSkill.Rouge;
 using AttackSkill.UI;
@@ -30,8 +31,6 @@ namespace AttackSkill.Enemy
         [SerializeField] Vector2 spawnInterval = new Vector2(4f, 8f);
         [Tooltip("每波同时生成数量（含）")]
         [SerializeField] Vector2Int spawnBatchCount = new Vector2Int(8, 16);
-        [Tooltip("场上同时存活上限")]
-        [SerializeField] int maxAlive = 100;
         [Tooltip("相对玩家的刷怪半径（米）")]
         [SerializeField] float spawnRadius = 10f;
         [Tooltip("相对玩家的最近刷怪距离，避免刷在脚边")]
@@ -48,8 +47,31 @@ namespace AttackSkill.Enemy
 
         public static RouGeLikeFlowController Instance { get; private set; }
 
+        public const int MaxAliveBase = 30;
+        public const int MaxAlivePerLevel = 5;
+        public const int MaxAliveCap = 100;
+
         public bool HasTeleported => _teleported;
         public bool IsPlayerInArea => CheckPlayerInArea();
+        public int MaxAliveNow => MaxAliveForLevel(PartyRougeProgress.Level);
+
+        /// <summary>Lv1=30，之后每级 +5，封顶 100。</summary>
+        public static int MaxAliveForLevel(int level)
+        {
+            int lv = Mathf.Max(1, level);
+            return Mathf.Min(MaxAliveCap, MaxAliveBase + MaxAlivePerLevel * (lv - 1));
+        }
+
+        /// <summary>角色已生成：海滩 intro 立刻按 20m 判断一次（含已在范围内）。</summary>
+        public void NotifyPlayerReady()
+        {
+            if (_teleported || introSpawnGroup == null || !introSpawnGroup.enabled)
+            {
+                return;
+            }
+
+            introSpawnGroup.EvaluateActivation();
+        }
 
         void Awake()
         {
@@ -91,7 +113,7 @@ namespace AttackSkill.Enemy
                 return;
             }
 
-            if (_aliveRouge.Count >= Mathf.Max(1, maxAlive))
+            if (_aliveRouge.Count >= MaxAliveNow)
             {
                 return;
             }
@@ -188,54 +210,102 @@ namespace AttackSkill.Enemy
 
         void OnIntroWaveCleared()
         {
+            if (_teleported || GameSaveService.HasPendingRestore)
+            {
+                return;
+            }
+
+            EnterRougeCombat(resetProgress: true, teleportPlayer: true, showTip: true);
+        }
+
+        /// <summary>读档：若本局已进过肉鸽区（或坐标已在平面内），开刷怪闸且不 ResetRun。</summary>
+        public void ApplyRestoredEntry(bool hasTeleported, Vector3 playerPos, float battleTimeRemaining = -1f)
+        {
+            ResolveRefs();
             if (_teleported)
             {
                 return;
             }
 
-            TeleportToRougePlane();
-        }
-
-        void TeleportToRougePlane()
-        {
-            if (playerSpawn == null)
+            if (!hasTeleported && !ContainsPoint(playerPos))
             {
-                Debug.LogError("[RouGeLike] 缺少 PlayerSpawn。", this);
                 return;
             }
 
-            Vector3 pos = playerSpawn.position;
-            // 略抬高，避免卡进地面
-            pos.y += 0.05f;
-            Quaternion rot = playerSpawn.rotation;
-
-            var party = PartyController.Instance;
-            if (party != null)
+            EnterRougeCombat(
+                resetProgress: false,
+                teleportPlayer: false,
+                showTip: false,
+                battleTimeRemaining: battleTimeRemaining);
+            if (introSpawnGroup != null)
             {
-                party.TeleportActiveTo(pos, rot);
+                introSpawnGroup.MarkIntroClearedAndDisable();
             }
-            else
-            {
-                Transform player = PlayerTargetLocator.GetActivePlayerTransform();
-                var character = player != null
-                    ? player.GetComponentInParent<GenshinLikeCharacter>()
-                    : null;
-                character?.TeleportTo(pos, rot);
-            }
+        }
 
-            var cam = GameServices.ResolveCamera();
-            if (cam != null)
+        void EnterRougeCombat(
+            bool resetProgress,
+            bool teleportPlayer,
+            bool showTip,
+            float battleTimeRemaining = -1f)
+        {
+            if (teleportPlayer)
             {
-                cam.SnapToFollowTarget();
+                if (playerSpawn == null)
+                {
+                    Debug.LogError("[RouGeLike] 缺少 PlayerSpawn。", this);
+                    return;
+                }
+
+                Vector3 pos = playerSpawn.position;
+                pos.y += 0.05f;
+                Quaternion rot = playerSpawn.rotation;
+
+                var party = PartyController.Instance;
+                if (party != null)
+                {
+                    party.TeleportActiveTo(pos, rot);
+                }
+                else
+                {
+                    Transform player = PlayerTargetLocator.GetActivePlayerTransform();
+                    var character = player != null
+                        ? player.GetComponentInParent<GenshinLikeCharacter>()
+                        : null;
+                    character?.TeleportTo(pos, rot);
+                }
+
+                var cam = GameServices.ResolveCamera();
+                if (cam != null)
+                {
+                    cam.SnapToFollowTarget();
+                }
             }
 
             _teleported = true;
             _nextSpawnAt = Time.time + 1.5f;
-            AttackSkill.Rouge.PartyRougeProgress.ResetRun();
+            if (resetProgress)
+            {
+                PartyRougeProgress.ResetRun();
+            }
+
             PrewarmEnemyPool();
             SceneBgmPlayer.PlayRougeDrone();
-            ShowTeleportTip();
-            Debug.Log("[RouGeLike] 初始波次已清，传送至 RouGeLikePlane。", this);
+            // 新进肉鸽 / 未记录剩余：满时长；读档：续跑剩余秒
+            float timer = resetProgress || battleTimeRemaining < 0f
+                ? -1f
+                : battleTimeRemaining;
+            UIBattleTimePanel.BeginRougeTimer(timer);
+            if (showTip)
+            {
+                ShowTeleportTip();
+            }
+
+            Debug.Log(
+                resetProgress
+                    ? "[RouGeLike] 初始波次已清，传送至 RouGeLikePlane。"
+                    : "[RouGeLike] 读档恢复肉鸽区，跳过海滩闸门。",
+                this);
         }
 
         void PrewarmEnemyPool()
@@ -247,8 +317,9 @@ namespace AttackSkill.Enemy
                 return;
             }
 
-            int perType = Mathf.Max(8, Mathf.CeilToInt(Mathf.Max(1, maxAlive) / (float)eligible.Count));
-            perType = Mathf.Min(perType, Mathf.Max(1, maxAlive));
+            int cap = Mathf.Max(1, MaxAliveNow);
+            int perType = Mathf.Max(8, Mathf.CeilToInt(cap / (float)eligible.Count));
+            perType = Mathf.Min(perType, cap);
             for (int i = 0; i < eligible.Count; i++)
             {
                 EnemyObjectPool.Prewarm(eligible[i], perType);
@@ -272,7 +343,7 @@ namespace AttackSkill.Enemy
         /// <summary>一波在玩家附近同时刷怪。</summary>
         int TrySpawnBatch()
         {
-            int room = Mathf.Max(0, Mathf.Max(1, maxAlive) - _aliveRouge.Count);
+            int room = Mathf.Max(0, MaxAliveNow - _aliveRouge.Count);
             if (room <= 0)
             {
                 return 0;
@@ -476,6 +547,30 @@ namespace AttackSkill.Enemy
             return true;
         }
 
+        /// <summary>暂停重置：离开肉鸽区，恢复海滩 intro 波并切回海滨 BGM。</summary>
+        public void ResetToCamp()
+        {
+            ResolveRefs();
+            _teleported = false;
+            ClearAliveRouge();
+            if (introSpawnGroup != null)
+            {
+                introSpawnGroup.ResetWaveForReplay();
+            }
+
+            BindIntroGroup();
+            SceneBgmPlayer.PlayCampTheme();
+            UIBattleTimePanel.EndRougeTimer();
+
+            var cam = GameServices.ResolveCamera();
+            if (cam != null)
+            {
+                cam.SnapToFollowTarget();
+            }
+
+            Debug.Log("[RouGeLike] 已重置回海滩清波。", this);
+        }
+
         /// <summary>重新开始：清场上肉鸽怪并重置刷怪计时，保持已进入肉鸽区。</summary>
         public void ResetEncounterForRestart()
         {
@@ -491,6 +586,7 @@ namespace AttackSkill.Enemy
             }
 
             SceneBgmPlayer.PlayRougeDrone();
+            UIBattleTimePanel.BeginRougeTimer();
         }
 
         void ClearAliveRouge()

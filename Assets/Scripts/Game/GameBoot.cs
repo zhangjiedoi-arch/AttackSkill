@@ -1,11 +1,11 @@
 namespace AttackSkill.Game
 {
-    /// <summary>跨场景启动意图：开场「连接」= 新开局；主菜单继续 = Continue。</summary>
+    /// <summary>跨场景启动意图：开场「连接」有档=Continue，无档=NewGame。</summary>
     public enum GameBootIntent
     {
         /// <summary>未指定：直接进 GameScene 时，由 GameProgress.loadSaveOnStart 决定是否读档。</summary>
         Unspecified = 0,
-        /// <summary>新开一局：不加载进度档（磁盘档保留）。</summary>
+        /// <summary>新开一局：不加载进度档。磁盘无档，或玩家已 F6 删档。</summary>
         NewGame = 1,
         /// <summary>继续：加载进度档并 PendingRestore。</summary>
         Continue = 2

@@ -4,7 +4,6 @@ using AttackSkill.Character.HSM;
 using AttackSkill.Combat;
 using AttackSkill.Core;
 using AttackSkill.Game;
-using AttackSkill.Rouge;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -153,12 +152,10 @@ namespace AttackSkill.UI
                 return;
             }
 
-            // 进入探索工具前：贴身搜索（猎手直觉可加成）
+            // 进入探索工具前：贴身搜索
             if (!toolActive)
             {
-                CombatEngageUtility.TrySnapToNearestEnemy(
-                    character,
-                    RougePassiveEffects.EngageRadius);
+                CombatEngageUtility.TrySnapToNearestEnemy(character);
             }
 
             if (!ExplorationToolService.TryToggleEquipped(

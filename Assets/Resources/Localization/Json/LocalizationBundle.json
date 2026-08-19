@@ -538,6 +538,12 @@
           "ja": "ゲーム終了"
         },
         {
+          "key": "pause_reset",
+          "zhHans": "返回海滩",
+          "en": "Return to Beach",
+          "ja": "海岸に戻る"
+        },
+        {
           "key": "entering_game",
           "zhHans": "正在进入游戏…",
           "en": "Entering game…",
@@ -580,6 +586,12 @@
           "ja": "深淵を怒らせ、未知の地へ連れ去られた..."
         },
         {
+          "key": "rouge_skill_current_stack",
+          "zhHans": "当前 {0}/{1} 层",
+          "en": "Current stacks: {0}/{1}",
+          "ja": "現在 {0}/{1} スタック"
+        },
+        {
           "key": "task_camp",
           "zhHans": "击败海边的敌人",
           "en": "Defeat the enemies by the sea",
@@ -596,6 +608,18 @@
           "zhHans": "您被深渊吞噬了！",
           "en": "You were swallowed by the Abyss!",
           "ja": "深淵に呑まれた！"
+        },
+        {
+          "key": "game_over_rescue_title",
+          "zhHans": "派蒙拯救了你！",
+          "en": "Paimon saved you!",
+          "ja": "パイモンがあなたを救った！"
+        },
+        {
+          "key": "battle_time_rescue",
+          "zhHans": "即将获救：{0}",
+          "en": "Rescue incoming: {0}",
+          "ja": "もうすぐ救出：{0}"
         },
         {
           "key": "game_over_reset",
@@ -679,6 +703,162 @@
           "zhHans": "机关变转之刻，余音回响不绝。风带来了新的讯息，也带来了久违的重逢。\n神机锋刃挥下，云雀褪去初羽。少女随歌而行，于梦中所见的，是她那不再停滞的命运。",
           "en": "When the gears shifted, the echoes of the music continued to reverberate. The wind brought new messages and also long-awaited reunions.\nWith the swift motion of the divine blade, the lark shed its initial feathers. The young girl followed the melody, and what she saw in her dream was her destiny that no longer stood still.",
           "ja": "When the gears shifted, the echoes of the music continued to reverberate. The wind brought new messages and also long-awaited reunions.\nWith the swift motion of the divine blade, the lark shed its initial feathers. The young girl followed the melody, and what she saw in her dream was her destiny that no longer stood still."
+        },
+        {
+          "key": "rouge_passive_blade_name",
+          "zhHans": "锋刃",
+          "en": "Blade",
+          "ja": "刃"
+        },
+        {
+          "key": "rouge_passive_blade_desc",
+          "zhHans": "普攻伤害每层 +12%",
+          "en": "+12% basic attack damage per stack",
+          "ja": "通常攻撃ダメージが1スタックにつき+12%"
+        },
+        {
+          "key": "rouge_passive_thick_skin_name",
+          "zhHans": "厚皮",
+          "en": "Thick Skin",
+          "ja": "厚い皮"
+        },
+        {
+          "key": "rouge_passive_thick_skin_desc",
+          "zhHans": "受到伤害每层 -8%",
+          "en": "-8% damage taken per stack",
+          "ja": "被ダメージが1スタックにつき-8%"
+        },
+        {
+          "key": "rouge_passive_quickstep_name",
+          "zhHans": "快步",
+          "en": "Quickstep",
+          "ja": "速歩"
+        },
+        {
+          "key": "rouge_passive_quickstep_desc",
+          "zhHans": "移动速度每层 +6%",
+          "en": "+6% move speed per stack",
+          "ja": "移動速度が1スタックにつき+6%"
+        },
+        {
+          "key": "rouge_passive_lifesteal_name",
+          "zhHans": "嗜血",
+          "en": "Lifesteal",
+          "ja": "吸血"
+        },
+        {
+          "key": "rouge_passive_lifesteal_desc",
+          "zhHans": "造成伤害的 4%/层 转化为生命",
+          "en": "Heal for 4% of damage dealt per stack",
+          "ja": "与えたダメージの4%/スタックを回復"
+        },
+        {
+          "key": "rouge_passive_ember_name",
+          "zhHans": "余火",
+          "en": "Ember",
+          "ja": "余燼"
+        },
+        {
+          "key": "rouge_passive_ember_desc",
+          "zhHans": "E 技能伤害每层 +15%",
+          "en": "+15% E skill damage per stack",
+          "ja": "Eスキルダメージが1スタックにつき+15%"
+        },
+        {
+          "key": "rouge_passive_execute_name",
+          "zhHans": "处决",
+          "en": "Execute",
+          "ja": "処刑"
+        },
+        {
+          "key": "rouge_passive_execute_desc",
+          "zhHans": "目标生命低于 25% 时伤害每层 +40%",
+          "en": "+40% damage vs targets below 25% HP per stack",
+          "ja": "HP25%未満の敵へのダメージが1スタックにつき+40%"
+        },
+        {
+          "key": "rouge_passive_abyss_pact_name",
+          "zhHans": "深渊契约",
+          "en": "Abyss Pact",
+          "ja": "深淵契約"
+        },
+        {
+          "key": "rouge_passive_abyss_pact_desc",
+          "zhHans": "攻击 +25%，最大生命 -15%",
+          "en": "+25% attack, -15% max HP",
+          "ja": "攻撃力+25%、最大HP-15%"
+        },
+        {
+          "key": "rouge_passive_fire_blade_name",
+          "zhHans": "火之刃",
+          "en": "Fire Blade",
+          "ja": "炎の刃"
+        },
+        {
+          "key": "rouge_passive_fire_blade_desc",
+          "zhHans": "环绕火刃：伤害为攻击力的 2 倍，不暴击；每层伤害 +20%（满 5 层）",
+          "en": "Orbiting fire blade: 2x ATK, no crit; +20% damage per extra stack (max 5)",
+          "ja": "周囲を回る炎の刃：攻撃力の2倍、クリティカルなし。追加1スタックにつきダメージ+20%（最大5）"
+        },
+        {
+          "key": "rouge_passive_wind_blade_name",
+          "zhHans": "风之刃",
+          "en": "Wind Blade",
+          "ja": "風の刃"
+        },
+        {
+          "key": "rouge_passive_wind_blade_desc",
+          "zhHans": "环绕风刃：伤害为攻击力的 1.5 倍，不暴击，附带击退；每层伤害 +20%（满 5 层）",
+          "en": "Orbiting wind blade: 1.5x ATK, no crit, knocks back; +20% damage per extra stack (max 5)",
+          "ja": "周囲を回る風の刃：攻撃力の1.5倍、クリティカルなし、ノックバック。追加1スタックにつきダメージ+20%（最大5）"
+        },
+        {
+          "key": "rouge_passive_ice_sorrow_name",
+          "zhHans": "冰之哀伤",
+          "en": "Ice Sorrow",
+          "ja": "氷の哀しみ"
+        },
+        {
+          "key": "rouge_passive_ice_sorrow_desc",
+          "zhHans": "在角色 5–10m 随机生成冰领域，持续 2 秒：每秒造成攻击力 120% 冰伤；每层 +10%（满 5 层）",
+          "en": "Spawn an ice field 5–10m away for 2s: 120% ATK ice damage per second; +10% per extra stack (max 5)",
+          "ja": "5–10m先に氷領域を2秒生成：毎秒攻撃力120%の氷ダメージ。追加1スタックにつき+10%（最大5）"
+        },
+        {
+          "key": "rouge_passive_fire_joy_name",
+          "zhHans": "火之高兴",
+          "en": "Fire Joy",
+          "ja": "炎の歓び"
+        },
+        {
+          "key": "rouge_passive_fire_joy_desc",
+          "zhHans": "在角色 5–10m 随机生成火领域，持续 5 秒：每秒造成攻击力 120% 火伤；每层 +10%（满 5 层）",
+          "en": "Spawn a fire field 5–10m away for 5s: 120% ATK fire damage per second; +10% per extra stack (max 5)",
+          "ja": "5–10m先に炎領域を5秒生成：毎秒攻撃力120%の炎ダメージ。追加1スタックにつき+10%（最大5）"
+        },
+        {
+          "key": "rouge_passive_snow_frost_name",
+          "zhHans": "雪之哀霜",
+          "en": "Snow Frost",
+          "ja": "雪の霜"
+        },
+        {
+          "key": "rouge_passive_snow_frost_desc",
+          "zhHans": "在角色 5–10m 随机生成暗领域，持续 4 秒：每秒造成攻击力 120% 暗伤；每层 +10%（满 5 层）",
+          "en": "Spawn a dark field 5–10m away for 4s: 120% ATK dark damage per second; +10% per extra stack (max 5)",
+          "ja": "5–10m先に闇領域を4秒生成：毎秒攻撃力120%の闇ダメージ。追加1スタックにつき+10%（最大5）"
+        },
+        {
+          "key": "rouge_passive_decoy_tree_name",
+          "zhHans": "诱敌之树",
+          "en": "Decoy Tree",
+          "ja": "囮の樹"
+        },
+        {
+          "key": "rouge_passive_decoy_tree_desc",
+          "zhHans": "在角色 10–20m 随机生成诱敌之树：10m 内敌人优先攻击它；生命 2000，每层 +10%（满 5 层）",
+          "en": "Spawn a decoy tree 10–20m away: enemies within 10m prefer it; 2000 HP, +10% per extra stack (max 5)",
+          "ja": "10–20m先に囮の樹を生成：10m内の敵は優先して攻撃。HP2000、追加1スタックにつき+10%（最大5）"
         }
       ]
     }

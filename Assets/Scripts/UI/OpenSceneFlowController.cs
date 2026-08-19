@@ -464,11 +464,11 @@ namespace AttackSkill.UI
                 yield break;
             }
 
-            Debug.Log($"[OpenSceneFlow] EnterGame → 加载 {gameSceneName}");
-
-            // 开场连接 = 新开局：不加载进度档（磁盘档保留，可供以后「继续」）
-            GameBoot.SetIntent(GameBootIntent.NewGame);
+            // 连接是进 GameScene 的唯一入口。有档则 Continue，否则 F5/退出写的档会被整局丢掉。
+            bool continueSave = GameSaveService.Exists();
+            GameBoot.SetIntent(continueSave ? GameBootIntent.Continue : GameBootIntent.NewGame);
             GameSaveService.ClearPendingRestore();
+            Debug.Log($"[OpenSceneFlow] EnterGame → 加载 {gameSceneName} intent={(continueSave ? "Continue" : "NewGame")} exists={continueSave} path={GameSaveService.SavePath}");
 
             UIChangeScenePanel loading = null;
             if (ui != null)

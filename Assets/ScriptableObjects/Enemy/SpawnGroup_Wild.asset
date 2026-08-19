@@ -25,7 +25,7 @@ MonoBehaviour:
   - definition: {fileID: 11400000, guid: 4ce05a63d99e8394791c1817ecd79ddb, type: 2}
     localOffset: {x: -2, y: 0, z: 1}
     localEuler: {x: 0, y: 0, z: 0}
-  activateRadius: 35
-  hibernateRadius: 50
+  activateRadius: 20
+  hibernateRadius: 40
   respawnDelay: 20
   respawnOnlyWhenPlayerAway: 1

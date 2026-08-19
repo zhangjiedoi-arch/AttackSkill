@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AttackSkill.Combat;
 using AttackSkill.Enemy;
 using UnityEngine;
@@ -14,6 +15,26 @@ namespace AttackSkill.Rouge
         float _expireAt;
         bool _collected;
         bool _configured;
+
+        static readonly List<ExpOrbPickup> Live = new List<ExpOrbPickup>(64);
+
+        public static void ClearAll()
+        {
+            if (Live.Count == 0)
+            {
+                return;
+            }
+
+            var snap = Live.ToArray();
+            Live.Clear();
+            for (int i = 0; i < snap.Length; i++)
+            {
+                if (snap[i] != null)
+                {
+                    Destroy(snap[i].gameObject);
+                }
+            }
+        }
 
         public void Configure(int exp, float life, float radius)
         {
@@ -32,6 +53,16 @@ namespace AttackSkill.Rouge
                 var cfg = RougeCatalog.ExpOrb;
                 Configure(cfg.expAmount, cfg.lifetime, cfg.pickRadius);
             }
+
+            if (!Live.Contains(this))
+            {
+                Live.Add(this);
+            }
+        }
+
+        void OnDisable()
+        {
+            Live.Remove(this);
         }
 
         void Update()
@@ -47,8 +78,6 @@ namespace AttackSkill.Rouge
                 return;
             }
 
-            // 轻微缓慢上浮，避免卡地
-            transform.position += Vector3.up * (0.15f * Time.deltaTime);
             transform.Rotate(Vector3.up, 90f * Time.deltaTime, Space.World);
 
             Transform player = PlayerTargetLocator.GetActivePlayerTransform();
@@ -87,7 +116,8 @@ namespace AttackSkill.Rouge
             }
 
             var cfg = RougeCatalog.ExpOrb;
-            var go = Object.Instantiate(prefab, worldPos, Quaternion.identity);
+            Vector3 pos = SnapToGround(worldPos);
+            var go = Object.Instantiate(prefab, pos, Quaternion.identity);
             go.name = "ExpOrb";
             go.SetActive(true);
             return FinalizeOrb(go, cfg);
@@ -98,7 +128,7 @@ namespace AttackSkill.Rouge
             var cfg = RougeCatalog.ExpOrb;
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             go.name = "ExpOrb";
-            go.transform.position = worldPos;
+            go.transform.position = SnapToGround(worldPos);
             go.transform.localScale = Vector3.one * 0.45f;
 
             var col = go.GetComponent<Collider>();
@@ -142,6 +172,37 @@ namespace AttackSkill.Rouge
             col.radius = Mathf.Max(col.radius, 0.35f);
             orb.Configure(cfg.expAmount, cfg.lifetime, cfg.pickRadius);
             return orb;
+        }
+
+        const float GroundHover = 0.28f;
+        const float GroundRayUp = 2f;
+        const float GroundRayDown = 24f;
+
+        static Vector3 SnapToGround(Vector3 pos)
+        {
+            int mask = CombatLayers.DefaultCameraCollisionMask;
+            int enemy = CombatLayers.EnemyLayer;
+            if (enemy >= 0)
+            {
+                mask &= ~(1 << enemy);
+            }
+
+            Vector3 origin = pos + Vector3.up * GroundRayUp;
+            if (Physics.Raycast(
+                    origin,
+                    Vector3.down,
+                    out RaycastHit hit,
+                    GroundRayUp + GroundRayDown,
+                    mask,
+                    QueryTriggerInteraction.Ignore))
+            {
+                Vector3 grounded = hit.point;
+                grounded.y += GroundHover;
+                return grounded;
+            }
+
+            pos.y += GroundHover;
+            return pos;
         }
     }
 }

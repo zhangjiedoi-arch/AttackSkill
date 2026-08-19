@@ -130,20 +130,6 @@ namespace AttackSkill.Combat
             }
 
             float nextHp = currentHp - info.Amount;
-            if (nextHp <= 0f &&
-                AttackSkill.Rouge.RougePassiveEffects.TryTriggerSecondHeart(this))
-            {
-                onDamaged?.Invoke();
-                Damaged?.Invoke();
-                HpChanged?.Invoke();
-                if (info.Knockback > 0.01f)
-                {
-                    ApplyKnockback(info.HitDirection, info.Knockback);
-                }
-
-                return;
-            }
-
             currentHp = Mathf.Max(0f, nextHp);
             onDamaged?.Invoke();
             Damaged?.Invoke();

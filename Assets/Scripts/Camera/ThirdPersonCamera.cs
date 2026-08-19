@@ -184,9 +184,12 @@ namespace AttackSkill.CameraSystem
                 return;
             }
 
+            SanitizeOrbitState();
+
             if (!GameplayInputGate.IsSoftBlocked)
             {
                 UpdateOrbitAngles();
+                SanitizeOrbitState();
             }
 
             UpdatePivotAndCamera();
@@ -256,7 +259,18 @@ namespace AttackSkill.CameraSystem
         void UpdatePivotAndCamera()
         {
             // 角色位移在 FixedUpdate：pivot 必须 LateUpdate 硬跟随，禁止 SmoothDamp 滞后追赶
-            Vector3 desiredPivot = followTarget.position + pivotOffset;
+            Vector3 targetPos = followTarget.position;
+            if (!IsFinite(targetPos))
+            {
+                return;
+            }
+
+            Vector3 desiredPivot = targetPos + pivotOffset;
+            if (!IsFinite(desiredPivot))
+            {
+                return;
+            }
+
             _pivotVelocity = Vector3.zero;
             transform.position = desiredPivot;
             ApplyRigTransforms();
@@ -281,18 +295,106 @@ namespace AttackSkill.CameraSystem
             }
 
             float finalDistance = ResolveSmoothedCameraDistance(distance);
+            if (!IsFinite(finalDistance))
+            {
+                finalDistance = Mathf.Clamp(_targetDistance, minDistance, maxDistance);
+                if (!IsFinite(finalDistance))
+                {
+                    finalDistance = Mathf.Clamp(defaultDistance, minDistance, maxDistance);
+                }
+
+                distance = finalDistance;
+                _collisionDistance = finalDistance;
+                _collisionDistanceVelocity = 0f;
+                _distanceVelocity = 0f;
+            }
+
             Transform camTransform = controlledCamera.transform;
             camTransform.localPosition = new Vector3(0f, 0f, -finalDistance);
             camTransform.localRotation = Quaternion.identity;
             UpdateNearCharacterFade(finalDistance);
         }
 
+        void SanitizeOrbitState()
+        {
+            if (!IsFinite(_targetYaw))
+            {
+                _targetYaw = 0f;
+            }
+
+            if (!IsFinite(_targetPitch))
+            {
+                _targetPitch = Mathf.Clamp(18f, minPitch, maxPitch);
+            }
+
+            if (!IsFinite(_targetDistance))
+            {
+                _targetDistance = Mathf.Clamp(defaultDistance, minDistance, maxDistance);
+            }
+            else
+            {
+                _targetDistance = Mathf.Clamp(_targetDistance, minDistance, maxDistance);
+            }
+
+            if (!IsFinite(yaw))
+            {
+                yaw = _targetYaw;
+                _yawVelocity = 0f;
+            }
+
+            if (!IsFinite(pitch))
+            {
+                pitch = _targetPitch;
+                _pitchVelocity = 0f;
+            }
+
+            if (!IsFinite(distance))
+            {
+                distance = _targetDistance;
+                _distanceVelocity = 0f;
+            }
+
+            if (!IsFinite(_yawVelocity))
+            {
+                _yawVelocity = 0f;
+            }
+
+            if (!IsFinite(_pitchVelocity))
+            {
+                _pitchVelocity = 0f;
+            }
+
+            if (!IsFinite(_distanceVelocity))
+            {
+                _distanceVelocity = 0f;
+            }
+
+            if (!IsFinite(_collisionDistance) || !IsFinite(_collisionDistanceVelocity))
+            {
+                _collisionDistance = -1f;
+                _collisionDistanceVelocity = 0f;
+            }
+        }
+
+        static bool IsFinite(float v) => !(float.IsNaN(v) || float.IsInfinity(v));
+
+        static bool IsFinite(Vector3 v) => IsFinite(v.x) && IsFinite(v.y) && IsFinite(v.z);
+
         float ResolveSmoothedCameraDistance(float desiredDistance)
         {
+            if (!IsFinite(desiredDistance))
+            {
+                desiredDistance = Mathf.Clamp(defaultDistance, minDistance, maxDistance);
+            }
+
             float resolved = desiredDistance;
             if (enableCollision)
             {
                 resolved = ResolveCollisionDistance(desiredDistance);
+                if (!IsFinite(resolved))
+                {
+                    resolved = desiredDistance;
+                }
             }
 
             if (_collisionDistance < 0f)

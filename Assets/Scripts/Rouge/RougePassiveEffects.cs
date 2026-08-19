@@ -9,8 +9,7 @@ namespace AttackSkill.Rouge
     public static class RougePassiveEffects
     {
         public const float ExecuteHpThreshold = 0.25f;
-        public const float MinSwitchCooldown = 0.1f;
-        /// <summary>相对 1 级表内值：每升 1 级，攻/防/血 +10%。</summary>
+        /// <summary>相对 1 级表内值：每升 1 级，攻/防/血 +10%（玩家与敌人相同）。</summary>
         public const float LevelStatBonusPerLevel = 0.10f;
 
         public static event System.Action Changed;
@@ -34,11 +33,15 @@ namespace AttackSkill.Rouge
 
         public static void OnRunReset()
         {
+            ExpOrbPickup.ClearAll();
+            HealingCircleZone.ClearAll();
             ApplyAbyssPactToActiveParty();
             if (RougeConstructDriver.Instance != null)
             {
                 RougeConstructDriver.Instance.DespawnAll();
             }
+
+            RougeOrbitWeaponDriver.SyncFromProgress();
         }
 
         /// <summary>1 级 = 100%；2 级 = 110%，以此类推。</summary>
@@ -50,28 +53,11 @@ namespace AttackSkill.Rouge
         public static float DamageTakenMul => Mathf.Max(0.05f, 1f + PartyRougeProgress.SumMod("damageTakenMul"));
         public static float MoveSpeedMul => 1f + PartyRougeProgress.SumMod("moveSpeedMul");
         public static float LifestealRatio => Mathf.Max(0f, PartyRougeProgress.SumMod("lifestealRatio"));
-        public static float EngageRadius => CombatEngageUtility.DefaultSearchRadius;
-        public static float HealCircleBonusPerSecond => 0f;
-        public static float HealCircleDropChanceAdd => 0f;
         public static float MaxHpMul => 1f + PartyRougeProgress.SumMod("maxHpMul");
         public static float SkillEDamageMul => 1f + PartyRougeProgress.SumMod("skillEDamageMul");
         public static float ExecuteDamageMul => 1f + PartyRougeProgress.SumMod("executeDamageMul");
 
         public static float EffectiveMoveSpeedMul => Mathf.Max(0.2f, MoveSpeedMul);
-
-        public static float GetSwitchCooldown(float baseCooldown)
-        {
-            return Mathf.Max(MinSwitchCooldown, baseCooldown);
-        }
-
-        public static void NotifyEnemyKilledByPlayer()
-        {
-        }
-
-        public static bool TryTriggerSecondHeart(Health health)
-        {
-            return false;
-        }
 
         public static void ApplyAbyssPactToActiveParty()
         {

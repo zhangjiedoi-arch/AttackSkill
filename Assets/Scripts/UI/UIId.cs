@@ -24,6 +24,7 @@ namespace AttackSkill.UI
         BattleSystem = 31,
         BattleCombat = 32,
         BattleVitals = 33,
-        BattleTask = 34
+        BattleTask = 34,
+        BattleTime = 35
     }
 }

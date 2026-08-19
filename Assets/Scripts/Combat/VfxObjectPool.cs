@@ -1,62 +1,153 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AttackSkill.Combat
 {
     /// <summary>
-    /// 特效对象池：按 Prefab 实例 ID 分桶，避免频繁 Instantiate/Destroy。
+    /// 轻量特效对象池：按 Prefab 复用。池根挂在当前场景（非 DDOL），切场景随场景销毁。
+    /// 场景卸载 / OnDisable 路径禁止新建根节点，改 Destroy，避免 IsActive 断言与残留 GO。
     /// </summary>
     public static class VfxObjectPool
     {
-        const string PoolRootName = "VfxObjectPool";
-        const int DefaultPrewarm = 2;
+        const string RootName = "[VfxObjectPool]";
 
-        static readonly Dictionary<int, Stack<GameObject>> Pools = new Dictionary<int, Stack<GameObject>>(16);
         static Transform _root;
+        static readonly Dictionary<int, Stack<VfxPoolMember>> Pools = new Dictionary<int, Stack<VfxPoolMember>>(64);
+        static readonly List<VfxPoolMember> DeferredHierarchy = new List<VfxPoolMember>(32);
+        static VfxPoolPump _pump;
+        static bool _quitting;
+        static bool _hooks;
 
-        public static GameObject Spawn(GameObject prefab, Vector3 position, Quaternion rotation)
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics()
         {
-            if (prefab == null)
+            _root = null;
+            _pump = null;
+            _quitting = false;
+            Pools.Clear();
+            DeferredHierarchy.Clear();
+            EnsureHooks();
+        }
+
+        static void EnsureHooks()
+        {
+            if (_hooks)
+            {
+                return;
+            }
+
+            _hooks = true;
+            Application.quitting += OnQuitting;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
+        }
+
+        static void OnQuitting()
+        {
+            _quitting = true;
+            TearDownRoot(destroyObjects: true);
+        }
+
+        static void OnSceneUnloaded(Scene _)
+        {
+            // 池根若在被卸场景内，引用已失效；勿在卸载回调里 new GO
+            _root = null;
+            _pump = null;
+            Pools.Clear();
+            DeferredHierarchy.Clear();
+        }
+
+        static void TearDownRoot(bool destroyObjects)
+        {
+            if (destroyObjects && _root)
+            {
+                Object.Destroy(_root.gameObject);
+            }
+
+            _root = null;
+            _pump = null;
+            Pools.Clear();
+            DeferredHierarchy.Clear();
+        }
+
+        static bool CanUsePool => Application.isPlaying && !_quitting;
+
+        /// <summary>允许新建池根：仅正常玩法帧，不在退出/卸载中。</summary>
+        static bool CanCreateRoot => CanUsePool;
+
+        public static GameObject Spawn(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent = null)
+        {
+            EnsureHooks();
+            if (prefab == null || !CanUsePool)
             {
                 return null;
             }
 
+            FlushDeferredHierarchy();
+
             int key = prefab.GetInstanceID();
-            EnsurePool(key, prefab, minIdleCount: 0);
-
-            GameObject go = null;
-            var stack = Pools[key];
-            while (stack.Count > 0)
+            if (!Pools.TryGetValue(key, out var stack))
             {
-                go = stack.Pop();
-                if (go != null)
-                {
-                    break;
-                }
-
-                go = null;
+                stack = new Stack<VfxPoolMember>(8);
+                Pools[key] = stack;
             }
 
-            if (go == null)
+            VfxPoolMember member = null;
+            while (stack.Count > 0 && member == null)
+            {
+                member = stack.Pop();
+                if (member == null || !member)
+                {
+                    member = null;
+                    continue;
+                }
+
+                if (member.gameObject == null)
+                {
+                    member = null;
+                }
+            }
+
+            GameObject go;
+            if (member == null)
             {
                 go = Object.Instantiate(prefab);
-                var member = go.GetComponent<VfxPoolMember>();
+                member = go.GetComponent<VfxPoolMember>();
                 if (member == null)
                 {
                     member = go.AddComponent<VfxPoolMember>();
                 }
 
-                member.Bind(key, prefab);
+                member.BindPrefabKey(key);
+            }
+            else
+            {
+                go = member.gameObject;
             }
 
-            go.transform.SetParent(null, false);
-            go.transform.SetPositionAndRotation(position, rotation);
-            go.SetActive(true);
+            Transform t = go.transform;
+            if (parent != null)
+            {
+                t.SetParent(parent, false);
+            }
+            else
+            {
+                t.SetParent(null, false);
+            }
+
+            t.SetPositionAndRotation(position, rotation);
+            t.localScale = Vector3.one;
+
+            member.MarkPooled(false);
+            if (!go.activeSelf)
+            {
+                go.SetActive(true);
+            }
+
             RestartParticles(go);
             return go;
         }
 
-        /// <summary>延迟回收；lifetime&lt;=0 时下一帧回收。</summary>
         public static void Despawn(GameObject instance, float lifetime)
         {
             if (instance == null)
@@ -74,57 +165,6 @@ namespace AttackSkill.Combat
             member.ScheduleReturn(Mathf.Max(0.01f, lifetime));
         }
 
-        /// <summary>确保空闲池至少有 count 个；已有足够数量时不再新建（切人重复 Prewarm 安全）。</summary>
-        public static void Prewarm(GameObject prefab, int count)
-        {
-            if (prefab == null || count <= 0)
-            {
-                return;
-            }
-
-            EnsurePool(prefab.GetInstanceID(), prefab, minIdleCount: count);
-        }
-
-        internal static void Return(VfxPoolMember member)
-        {
-            if (member == null)
-            {
-                return;
-            }
-
-            GameObject go = member.gameObject;
-            if (go == null)
-            {
-                return;
-            }
-
-            // 已在池根下且未激活：视为已归还，避免 OnDisable/重复 Return 再 Push
-            Transform root = GetRoot();
-            if (!go.activeSelf && go.transform.parent == root && member.IsPooled)
-            {
-                return;
-            }
-
-            StopParticles(go);
-            member.MarkPooled(true);
-            if (go.activeSelf)
-            {
-                go.SetActive(false);
-            }
-
-            go.transform.SetParent(root, false);
-
-            int key = member.PrefabKey;
-            if (!Pools.TryGetValue(key, out Stack<GameObject> stack))
-            {
-                stack = new Stack<GameObject>(8);
-                Pools[key] = stack;
-            }
-
-            stack.Push(go);
-        }
-
-        /// <summary>立即回收到池（取消延迟归还）。</summary>
         public static void RecycleNow(GameObject instance)
         {
             if (instance == null)
@@ -139,35 +179,35 @@ namespace AttackSkill.Combat
                 return;
             }
 
-            Return(member);
+            member.RecycleNow();
         }
 
-        /// <param name="minIdleCount">空闲实例下限；0 表示仅在桶为空时补 DefaultPrewarm。</param>
-        static void EnsurePool(int key, GameObject prefab, int minIdleCount)
+        public static void Prewarm(GameObject prefab, int count)
         {
-            if (!Pools.TryGetValue(key, out Stack<GameObject> stack))
-            {
-                stack = new Stack<GameObject>(8);
-                Pools[key] = stack;
-            }
-
-            int target = minIdleCount;
-            if (target <= 0 && stack.Count == 0)
-            {
-                target = DefaultPrewarm;
-            }
-
-            int need = target - stack.Count;
-            if (need <= 0)
+            EnsureHooks();
+            if (prefab == null || count <= 0 || !CanUsePool)
             {
                 return;
             }
 
-            Transform root = GetRoot();
-            for (int i = 0; i < need; i++)
+            FlushDeferredHierarchy();
+
+            int key = prefab.GetInstanceID();
+            if (!Pools.TryGetValue(key, out var stack))
             {
-                var go = Object.Instantiate(prefab, root, false);
-                go.name = prefab.name + "_Pooled";
+                stack = new Stack<VfxPoolMember>(count);
+                Pools[key] = stack;
+            }
+
+            Transform root = GetOrCreateRoot();
+            if (root == null)
+            {
+                return;
+            }
+
+            for (int i = stack.Count; i < count; i++)
+            {
+                GameObject go = Object.Instantiate(prefab, root);
                 go.SetActive(false);
                 var member = go.GetComponent<VfxPoolMember>();
                 if (member == null)
@@ -175,28 +215,184 @@ namespace AttackSkill.Combat
                     member = go.AddComponent<VfxPoolMember>();
                 }
 
-                member.Bind(key, prefab);
+                member.BindPrefabKey(key);
                 member.MarkPooled(true);
-                stack.Push(go);
+                stack.Push(member);
             }
         }
 
-        static Transform GetRoot()
+        internal static void Return(VfxPoolMember member)
         {
-            if (_root != null)
+            ReturnInternal(member, hierarchyUnsafe: false);
+        }
+
+        /// <summary>
+        /// 由 OnDisable / 卸载路径调用：禁止 SetActive/SetParent/新建池根。
+        /// </summary>
+        public static void ReturnFromDisable(VfxPoolMember member)
+        {
+            ReturnInternal(member, hierarchyUnsafe: true);
+        }
+
+        /// <summary>卸载/禁用中无法安全入池时直接销毁。</summary>
+        internal static void Abandon(VfxPoolMember member)
+        {
+            if (member == null || !member)
             {
-                return _root;
+                return;
             }
 
-            var existing = GameObject.Find(PoolRootName);
-            if (existing == null)
+            member.MarkPooled(true);
+            GameObject go = member.gameObject;
+            if (go != null)
             {
-                existing = new GameObject(PoolRootName);
-                Object.DontDestroyOnLoad(existing);
+                Object.Destroy(go);
+            }
+        }
+
+        static void ReturnInternal(VfxPoolMember member, bool hierarchyUnsafe)
+        {
+            EnsureHooks();
+            if (member == null || !member)
+            {
+                return;
             }
 
-            _root = existing.transform;
-            return _root;
+            GameObject go = member.gameObject;
+            if (go == null)
+            {
+                return;
+            }
+
+            if (!CanUsePool)
+            {
+                member.MarkPooled(true);
+                Object.Destroy(go);
+                return;
+            }
+
+            int key = member.PrefabKey;
+            if (key == 0)
+            {
+                Object.Destroy(go);
+                return;
+            }
+
+            if (!Pools.TryGetValue(key, out var stack))
+            {
+                stack = new Stack<VfxPoolMember>(8);
+                Pools[key] = stack;
+            }
+
+            member.MarkPooled(true);
+            StopParticles(go);
+
+            // 禁用/卸载：禁止 SetActive / SetParent / 新建池根
+            if (hierarchyUnsafe)
+            {
+                if (!Contains(stack, member))
+                {
+                    stack.Push(member);
+                }
+
+                Transform existingRoot = TryGetRoot();
+                if (existingRoot != null)
+                {
+                    if (!DeferredHierarchy.Contains(member))
+                    {
+                        DeferredHierarchy.Add(member);
+                    }
+
+                    EnsurePump(existingRoot);
+                }
+                // 无根则留在原地（已 inactive），下次 Spawn/Prewarm 再 Flush；勿在此 GetOrCreateRoot
+                return;
+            }
+
+            Transform root = GetOrCreateRoot();
+            if (root == null)
+            {
+                Object.Destroy(go);
+                return;
+            }
+
+            if (go.activeSelf)
+            {
+                go.SetActive(false);
+            }
+
+            if (go.transform.parent != root)
+            {
+                go.transform.SetParent(root, false);
+            }
+
+            go.transform.localPosition = Vector3.zero;
+            go.transform.localRotation = Quaternion.identity;
+            go.transform.localScale = Vector3.one;
+
+            if (!Contains(stack, member))
+            {
+                stack.Push(member);
+            }
+        }
+
+        internal static void FlushDeferredHierarchy()
+        {
+            if (DeferredHierarchy.Count == 0 || !CanUsePool)
+            {
+                DeferredHierarchy.Clear();
+                return;
+            }
+
+            Transform root = GetOrCreateRoot();
+            if (root == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < DeferredHierarchy.Count; i++)
+            {
+                VfxPoolMember member = DeferredHierarchy[i];
+                if (member == null || !member)
+                {
+                    continue;
+                }
+
+                GameObject go = member.gameObject;
+                if (go == null)
+                {
+                    continue;
+                }
+
+                if (go.activeSelf)
+                {
+                    go.SetActive(false);
+                }
+
+                if (go.transform.parent != root)
+                {
+                    go.transform.SetParent(root, false);
+                }
+
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one;
+            }
+
+            DeferredHierarchy.Clear();
+        }
+
+        static bool Contains(Stack<VfxPoolMember> stack, VfxPoolMember member)
+        {
+            foreach (var m in stack)
+            {
+                if (ReferenceEquals(m, member))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         static void RestartParticles(GameObject go)
@@ -229,69 +425,185 @@ namespace AttackSkill.Combat
                 ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             }
         }
+
+        static Transform TryGetRoot()
+        {
+            return _root ? _root : null;
+        }
+
+        static Transform GetOrCreateRoot()
+        {
+            if (_root)
+            {
+                return _root;
+            }
+
+            if (!CanCreateRoot)
+            {
+                return null;
+            }
+
+            // 卸载中 activeScene 可能已不可用，此时新建会触发 IsActive 断言与残留警告
+            Scene scene = SceneManager.GetActiveScene();
+            if (!scene.IsValid() || !scene.isLoaded)
+            {
+                return null;
+            }
+
+            // 场景内根：随场景销毁，避免退出 Play 残留 DDOL
+            var go = new GameObject(RootName);
+            SceneManager.MoveGameObjectToScene(go, scene);
+            _root = go.transform;
+            return _root;
+        }
+
+        static void EnsurePump(Transform root)
+        {
+            if (_pump || root == null)
+            {
+                return;
+            }
+
+            _pump = root.GetComponent<VfxPoolPump>();
+            if (_pump == null)
+            {
+                _pump = root.gameObject.AddComponent<VfxPoolPump>();
+            }
+        }
+
+        sealed class VfxPoolPump : MonoBehaviour
+        {
+            void LateUpdate()
+            {
+                FlushDeferredHierarchy();
+            }
+
+            void OnDestroy()
+            {
+                if (_pump == this)
+                {
+                    _pump = null;
+                }
+
+                if (_root != null && _root.gameObject == gameObject)
+                {
+                    _root = null;
+                }
+            }
+        }
     }
 
-    /// <summary>池化实例标记；负责延迟归还。</summary>
+    [DisallowMultipleComponent]
     public sealed class VfxPoolMember : MonoBehaviour
     {
-        public int PrefabKey { get; private set; }
-        public bool IsPooled { get; private set; }
-
-        float _returnAt = -1f;
+        int _prefabKey;
+        bool _pooled;
         bool _pending;
+        float _returnAt = -1f;
         bool _returning;
 
-        public void Bind(int prefabKey, GameObject _)
+        public int PrefabKey => _prefabKey;
+
+        public void BindPrefabKey(int key)
         {
-            PrefabKey = prefabKey;
-            IsPooled = false;
+            _prefabKey = key;
         }
 
         public void MarkPooled(bool pooled)
         {
-            IsPooled = pooled;
+            _pooled = pooled;
+            if (pooled)
+            {
+                _pending = false;
+                _returnAt = -1f;
+            }
         }
 
-        public void ScheduleReturn(float lifetime)
+        public void ScheduleReturn(float lifeSeconds)
         {
-            IsPooled = false;
+            if (lifeSeconds <= 0f)
+            {
+                return;
+            }
+
             _pending = true;
-            _returnAt = Time.time + Mathf.Max(0.01f, lifetime);
-            enabled = true;
+            _returnAt = Time.time + lifeSeconds;
+        }
+
+        public void RecycleNow()
+        {
+            if (_pooled || _returning)
+            {
+                return;
+            }
+
+            _pending = false;
+            _returnAt = -1f;
+            _returning = true;
+            try
+            {
+                // 父级 OnDisable / 卸载中：禁止同步改层级与新建池根
+                bool hierarchyUnsafe = !isActiveAndEnabled || !gameObject.activeInHierarchy;
+                if (hierarchyUnsafe)
+                {
+                    VfxObjectPool.ReturnFromDisable(this);
+                    return;
+                }
+
+                VfxObjectPool.Return(this);
+                if (this && gameObject.activeSelf)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
+            finally
+            {
+                _returning = false;
+            }
         }
 
         void Update()
         {
-            if (!_pending || Time.time < _returnAt)
+            if (!_pending || _pooled || _returning)
             {
                 return;
             }
 
-            _pending = false;
-            _returnAt = -1f;
-            VfxObjectPool.Return(this);
+            if (Time.time < _returnAt)
+            {
+                return;
+            }
+
+            RecycleNow();
         }
 
         void OnDisable()
         {
-            // 延迟回收被提前失活时仍归还，避免游离实例 + 下次 Spawn 再新建导致池膨胀
-            if (_pending && !_returning)
+            if (_returning || _pooled)
+            {
+                return;
+            }
+
+            if (_pending)
             {
                 _pending = false;
                 _returnAt = -1f;
                 _returning = true;
-                VfxObjectPool.Return(this);
-                _returning = false;
-                return;
+                try
+                {
+                    VfxObjectPool.ReturnFromDisable(this);
+                }
+                finally
+                {
+                    _returning = false;
+                }
             }
-
-            _pending = false;
-            _returnAt = -1f;
         }
 
-        void OnEnable()
+        void OnDestroy()
         {
-            IsPooled = false;
+            _pending = false;
+            _returnAt = -1f;
         }
     }
 }

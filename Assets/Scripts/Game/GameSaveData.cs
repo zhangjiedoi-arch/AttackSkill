@@ -1,18 +1,21 @@
 using System;
 using System.IO;
 using UnityEngine;
+using AttackSkill.Rouge;
 using AttackSkill.UI;
 
 namespace AttackSkill.Game
 {
     /// <summary>
     /// 进度存档（与 <see cref="LocalAccountStore"/> 账号资料分离）。
-    /// v1：场景+位姿+队员下标；v2：+性别快照+当前角色 HP；v3：+轮盘 T 技能下标。
+    /// v1：场景+位姿+队员下标；v2：+性别快照+当前角色 HP；v3：+轮盘 T 技能下标；
+    /// v4：+肉鸽局状态（等级/被动/已进平面/阵亡槽）；
+    /// v5：+肉鸽获救倒计时剩余秒（rougeRun.battleTimeRemaining）。
     /// </summary>
     [Serializable]
     public class GameSaveData
     {
-        public const int CurrentVersion = 3;
+        public const int CurrentVersion = 5;
 
         public int version = CurrentVersion;
         public string sceneName;
@@ -31,6 +34,9 @@ namespace AttackSkill.Game
 
         /// <summary>轮盘装备到 T 的技能下标（0–7）；&lt;0 表示未记录（用 PlayerPrefs/默认）。</summary>
         public int equippedSkillIndex = -1;
+
+        /// <summary>肉鸽一局状态；旧档为 null，Migrate 时补默认。</summary>
+        public RougeRunSave rougeRun;
 
         public Vector3 Position
         {
@@ -74,6 +80,7 @@ namespace AttackSkill.Game
                 Gender = genderSnapshot,
                 activeHp = activeHpSnapshot,
                 equippedSkillIndex = equippedSkillIndexSnapshot,
+                rougeRun = PartyRougeProgress.Capture(),
                 savedAtUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             };
         }
@@ -89,6 +96,12 @@ namespace AttackSkill.Game
 
             if (version >= CurrentVersion)
             {
+                if (rougeRun == null)
+                {
+                    rougeRun = new RougeRunSave();
+                }
+
+                SanitizeRougeBattleTime();
                 version = CurrentVersion;
                 return;
             }
@@ -117,7 +130,80 @@ namespace AttackSkill.Game
                 }
             }
 
+            if (version < 4)
+            {
+                if (rougeRun == null)
+                {
+                    rougeRun = new RougeRunSave();
+                }
+
+                if (rougeRun.level < 1)
+                {
+                    rougeRun.level = 1;
+                }
+
+                if (rougeRun.exp < 0)
+                {
+                    rougeRun.exp = 0;
+                }
+
+                if (rougeRun.pendingLevelUps < 0)
+                {
+                    rougeRun.pendingLevelUps = 0;
+                }
+            }
+
+            if (version < 5)
+            {
+                if (rougeRun == null)
+                {
+                    rougeRun = new RougeRunSave();
+                }
+
+                // 旧档无倒计时字段时 Json 缺省为 0，已进肉鸽则补满时长避免立刻结算
+                if (rougeRun.hasTeleported && rougeRun.battleTimeRemaining <= 0f)
+                {
+                    rougeRun.battleTimeRemaining = UIBattleTimePanel.DurationSeconds;
+                }
+                else if (!rougeRun.hasTeleported)
+                {
+                    rougeRun.battleTimeRemaining = -1f;
+                }
+            }
+
+            SanitizeRougeBattleTime();
             version = CurrentVersion;
+        }
+
+        void SanitizeRougeBattleTime()
+        {
+            if (rougeRun == null)
+            {
+                return;
+            }
+
+            if (!rougeRun.hasTeleported)
+            {
+                rougeRun.battleTimeRemaining = -1f;
+                return;
+            }
+
+            if (float.IsNaN(rougeRun.battleTimeRemaining) || float.IsInfinity(rougeRun.battleTimeRemaining))
+            {
+                rougeRun.battleTimeRemaining = UIBattleTimePanel.DurationSeconds;
+                return;
+            }
+
+            if (rougeRun.battleTimeRemaining < 0f)
+            {
+                rougeRun.battleTimeRemaining = UIBattleTimePanel.DurationSeconds;
+                return;
+            }
+
+            if (rougeRun.battleTimeRemaining > UIBattleTimePanel.DurationSeconds)
+            {
+                rougeRun.battleTimeRemaining = UIBattleTimePanel.DurationSeconds;
+            }
         }
     }
 
@@ -209,6 +295,7 @@ namespace AttackSkill.Game
         {
             if (data == null || string.IsNullOrEmpty(data.sceneName))
             {
+                Debug.LogWarning("[GameSave] 存档失败：数据为空或缺少 sceneName");
                 return false;
             }
 
@@ -219,7 +306,7 @@ namespace AttackSkill.Game
                 string json = JsonUtility.ToJson(data, prettyPrint: true);
                 File.WriteAllText(SavePath, json);
                 Debug.Log(
-                    $"[GameSave] 已保存 → {SavePath}\n{data.sceneName} slot={data.activeIndex} hp={data.activeHp} gender={data.Gender} skillT={data.equippedSkillIndex}");
+                    $"[GameSave] 已保存 → {SavePath}\n{data.sceneName} slot={data.activeIndex} hp={data.activeHp} gender={data.Gender} skillT={data.equippedSkillIndex} rougeLv={data.rougeRun?.level ?? 1} teleported={data.rougeRun?.hasTeleported ?? false} battleTime={data.rougeRun?.battleTimeRemaining ?? -1f:0.##}");
                 return true;
             }
             catch (Exception e)

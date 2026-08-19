@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AttackSkill.Character.HSM;
 using AttackSkill.Rouge;
 using UnityEngine;
@@ -22,14 +23,16 @@ namespace AttackSkill.Combat
         float _skillEReadyAt;
         float _skillRReadyAt;
 
-        /// <summary>玩家随肉鸽等级缩放后的攻击；敌人仍为表内值。</summary>
-        public float Attack => runtime.attack * PlayerLevelStatMul;
-        /// <summary>玩家随肉鸽等级缩放后的防御；敌人仍为表内值。</summary>
-        public float Defense => runtime.defense * PlayerLevelStatMul;
+        static readonly List<CombatStats> LiveInstances = new List<CombatStats>(64);
+
+        /// <summary>随肉鸽等级缩放后的攻击（玩家与敌人相同系数）。</summary>
+        public float Attack => runtime.attack * LevelStatMul;
+        /// <summary>随肉鸽等级缩放后的防御（玩家与敌人相同系数）。</summary>
+        public float Defense => runtime.defense * LevelStatMul;
         public float CritRate => runtime.critRate;
         public float CritDamage => runtime.critDamage;
-        /// <summary>玩家随肉鸽等级缩放后的最大生命（不含深渊契约等被动）。</summary>
-        public float MaxHp => runtime.maxHp * PlayerLevelStatMul;
+        /// <summary>随肉鸽等级缩放后的最大生命（不含深渊契约等被动）。</summary>
+        public float MaxHp => runtime.maxHp * LevelStatMul;
         public CombatElement Element => runtime.element;
         public CombatStatBlock Runtime => runtime;
 
@@ -64,7 +67,7 @@ namespace AttackSkill.Combat
         public CharacterCombatStatsDefinition CharacterSource => characterSource;
         public EnemyCombatStatsDefinition EnemySource => enemySource;
 
-        float PlayerLevelStatMul => IsPlayerUnit ? RougePassiveEffects.LevelStatMul : 1f;
+        float LevelStatMul => RougePassiveEffects.LevelStatMul;
 
         /// <summary>
         /// 装配时 CombatStats 早于 GenshinLikeCharacter 加入，不能在 Awake 里把「不是玩家」缓存死。
@@ -98,6 +101,35 @@ namespace AttackSkill.Combat
             _health = GetComponent<Health>();
             _player = GetComponent<GenshinLikeCharacter>()
                       ?? GetComponentInParent<GenshinLikeCharacter>();
+        }
+
+        void OnEnable()
+        {
+            if (!LiveInstances.Contains(this))
+            {
+                LiveInstances.Add(this);
+            }
+        }
+
+        void OnDisable()
+        {
+            LiveInstances.Remove(this);
+        }
+
+        /// <summary>玩家升级后重算场上单位 Health（攻防读 getter，血量需同步）。</summary>
+        public static void RefreshAllHealthForRougeLevel()
+        {
+            for (int i = LiveInstances.Count - 1; i >= 0; i--)
+            {
+                CombatStats stats = LiveInstances[i];
+                if (stats == null)
+                {
+                    LiveInstances.RemoveAt(i);
+                    continue;
+                }
+
+                stats.RefreshHealth(refillHp: false);
+            }
         }
 
         public void ApplyCharacterDefinition(CharacterCombatStatsDefinition def, bool refillHp = true)

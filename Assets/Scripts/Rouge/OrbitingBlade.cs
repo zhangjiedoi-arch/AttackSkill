@@ -15,8 +15,9 @@ namespace AttackSkill.Rouge
 
         const int OverlapBufferSize = 32;
 
+        public const float HitCooldown = 0.1f;
+
         [SerializeField] float degreesPerSecond = 220f;
-        [SerializeField] float hitCooldown = 0.45f;
         [SerializeField] float knockback;
 
         BoxCollider _box;
@@ -195,7 +196,7 @@ namespace AttackSkill.Rouge
                     continue;
                 }
 
-                _nextHitAt[id] = now + Mathf.Max(0.05f, hitCooldown);
+                _nextHitAt[id] = now + HitCooldown;
             }
 
             if (_nextHitAt.Count > 48)

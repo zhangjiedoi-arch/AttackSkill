@@ -50,3 +50,5 @@ R：SkillRState → BeginTimedPhase("Skill_R")
 - 扇形高度用 `hitHeight`；刀光默认世界坐标不跟随。
 - phase id 须与 HSM 一致：`attack1`/`attack2`/`attack3`/`skill`/`Skill_R`。
 - 敌人仍可用 `EnemyAttackHitRelay` 动画 Event；**当前**以 `EnemyCombat` Active 阶段 `EnemyHitbox` 出伤为准（Attack 动画未绑 Event）。
+- 环绕刃 `OrbitingBlade` 对同一目标 0.1s 命中节流（`HitCooldown`），不是每帧结算。
+- 敌人攻防血随玩家肉鸽等级乘 `LevelStatMul`（与玩家相同 +10%/级）。`attackDamage` 仍是技能倍率%。

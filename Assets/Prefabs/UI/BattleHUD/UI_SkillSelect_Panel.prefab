@@ -1044,7 +1044,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5f9a2b30c4e5f7081b2c3d4e5f6a7b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
+  btnSelect: {fileID: 5069627157753707597}
+  txtTitle: {fileID: 2484698238152691917}
+  txtSelect: {fileID: 2788420509772306480}
+  palCard0: {fileID: 6013733079820694104}
+  palCard1: {fileID: 5014285714737103406}
+  palCard2: {fileID: 3762296812995046419}
 --- !u!1 &6286086496729523226
 GameObject:
   m_ObjectHideFlags: 0

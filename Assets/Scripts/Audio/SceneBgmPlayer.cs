@@ -49,10 +49,16 @@ namespace AttackSkill.Audio
             player.ApplyForActiveScene();
         }
 
-        /// <summary>肉鸽传送后切 drone，直到离开 GameScene。</summary>
+        /// <summary>肉鸽传送后切 drone，直到离开 GameScene 或返回海滩。</summary>
         public static void PlayRougeDrone()
         {
             EnsureExists().SwitchToRougeDrone();
+        }
+
+        /// <summary>暂停重置回海滩：取消 drone，改播海滨 BGM。</summary>
+        public static void PlayCampTheme()
+        {
+            EnsureExists().SwitchToCampTheme();
         }
 
         void Awake()
@@ -181,6 +187,12 @@ namespace AttackSkill.Audio
             }
 
             PlayClip(droneBgm, "drone");
+        }
+
+        void SwitchToCampTheme()
+        {
+            _rougeDrone = false;
+            Play();
         }
 
         void PlayClip(AudioClip clip, string label)

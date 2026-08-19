@@ -12,6 +12,7 @@ namespace AttackSkill.Enemy
         [Header("Stats")]
         [Tooltip("可选：覆盖 Resources/Combat/Stats/Enemies 默认雷属性表；空则用 Enemy_Thunder")]
         public EnemyCombatStatsDefinition combatStats;
+        [Tooltip("1 级表内生命；运行时再乘玩家肉鸽等级系数（每级 +10%）")]
         public float maxHp = 80f;
         [Tooltip("头顶血条显示等级")]
         public int level = 1;
@@ -32,6 +33,7 @@ namespace AttackSkill.Enemy
         public float disengageRange = 22f;
         [Tooltip("离出生点超过此值则强制勒回（leash）。建议 ≥ disengageRange，否则会先被出生点拉开")]
         public float returnHomeRange = 28f;
+        [Tooltip("技能倍率%（100=100% ATK）。1 级表内值；ATK 会随玩家肉鸽等级 +10%/级")]
         public float attackDamage = 12f;
         public float attackKnockback = 1.2f;
         public float attackWindup = 0.35f;

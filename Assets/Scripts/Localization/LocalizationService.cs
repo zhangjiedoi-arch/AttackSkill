@@ -219,6 +219,7 @@ namespace AttackSkill.Localization
             // key 规范：小写 + 下划线（如 tools_network_test）
             Add(LocalizationTableType.UI, "pause_title", "已暂停", "Paused", "一時停止");
             Add(LocalizationTableType.UI, "pause_hint", "再按 {0} 继续", "Press {0} to resume", "{0} でもう一度再開");
+            Add(LocalizationTableType.UI, "pause_reset", "返回海滩", "Return to Beach", "海岸に戻る");
             Add(LocalizationTableType.UI, "locale_label", "语言", "Language", "言語");
             Add(LocalizationTableType.UI, "locale_zh", "简体中文", "Chinese", "中国語");
             Add(LocalizationTableType.UI, "locale_en", "英语", "English", "英語");

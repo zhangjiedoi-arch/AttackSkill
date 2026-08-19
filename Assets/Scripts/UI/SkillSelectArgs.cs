@@ -13,26 +13,32 @@ namespace AttackSkill.UI
     {
         public static string Name(RougePassiveDefData def)
         {
-            if (def == null)
-            {
-                return string.Empty;
-            }
-
-            return LocalizationService.CurrentLocale == GameLocale.En
-                ? (string.IsNullOrEmpty(def.nameEn) ? def.nameZh : def.nameEn)
-                : (string.IsNullOrEmpty(def.nameZh) ? def.nameEn : def.nameZh);
+            return Resolve(def, def != null ? def.nameKey : null, "_name");
         }
 
         public static string Desc(RougePassiveDefData def)
+        {
+            return Resolve(def, def != null ? def.descKey : null, "_desc");
+        }
+
+        static string Resolve(RougePassiveDefData def, string key, string suffix)
         {
             if (def == null)
             {
                 return string.Empty;
             }
 
-            return LocalizationService.CurrentLocale == GameLocale.En
-                ? (string.IsNullOrEmpty(def.descEn) ? def.descZh : def.descEn)
-                : (string.IsNullOrEmpty(def.descZh) ? def.descEn : def.descZh);
+            if (string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(def.id))
+            {
+                key = "rouge_passive_" + def.id + suffix;
+            }
+
+            if (string.IsNullOrEmpty(key))
+            {
+                return string.Empty;
+            }
+
+            return LocalizationService.Get(LocalizationTableType.Story, key);
         }
     }
 }

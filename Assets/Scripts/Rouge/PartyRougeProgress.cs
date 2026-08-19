@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AttackSkill.Combat;
 using UnityEngine;
 
 namespace AttackSkill.Rouge
@@ -11,12 +12,27 @@ namespace AttackSkill.Rouge
         public int stack;
     }
 
+    /// <summary>一局肉鸽可序列化快照（写入 GameSaveData）。</summary>
+    [Serializable]
+    public class RougeRunSave
+    {
+        public int level = 1;
+        public int exp;
+        public int pendingLevelUps;
+        public RougePassiveStack[] passives;
+        public bool hasTeleported;
+        public bool[] fallenSlots;
+        /// <summary>获救倒计时剩余秒；&lt;0 表示未进肉鸽战斗计时。</summary>
+        public float battleTimeRemaining = -1f;
+    }
+
     /// <summary>全队共享：等级、经验、永久被动。</summary>
     public static class PartyRougeProgress
     {
         static int _level = 1;
         static int _exp;
         static readonly List<RougePassiveStack> _passives = new List<RougePassiveStack>(16);
+        static readonly Dictionary<string, float> _modSums = new Dictionary<string, float>(16);
         static int _pendingLevelUps;
         static bool _selectUiOpen;
 
@@ -57,7 +73,80 @@ namespace AttackSkill.Rouge
             _passives.Clear();
             _pendingLevelUps = 0;
             _selectUiOpen = false;
+            RebuildModCache();
             RougePassiveEffects.OnRunReset();
+            Changed?.Invoke();
+        }
+
+        public static RougeRunSave Capture()
+        {
+            var save = new RougeRunSave
+            {
+                level = Mathf.Max(1, _level),
+                exp = Mathf.Max(0, _exp),
+                pendingLevelUps = Mathf.Max(0, _pendingLevelUps),
+                passives = _passives.Count > 0
+                    ? new RougePassiveStack[_passives.Count]
+                    : Array.Empty<RougePassiveStack>()
+            };
+
+            for (int i = 0; i < _passives.Count; i++)
+            {
+                var src = _passives[i];
+                save.passives[i] = new RougePassiveStack
+                {
+                    id = src != null ? src.id : null,
+                    stack = src != null ? src.stack : 0
+                };
+            }
+
+            return save;
+        }
+
+        /// <summary>读档恢复。不弹三选一（由 HUD 打开后再 <see cref="TryOpenSkillSelectIfPending"/>）。</summary>
+        public static void Restore(RougeRunSave save)
+        {
+            if (save == null)
+            {
+                ResetRun();
+                return;
+            }
+
+            RougeCatalog.EnsureLoaded();
+            var table = RougeCatalog.Levels;
+            int maxLv = table != null ? Mathf.Max(1, table.maxLevel) : 15;
+
+            _level = Mathf.Clamp(save.level, 1, maxLv);
+            _exp = Mathf.Max(0, save.exp);
+            _pendingLevelUps = Mathf.Max(0, save.pendingLevelUps);
+            _selectUiOpen = false;
+            _passives.Clear();
+
+            if (save.passives != null)
+            {
+                for (int i = 0; i < save.passives.Length; i++)
+                {
+                    var src = save.passives[i];
+                    if (src == null || string.IsNullOrEmpty(src.id))
+                    {
+                        continue;
+                    }
+
+                    var def = RougeCatalog.GetPassive(src.id);
+                    if (def == null)
+                    {
+                        continue;
+                    }
+
+                    int max = Mathf.Max(1, def.maxStack);
+                    int stack = Mathf.Clamp(src.stack, 1, max);
+                    _passives.Add(new RougePassiveStack { id = src.id, stack = stack });
+                }
+            }
+
+            RebuildModCache();
+            RougePassiveEffects.NotifyChanged();
+            CombatStats.RefreshAllHealthForRougeLevel();
             Changed?.Invoke();
         }
 
@@ -97,6 +186,7 @@ namespace AttackSkill.Rouge
             {
                 _pendingLevelUps += gained;
                 RougePassiveEffects.ApplyAbyssPactToActiveParty();
+                CombatStats.RefreshAllHealthForRougeLevel();
                 TryOpenSkillSelect();
             }
 
@@ -143,12 +233,14 @@ namespace AttackSkill.Rouge
                 }
 
                 _passives[i].stack++;
+                RebuildModCache();
                 Changed?.Invoke();
                 RougePassiveEffects.NotifyChanged();
                 return true;
             }
 
             _passives.Add(new RougePassiveStack { id = id, stack = 1 });
+            RebuildModCache();
             Changed?.Invoke();
             RougePassiveEffects.NotifyChanged();
             return true;
@@ -199,7 +291,17 @@ namespace AttackSkill.Rouge
 
         public static float SumMod(string modType)
         {
-            float sum = 0f;
+            if (string.IsNullOrEmpty(modType))
+            {
+                return 0f;
+            }
+
+            return _modSums.TryGetValue(modType, out float sum) ? sum : 0f;
+        }
+
+        static void RebuildModCache()
+        {
+            _modSums.Clear();
             for (int i = 0; i < _passives.Count; i++)
             {
                 var stack = _passives[i];
@@ -209,17 +311,24 @@ namespace AttackSkill.Rouge
                     continue;
                 }
 
+                int n = Mathf.Max(0, stack.stack);
+                if (n <= 0)
+                {
+                    continue;
+                }
+
                 for (int m = 0; m < def.mods.Length; m++)
                 {
                     var mod = def.mods[m];
-                    if (mod != null && mod.type == modType)
+                    if (mod == null || string.IsNullOrEmpty(mod.type))
                     {
-                        sum += mod.perStack * stack.stack;
+                        continue;
                     }
+
+                    _modSums.TryGetValue(mod.type, out float cur);
+                    _modSums[mod.type] = cur + mod.perStack * n;
                 }
             }
-
-            return sum;
         }
     }
 }

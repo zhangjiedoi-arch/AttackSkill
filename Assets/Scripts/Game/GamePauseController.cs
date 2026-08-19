@@ -1,5 +1,6 @@
 using UnityEngine;
 using AttackSkill.CameraSystem;
+using AttackSkill.Character;
 using AttackSkill.Core;
 using AttackSkill.UI;
 
@@ -139,6 +140,11 @@ namespace AttackSkill.Game
 
                     ui.OpenDialog(UIId.Setting);
                 },
+                onReset = () =>
+                {
+                    EndPauseSession(closeUi: true);
+                    PartyController.Instance?.ResetToBeachRun();
+                },
                 onQuit = QuitGame
             });
         }
@@ -202,6 +208,7 @@ namespace AttackSkill.Game
 
         public static void QuitGame()
         {
+            GameProgressController.Instance?.TrySave("Quit");
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else

@@ -25,7 +25,7 @@ namespace AttackSkill.Enemy
 
             var settings = CharacterRuntimeSettings.Get();
             float chance = settings != null ? settings.enemyHealDropChance : DefaultHealDropChance;
-            chance = Mathf.Clamp01(chance + RougePassiveEffects.HealCircleDropChanceAdd);
+            chance = Mathf.Clamp01(chance);
             if (Random.value > chance)
             {
                 return;
@@ -68,7 +68,6 @@ namespace AttackSkill.Enemy
             }
 
             Vector3 pos = agent.transform.position;
-            pos.y += 0.45f;
 
             var settings = CharacterRuntimeSettings.Get();
             GameObject prefab = settings != null ? settings.GetExpOrbPrefab() : null;

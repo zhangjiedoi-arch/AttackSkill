@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: "\u4E91\u6D77\u5996\u7CBE"
   prefab: {fileID: 2790419543999585648, guid: 688748231444055419c996d3b3be45df, type: 3}
   combatStats: {fileID: 0}
-  maxHp: 200
+  maxHp: 400
   level: 80
   moveSpeed: 3.5
   turnSpeed: 8

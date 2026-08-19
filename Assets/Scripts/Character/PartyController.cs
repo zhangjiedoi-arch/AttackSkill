@@ -408,12 +408,6 @@ namespace AttackSkill.Character
         /// <summary>读档复位或默认出生点开局。由 GameProgress 在场景就绪后调用。</summary>
         public void BeginPlayFromSaveOrDefault()
         {
-            if (_playStarted || _active != null)
-            {
-                return;
-            }
-
-            ClearFallen(notify: false);
             SyncGenderFromPendingIfNeeded();
             EnsureGenderRoster();
 
@@ -423,28 +417,42 @@ namespace AttackSkill.Character
                 return;
             }
 
-            bool spawned = false;
             if (GameSaveService.TryPeekPendingRestore(out GameSaveData save))
             {
-                spawned = TryApplyRestore(save);
-                if (spawned)
+                ClearFallen(notify: false);
+                if (_residual != null)
+                {
+                    DespawnResidual(_residual);
+                }
+
+                if (_active != null)
+                {
+                    DespawnCharacter(_active);
+                    ActiveIndex = -1;
+                }
+
+                _playStarted = false;
+                if (TryApplyRestore(save))
                 {
                     GameSaveService.TryConsumePendingRestore(out _);
+                    _playStarted = true;
+                    LocalAccountStore.LockGender();
+                    RouGeLikeFlowController.Instance?.NotifyPlayerReady();
+                    return;
                 }
-                else
-                {
-                    Debug.LogError(
-                        "[PartyController] 读档生成失败，保留 Pending；回退默认出生点。",
-                        this);
-                    spawned = TrySpawnAtDefault();
-                }
-            }
-            else
-            {
-                spawned = TrySpawnAtDefault();
+
+                Debug.LogError(
+                    "[PartyController] 读档生成失败，保留 Pending；回退默认出生点。",
+                    this);
             }
 
-            if (!spawned)
+            if (_playStarted || _active != null)
+            {
+                return;
+            }
+
+            ClearFallen(notify: false);
+            if (!TrySpawnAtDefault())
             {
                 Debug.LogError("[PartyController] 开局生成失败。", this);
                 return;
@@ -452,6 +460,7 @@ namespace AttackSkill.Character
 
             _playStarted = true;
             LocalAccountStore.LockGender();
+            RouGeLikeFlowController.Instance?.NotifyPlayerReady();
         }
 
         /// <summary>
@@ -489,36 +498,66 @@ namespace AttackSkill.Character
                 return false;
             }
 
+            PartyRougeProgress.Restore(save.rougeRun);
+            RestoreFallenSlots(save.rougeRun != null ? save.rougeRun.fallenSlots : null);
+
             Vector3 pos = save.Position;
             Quaternion rot = save.Rotation;
-            int idx = Mathf.Clamp(save.activeIndex, 0, characterPrefabs.Length - 1);
+            int preferred = Mathf.Clamp(save.activeIndex, 0, characterPrefabs.Length - 1);
+            int idx = FirstLivingIndex(preferred);
+            bool wipe = idx < 0;
+            if (wipe)
+            {
+                idx = preferred;
+            }
 
             if (syncTransformToSpawn)
             {
                 transform.position = pos;
             }
 
-            SwitchTo(idx, pos, rot, force: true, applySpawnOffset: false);
+            var flow = RouGeLikeFlowController.Instance;
+            bool hasTeleported = save.rougeRun != null && save.rougeRun.hasTeleported;
+            float battleTime = save.rougeRun != null ? save.rougeRun.battleTimeRemaining : -1f;
+            // 先开肉鸽闸并关掉海滩 intro，避免 SwitchTo 后 intro 清场把等级 ResetRun 掉。
+            flow?.ApplyRestoredEntry(hasTeleported, pos, battleTime);
+
+            SwitchTo(idx, pos, rot, force: true, applySpawnOffset: false, useRequestedPose: true);
 
             if (_active == null)
             {
+                ClearFallen(notify: false);
                 return false;
             }
 
-            if (save.activeHp >= 0f && _active.Health != null)
+            RougePassiveEffects.NotifyChanged();
+            RougePassiveEffects.ApplyMaxHpMul(_active);
+
+            bool sameLivingSlot = !wipe && idx == preferred;
+            if (sameLivingSlot && save.activeHp >= 0f && _active.Health != null)
             {
                 _active.Health.SetCurrentHp(save.activeHp);
             }
 
             BattleSkillWheelState.Restore(save.equippedSkillIndex);
 
+            if (wipe)
+            {
+                ShowGameOver();
+            }
+
             Debug.Log(
-                $"[PartyController] 读档复位：slot={idx} hp={save.activeHp} gender={save.Gender} skillT={save.equippedSkillIndex} @ {pos} ({SceneManager.GetActiveScene().name})");
+                $"[PartyController] 读档复位：slot={idx} hp={save.activeHp} gender={save.Gender} skillT={save.equippedSkillIndex} rougeLv={PartyRougeProgress.Level} teleported={hasTeleported} @ {pos} ({SceneManager.GetActiveScene().name})");
+            UIManager.Instance?.ShowTip(
+                LocalizationService.Format(LocalizationTableType.Common, "progress_load_save", save.sceneName),
+                2f);
             return true;
         }
 
         bool TrySpawnAtDefault()
         {
+            PartyRougeProgress.ResetRun();
+            ClearFallen(notify: false);
             if (syncTransformToSpawn)
             {
                 transform.position = spawnPosition;
@@ -547,7 +586,7 @@ namespace AttackSkill.Character
             RememberActivePose();
             Vector3 pos = _hasLastGameplayPose ? _lastGameplayPos : _active.transform.position;
             Quaternion rot = _hasLastGameplayPose ? _lastGameplayRot : _active.transform.rotation;
-            return GameSaveData.Create(
+            var data = GameSaveData.Create(
                 SceneManager.GetActiveScene().name,
                 pos,
                 rot,
@@ -555,6 +594,23 @@ namespace AttackSkill.Character
                 LocalAccountStore.HasGender ? LocalAccountStore.Gender : OpenSceneGender.Female,
                 hp,
                 BattleSkillWheelState.SelectedIndex);
+
+            var rouge = PartyRougeProgress.Capture();
+            var flow = RouGeLikeFlowController.Instance;
+            rouge.hasTeleported = flow != null && (flow.HasTeleported || flow.ContainsPoint(pos));
+            rouge.fallenSlots = CaptureFallenSlots();
+            if (rouge.hasTeleported)
+            {
+                float rem = UIBattleTimePanel.CaptureRemainingSeconds();
+                rouge.battleTimeRemaining = rem >= 0f ? rem : UIBattleTimePanel.DurationSeconds;
+            }
+            else
+            {
+                rouge.battleTimeRemaining = -1f;
+            }
+
+            data.rougeRun = rouge;
+            return data;
         }
 
         void Update()
@@ -612,7 +668,7 @@ namespace AttackSkill.Character
             }
 
             if (ActiveIndex >= 0 &&
-                Time.time < _lastSwitchTime + AttackSkill.Rouge.RougePassiveEffects.GetSwitchCooldown(switchCooldown))
+                Time.time < _lastSwitchTime + Mathf.Max(0.1f, switchCooldown))
             {
                 return false;
             }
@@ -623,14 +679,14 @@ namespace AttackSkill.Character
             return SwitchTo(index, pos, rot, force: false, applySpawnOffset: false);
         }
 
-        bool SwitchTo(int index, Vector3 worldPos, Quaternion worldRot, bool force, bool applySpawnOffset = true)
+        bool SwitchTo(int index, Vector3 worldPos, Quaternion worldRot, bool force, bool applySpawnOffset = true, bool useRequestedPose = false)
         {
             if (!force && ActiveIndex >= 0 && index == ActiveIndex)
             {
                 return false;
             }
 
-            if (!_restarting && IsSlotFallen(index))
+            if (!force && IsSlotFallen(index))
             {
                 return false;
             }
@@ -655,8 +711,8 @@ namespace AttackSkill.Character
                 DespawnResidual(_residual);
             }
 
-            // 切人前先记下旧角色位姿
-            if (old != null)
+            // 切人前先记下旧角色位姿（读档强制用存档坐标，不继承当前出生点）
+            if (old != null && !useRequestedPose)
             {
                 RememberPose(old.transform.position, old.transform.rotation);
                 worldPos = old.transform.position;
@@ -668,9 +724,9 @@ namespace AttackSkill.Character
             }
 
             Vector3 spawnPos = applySpawnOffset ? worldPos + worldRot * spawnOffset : worldPos;
-            // 活体切人：原位继承。死亡/开局：贴地（射线已排除 Player）
-            bool inheritLivePose = old != null && !old.IsDead;
-            if (!inheritLivePose)
+            // 活体切人：原位继承。死亡/开局：贴地。读档保持存档坐标（高空肉鸽平面贴地射线会打偏）。
+            bool inheritLivePose = !useRequestedPose && old != null && !old.IsDead;
+            if (!inheritLivePose && !useRequestedPose)
             {
                 spawnPos = SnapSpawnToGround(spawnPos);
             }
@@ -924,6 +980,86 @@ namespace AttackSkill.Character
             ShowGameOver();
         }
 
+        /// <summary>暂停「返回海滩」：清肉鸽进度、删档重写、回默认出生点、任务回到海滩清波。</summary>
+        public void ResetToBeachRun()
+        {
+            if (_restarting)
+            {
+                return;
+            }
+
+            _restarting = true;
+            try
+            {
+                _gameOverShown = false;
+                _playStarted = true;
+
+                if (_soloRespawnCoroutine != null)
+                {
+                    StopCoroutine(_soloRespawnCoroutine);
+                    _soloRespawnCoroutine = null;
+                    _soloRespawning = false;
+                }
+
+                ClearFallen(notify: false);
+                PartyRougeProgress.ResetRun();
+                BattleSkillWheelState.ResetToDefault();
+                GameSaveService.ClearPendingRestore();
+                GameSaveService.Delete();
+
+                if (_residual != null)
+                {
+                    DespawnResidual(_residual);
+                }
+
+                Vector3 pos = spawnPosition;
+                Quaternion rot = transform.rotation;
+                if (syncTransformToSpawn)
+                {
+                    transform.position = pos;
+                }
+
+                if (_active != null)
+                {
+                    DespawnCharacter(_active);
+                    ActiveIndex = -1;
+                }
+
+                int idx = Mathf.Clamp(startIndex, 0, Mathf.Max(0, MemberCount - 1));
+                SwitchTo(idx, pos, rot, force: true, applySpawnOffset: false, useRequestedPose: true);
+
+                var rouge = RouGeLikeFlowController.Instance;
+                rouge?.ResetToCamp();
+
+                var ui = UIManager.Instance;
+                if (ui != null)
+                {
+                    if (ui.IsOpen(UIId.GameOver))
+                    {
+                        ui.Close(UIId.GameOver);
+                    }
+
+                    if (ui.IsOpen(UIId.SkillSelect))
+                    {
+                        ui.Close(UIId.SkillSelect);
+                    }
+
+                    if (ui.IsOpen(UIId.SkillWheel))
+                    {
+                        ui.Close(UIId.SkillWheel);
+                    }
+                }
+
+                FallenChanged?.Invoke();
+                GameProgressController.Instance?.TrySave("ResetBeach");
+                Debug.Log($"[PartyController] 已返回海滩并重置存档 @ {pos}", this);
+            }
+            finally
+            {
+                _restarting = false;
+            }
+        }
+
         /// <summary>全灭后重新开始：清等级/被动、复活全员、回到肉鸽出生点。</summary>
         public void RestartRougeRun()
         {
@@ -1015,6 +1151,7 @@ namespace AttackSkill.Character
 
             _gameOverShown = true;
             FallenChanged?.Invoke();
+            UIBattleTimePanel.EndRougeTimer();
 
             var ui = UIManager.Instance;
             if (ui == null)
@@ -1026,6 +1163,34 @@ namespace AttackSkill.Character
             if (ui.Open(UIId.GameOver) == null)
             {
                 Debug.LogError("[PartyController] 无法打开 UI_GameOver_Dialog。", this);
+            }
+        }
+
+        /// <summary>肉鸽倒计时归零：派蒙救援结算（同 GameOver 交互）。</summary>
+        public void ShowRescueGameOver()
+        {
+            if (_gameOverShown)
+            {
+                return;
+            }
+
+            _gameOverShown = true;
+            FallenChanged?.Invoke();
+            UIBattleTimePanel.EndRougeTimer();
+
+            var ui = UIManager.Instance;
+            if (ui == null)
+            {
+                Debug.LogError("[PartyController] 救援结算但无 UIManager。", this);
+                return;
+            }
+
+            if (ui.Open(UIId.GameOver, new UIGameOverDialogArgs
+                {
+                    titleKey = UIGameOverDialog.RescueTitleKey
+                }) == null)
+            {
+                Debug.LogError("[PartyController] 无法打开救援结算 UI_GameOver_Dialog。", this);
             }
         }
 
@@ -1091,6 +1256,63 @@ namespace AttackSkill.Character
                 if (!IsSlotFallen(idx))
                 {
                     return idx;
+                }
+            }
+
+            return -1;
+        }
+
+        bool[] CaptureFallenSlots()
+        {
+            EnsureFallenArray();
+            if (_fallen == null || _fallen.Length == 0)
+            {
+                return Array.Empty<bool>();
+            }
+
+            var copy = new bool[_fallen.Length];
+            Array.Copy(_fallen, copy, _fallen.Length);
+            return copy;
+        }
+
+        void RestoreFallenSlots(bool[] slots)
+        {
+            EnsureFallenArray();
+            ClearFallen(notify: false);
+            if (slots != null && _fallen != null)
+            {
+                int n = Mathf.Min(_fallen.Length, slots.Length);
+                for (int i = 0; i < n; i++)
+                {
+                    _fallen[i] = slots[i];
+                }
+            }
+
+            FallenChanged?.Invoke();
+        }
+
+        int FirstLivingIndex(int preferred)
+        {
+            EnsureFallenArray();
+            if (preferred >= 0 && preferred < MemberCount && !IsSlotFallen(preferred))
+            {
+                return preferred;
+            }
+
+            if (preferred >= 0 && preferred < MemberCount)
+            {
+                int next = FindNextLivingIndex(preferred);
+                if (next >= 0)
+                {
+                    return next;
+                }
+            }
+
+            for (int i = 0; i < MemberCount; i++)
+            {
+                if (!IsSlotFallen(i))
+                {
+                    return i;
                 }
             }
 

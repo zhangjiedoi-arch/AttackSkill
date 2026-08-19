@@ -52,6 +52,12 @@ namespace AttackSkill.Enemy
             }
         }
 
+        void Start()
+        {
+            // 玩家若已在 20m 内（开局/读档/重置），立刻判一次，不坐等下一帧走进范围。
+            EvaluateActivation();
+        }
+
         void OnDestroy()
         {
             if (_points == null)
@@ -143,12 +149,28 @@ namespace AttackSkill.Enemy
 
         void Update()
         {
-            Transform player = PlayerTargetLocator.GetActivePlayerTransform();
-            Vector3 playerPos = player != null ? player.position : transform.position + Vector3.one * 9999f;
-            float dist = Vector3.Distance(playerPos, transform.position);
+            EvaluateActivation();
+            TickPoints();
+        }
 
-            float activateR = definition != null ? definition.activateRadius : 35f;
-            float hibernateR = definition != null ? definition.hibernateRadius : 50f;
+        /// <summary>按最近刷怪点距离激活；已在范围内也会生成。</summary>
+        public void EvaluateActivation()
+        {
+            if (!enabled || _initialWaveCleared)
+            {
+                return;
+            }
+
+            Transform player = PlayerTargetLocator.GetActivePlayerTransform();
+            if (player == null)
+            {
+                return;
+            }
+
+            Vector3 playerPos = player.position;
+            float dist = DistanceToNearestPoint(playerPos);
+            float activateR = definition != null ? definition.activateRadius : 20f;
+            float hibernateR = definition != null ? definition.hibernateRadius : 40f;
 
             if (!_activated && dist <= activateR)
             {
@@ -158,16 +180,49 @@ namespace AttackSkill.Enemy
             {
                 HibernateGroup();
             }
+        }
 
+        void TickPoints()
+        {
             if (_points == null)
             {
                 return;
             }
 
+            Transform player = PlayerTargetLocator.GetActivePlayerTransform();
+            Vector3 playerPos = player != null ? player.position : transform.position + Vector3.one * 9999f;
             for (int i = 0; i < _points.Length; i++)
             {
-                _points[i].Tick(Time.deltaTime, playerPos, _activated);
+                if (_points[i] != null)
+                {
+                    _points[i].Tick(Time.deltaTime, playerPos, _activated);
+                }
             }
+        }
+
+        float DistanceToNearestPoint(Vector3 playerPos)
+        {
+            float best = Vector3.Distance(playerPos, transform.position);
+            if (_points == null || _points.Length == 0)
+            {
+                return best;
+            }
+
+            for (int i = 0; i < _points.Length; i++)
+            {
+                if (_points[i] == null)
+                {
+                    continue;
+                }
+
+                float d = Vector3.Distance(playerPos, _points[i].transform.position);
+                if (d < best)
+                {
+                    best = d;
+                }
+            }
+
+            return best;
         }
 
         void ActivateGroup()
@@ -223,6 +278,36 @@ namespace AttackSkill.Enemy
             }
         }
 
+        /// <summary>读档已进入肉鸽区：海滩初始波视为已清，不再激活。</summary>
+        public void MarkIntroClearedAndDisable()
+        {
+            _initialWaveCleared = true;
+            HibernateGroup();
+            enabled = false;
+        }
+
+        /// <summary>暂停重置回海滩：清波、重新启用，并立刻按 20m 判断是否生成。</summary>
+        public void ResetWaveForReplay()
+        {
+            enabled = true;
+            _initialWaveCleared = false;
+            _deathCount = 0;
+            HibernateGroup();
+            _activated = false;
+            if (_points != null)
+            {
+                for (int i = 0; i < _points.Length; i++)
+                {
+                    if (_points[i] != null)
+                    {
+                        _points[i].ResetForReplay();
+                    }
+                }
+            }
+
+            EvaluateActivation();
+        }
+
         void BuildPointsFromDefinition()
         {
             var existing = GetComponentsInChildren<EnemySpawnPoint>(true);
@@ -261,8 +346,8 @@ namespace AttackSkill.Enemy
                 return;
             }
 
-            float a = definition != null ? definition.activateRadius : 35f;
-            float h = definition != null ? definition.hibernateRadius : 50f;
+            float a = definition != null ? definition.activateRadius : 20f;
+            float h = definition != null ? definition.hibernateRadius : 40f;
             Gizmos.color = new Color(0.2f, 1f, 0.4f, 0.35f);
             Gizmos.DrawWireSphere(transform.position, a);
             Gizmos.color = new Color(0.2f, 0.6f, 1f, 0.25f);

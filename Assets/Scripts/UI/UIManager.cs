@@ -153,6 +153,12 @@ namespace AttackSkill.UI
                 "BattleHUD/UI_Task_Panel",
                 stretchToParent: false,
                 closesOtherPanels: false);
+            EnsureEntry(
+                UIId.BattleTime,
+                UILayer.Panel,
+                "BattleHUD/UI_BattleTime_Panel",
+                stretchToParent: false,
+                closesOtherPanels: false);
         }
 
         void EnsureEntry(
@@ -485,6 +491,7 @@ namespace AttackSkill.UI
                 case UIId.BattleCombat: return typeof(UIBattleCombatPanel);
                 case UIId.BattleVitals: return typeof(UIBattleVitalsPanel);
                 case UIId.BattleTask: return typeof(UITaskPanel);
+                case UIId.BattleTime: return typeof(UIBattleTimePanel);
                 default: return typeof(UIGenericView);
             }
         }

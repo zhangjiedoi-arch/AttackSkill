@@ -19,8 +19,8 @@ namespace AttackSkill.Enemy
         };
 
         [Header("Activation")]
-        public float activateRadius = 15f;
-        public float hibernateRadius = 30f;
+        public float activateRadius = 20f;
+        public float hibernateRadius = 40f;
 
         [Header("Respawn")]
         public float respawnDelay = 20f;

@@ -822,7 +822,7 @@ MonoBehaviour:
     m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 0
-    m_HorizontalOverflow: 1
+    m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u9057\u97F3\u6276\u5251\uFF0C\u8361\u68A6\u800C\u6B4C"
