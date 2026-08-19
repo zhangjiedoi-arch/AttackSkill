@@ -194,6 +194,7 @@ namespace AttackSkill.Game
                 return;
             }
 
+            // 0 = 已结算，必须保留；仅 &lt;0 视为缺字段
             if (rougeRun.battleTimeRemaining < 0f)
             {
                 rougeRun.battleTimeRemaining = UIBattleTimePanel.DurationSeconds;

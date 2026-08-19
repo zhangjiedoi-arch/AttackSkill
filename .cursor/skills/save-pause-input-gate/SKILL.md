@@ -49,6 +49,8 @@ UI SoftBlock Push → 角色/相机输入变 default → OnClose Pop
 
 - SoftBlock ≠ `GamePause.IsPaused`（轮盘是软阻塞）。
 - 存档 v4 起含 `rougeRun`（`PartyRougeProgress` + 是否已进肉鸽平面 + 阵亡槽）。
-- 存档 v5 起含 `rougeRun.battleTimeRemaining`（肉鸽获救倒计时剩余秒；未进战斗为 -1）。
+- 存档 v5 起含 `rougeRun.battleTimeRemaining`（肉鸽获救倒计时剩余秒；未进战斗为 -1；**0=已结算**，勿回填满时长）。
+- 计时：`BeginRougeTimer` 无 UI 也先记镜像，Boot 末 `TryOpenPendingAfterBoot` 补开。结算用 `MarkExpiredAndClose`（保持 0）。
+- 读档：`ApplyRestoredEntry` 区内容差 2m；Flow 缺失时 `ForceDisableIntroGroups` + 仍开倒计时。intro 清场若已有等级/经验/被动则跳过 `ResetRun`。
 - 存档 v3 起含 `equippedSkillIndex`。
 - 输入后端抽象为 `GameInput`，优先 Input System。

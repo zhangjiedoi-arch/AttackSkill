@@ -35,6 +35,8 @@ namespace AttackSkill.Enemy
             var plane = GameObject.Find(PlaneName);
             if (plane == null)
             {
+                Debug.LogError(
+                    $"[RouGeLike] GameScene 中找不到 \"{PlaneName}\"，肉鸽流程无法挂载。请确认场景物体名或预挂 RouGeLikeFlowController。");
                 return;
             }
 

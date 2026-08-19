@@ -14,7 +14,7 @@ namespace AttackSkill.Rouge
     [Serializable]
     public class RougeExpOrbConfig
     {
-        public float dropChance = 0.55f;
+        public float dropChance = 0.75f;
         public int expAmount = 10;
         public float lifetime = 20f;
         public float pickRadius = 3f;

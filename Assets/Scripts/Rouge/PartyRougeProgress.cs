@@ -36,6 +36,20 @@ namespace AttackSkill.Rouge
         static int _pendingLevelUps;
         static bool _selectUiOpen;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics()
+        {
+            _level = 1;
+            _exp = 0;
+            _passives.Clear();
+            _modSums.Clear();
+            _pendingLevelUps = 0;
+            _selectUiOpen = false;
+            Changed = null;
+            LeveledUp = null;
+            SkillSelectRequested = null;
+        }
+
         public static event Action Changed;
         public static event Action<int> LeveledUp;
         /// <summary>需要弹出三选一 UI 时触发（由 UI 层订阅并 Open）。</summary>

@@ -48,5 +48,5 @@ Tab 轮盘 → SoftBlock + Commit 装备索引
 - Panel 互斥；Dialog 可叠。
 - 运行时文案主源：`Resources/Localization/Json/LocalizationBundle`。
 - 肉鸽被动名/描述：`RougePassiveTable.json` 只写 `nameKey`/`descKey`，正文在 `Story.json`（并同步进 Bundle 的 Story 表）。`RougePassiveText` 走 `LocalizationTableType.Story`。三选一描述下追加 `rouge_skill_current_stack`（当前层/上限）。
-- 肉鸽倒计时：`UI_BattleTime_Panel` / `UIBattleTimePanel`；`EnterRougeCombat` / `ResetEncounterForRestart` 开，`ResetToCamp` / 结算关。`txtTime`=`battle_time_rescue`（即将获救：mm:ss），&lt;60s 变红。剩余秒写入 `rougeRun.battleTimeRemaining`（存档 v5），读档续跑。
+- 肉鸽倒计时：`UI_BattleTime_Panel` / `UIBattleTimePanel`；`EnterRougeCombat` / `ResetEncounterForRestart` 开，`ResetToCamp` 用 `EndRougeTimer` 清成 -1；结算用 `MarkExpiredAndClose` 保持 0。`txtTime`=`battle_time_rescue`（即将获救：mm:ss），&lt;60s 变红。剩余秒写入 `rougeRun.battleTimeRemaining`（存档 v5），读档续跑。Boot 末 `TryOpenPendingAfterBoot` + `TryOpenSkillSelectIfPending`。
 - Battle HUD 打开时 Tab 给轮盘，不给切人。

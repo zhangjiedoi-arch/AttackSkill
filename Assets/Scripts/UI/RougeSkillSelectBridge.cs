@@ -26,6 +26,8 @@ namespace AttackSkill.UI
             var ui = UIManager.Instance;
             if (ui == null)
             {
+                // Boot 末 GameProgress 会再调 TryOpenSkillSelectIfPending
+                Debug.LogWarning("[RougeSkillSelect] UIManager 未就绪，等待 Boot 补开。");
                 return;
             }
 

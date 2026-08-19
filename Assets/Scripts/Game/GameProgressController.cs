@@ -168,6 +168,9 @@ namespace AttackSkill.Game
             // Continue 时 Party 已 Restore(equippedSkillIndex)；此处只补图标
             BattleSkillWheelState.EnsureIconResolved();
             UIManager.Instance?.OpenBattlePartyHud();
+            // UI 就绪后再补开倒计时 / 三选一（BeginRougeTimer 可能早于 UIManager）
+            UIBattleTimePanel.TryOpenPendingAfterBoot();
+            PartyRougeProgress.TryOpenSkillSelectIfPending();
             SceneBgmPlayer.EnsurePlayingForActiveScene();
 
             BootFinished = true;

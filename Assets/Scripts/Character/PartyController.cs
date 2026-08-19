@@ -520,7 +520,20 @@ namespace AttackSkill.Character
             bool hasTeleported = save.rougeRun != null && save.rougeRun.hasTeleported;
             float battleTime = save.rougeRun != null ? save.rougeRun.battleTimeRemaining : -1f;
             // 先开肉鸽闸并关掉海滩 intro，避免 SwitchTo 后 intro 清场把等级 ResetRun 掉。
-            flow?.ApplyRestoredEntry(hasTeleported, pos, battleTime);
+            if (hasTeleported || (flow != null && flow.ContainsPoint(pos, restoreMargin: 2f)))
+            {
+                if (flow != null)
+                {
+                    flow.ApplyRestoredEntry(hasTeleported, pos, battleTime);
+                }
+                else
+                {
+                    Debug.LogError(
+                        "[PartyController] 读档需进肉鸽区但 RouGeLikeFlowController 缺失，已强制关 intro 并开倒计时。");
+                    RouGeLikeFlowController.ForceDisableIntroGroups();
+                    UIBattleTimePanel.BeginRougeTimer(battleTime >= 0f ? battleTime : -1f);
+                }
+            }
 
             SwitchTo(idx, pos, rot, force: true, applySpawnOffset: false, useRequestedPose: true);
 
@@ -602,6 +615,7 @@ namespace AttackSkill.Character
             if (rouge.hasTeleported)
             {
                 float rem = UIBattleTimePanel.CaptureRemainingSeconds();
+                // ≥0（含结算后的 0）原样写入；仅从未开表（-1）时才回退满时长
                 rouge.battleTimeRemaining = rem >= 0f ? rem : UIBattleTimePanel.DurationSeconds;
             }
             else
@@ -1151,7 +1165,8 @@ namespace AttackSkill.Character
 
             _gameOverShown = true;
             FallenChanged?.Invoke();
-            UIBattleTimePanel.EndRougeTimer();
+            // 保持 battleTimeRemaining=0，勿 EndRougeTimer 清成 -1 导致存档回填满时长
+            UIBattleTimePanel.MarkExpiredAndClose();
 
             var ui = UIManager.Instance;
             if (ui == null)
@@ -1176,7 +1191,7 @@ namespace AttackSkill.Character
 
             _gameOverShown = true;
             FallenChanged?.Invoke();
-            UIBattleTimePanel.EndRougeTimer();
+            UIBattleTimePanel.MarkExpiredAndClose();
 
             var ui = UIManager.Instance;
             if (ui == null)

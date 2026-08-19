@@ -38,11 +38,20 @@ namespace AttackSkill.Enemy
         [Tooltip("Plane 本地 XZ 半宽（默认 Plane 网格 ±5）")]
         [SerializeField] float planeHalfExtent = 5f;
         [SerializeField] float planeHeightTolerance = 20f;
+        [Tooltip("传送后首次刷怪延迟（秒）")]
+        [SerializeField] float postTeleportSpawnDelay = 1.5f;
+        [Tooltip("场上上限：基数")]
+        [SerializeField] int maxAliveBase = MaxAliveBase;
+        [Tooltip("场上上限：每级增加")]
+        [SerializeField] int maxAlivePerLevel = MaxAlivePerLevel;
+        [Tooltip("场上上限：封顶")]
+        [SerializeField] int maxAliveCap = MaxAliveCap;
 
         readonly List<EnemyAgent> _aliveRouge = new List<EnemyAgent>(128);
         readonly List<EnemyDefinition> _eligibleScratch = new List<EnemyDefinition>(16);
         float _nextSpawnAt;
         bool _teleported;
+        bool _introGateClosed;
         bool _boundIntro;
 
         public static RouGeLikeFlowController Instance { get; private set; }
@@ -55,11 +64,14 @@ namespace AttackSkill.Enemy
         public bool IsPlayerInArea => CheckPlayerInArea();
         public int MaxAliveNow => MaxAliveForLevel(PartyRougeProgress.Level);
 
-        /// <summary>Lv1=30，之后每级 +5，封顶 100。</summary>
+        /// <summary>Lv1=30，之后每级 +5，封顶 100（可用 Inspector 覆盖）。</summary>
         public static int MaxAliveForLevel(int level)
         {
             int lv = Mathf.Max(1, level);
-            return Mathf.Min(MaxAliveCap, MaxAliveBase + MaxAlivePerLevel * (lv - 1));
+            int bas = Instance != null ? Mathf.Max(1, Instance.maxAliveBase) : MaxAliveBase;
+            int per = Instance != null ? Mathf.Max(0, Instance.maxAlivePerLevel) : MaxAlivePerLevel;
+            int cap = Instance != null ? Mathf.Max(1, Instance.maxAliveCap) : MaxAliveCap;
+            return Mathf.Min(cap, bas + per * (lv - 1));
         }
 
         /// <summary>角色已生成：海滩 intro 立刻按 20m 判断一次（含已在范围内）。</summary>
@@ -158,6 +170,16 @@ namespace AttackSkill.Enemy
             if (introSpawnGroup == null)
             {
                 introSpawnGroup = FindObjectOfType<EnemySpawnGroup>();
+                if (introSpawnGroup != null)
+                {
+                    var all = Object.FindObjectsOfType<EnemySpawnGroup>();
+                    if (all != null && all.Length > 1)
+                    {
+                        Debug.LogWarning(
+                            $"[RouGeLike] 场景有 {all.Length} 个 EnemySpawnGroup，已绑定 \"{introSpawnGroup.name}\"。请在 Inspector 指定 introSpawnGroup。",
+                            this);
+                    }
+                }
             }
 
             if ((enemyPool == null || enemyPool.Length == 0) && introSpawnGroup != null)
@@ -210,8 +232,18 @@ namespace AttackSkill.Enemy
 
         void OnIntroWaveCleared()
         {
-            if (_teleported || GameSaveService.HasPendingRestore)
+            if (_teleported || _introGateClosed || GameSaveService.HasPendingRestore)
             {
+                return;
+            }
+
+            // 读档已有进度却未关闸时：只关 intro，禁止 ResetRun
+            if (PartyRougeProgress.Level > 1 ||
+                PartyRougeProgress.Exp > 0 ||
+                PartyRougeProgress.Passives.Count > 0)
+            {
+                Debug.LogWarning("[RouGeLike] intro 清场时已有肉鸽进度，跳过 ResetRun，仅关闭海滩闸。", this);
+                CloseIntroGate();
                 return;
             }
 
@@ -224,10 +256,13 @@ namespace AttackSkill.Enemy
             ResolveRefs();
             if (_teleported)
             {
+                CloseIntroGate();
                 return;
             }
 
-            if (!hasTeleported && !ContainsPoint(playerPos))
+            // 读档容差：边缘坐标仍视为在区内
+            bool inArea = ContainsPoint(playerPos, restoreMargin: 2f);
+            if (!hasTeleported && !inArea)
             {
                 return;
             }
@@ -237,6 +272,30 @@ namespace AttackSkill.Enemy
                 teleportPlayer: false,
                 showTip: false,
                 battleTimeRemaining: battleTimeRemaining);
+            CloseIntroGate();
+        }
+
+        /// <summary>Flow 缺失时由 Party 调用：强制关掉所有海滩 intro 组。</summary>
+        public static void ForceDisableIntroGroups()
+        {
+            var groups = Object.FindObjectsOfType<EnemySpawnGroup>();
+            for (int i = 0; i < groups.Length; i++)
+            {
+                if (groups[i] != null)
+                {
+                    groups[i].MarkIntroClearedAndDisable();
+                }
+            }
+
+            if (Instance != null)
+            {
+                Instance._introGateClosed = true;
+            }
+        }
+
+        void CloseIntroGate()
+        {
+            _introGateClosed = true;
             if (introSpawnGroup != null)
             {
                 introSpawnGroup.MarkIntroClearedAndDisable();
@@ -283,7 +342,8 @@ namespace AttackSkill.Enemy
             }
 
             _teleported = true;
-            _nextSpawnAt = Time.time + 1.5f;
+            _introGateClosed = true;
+            _nextSpawnAt = Time.time + Mathf.Max(0.1f, postTeleportSpawnDelay);
             if (resetProgress)
             {
                 PartyRougeProgress.ResetRun();
@@ -291,7 +351,7 @@ namespace AttackSkill.Enemy
 
             PrewarmEnemyPool();
             SceneBgmPlayer.PlayRougeDrone();
-            // 新进肉鸽 / 未记录剩余：满时长；读档：续跑剩余秒
+            // 新进肉鸽 / 未记录剩余：满时长；读档：续跑剩余秒（0 则立刻结算）
             float timer = resetProgress || battleTimeRemaining < 0f
                 ? -1f
                 : battleTimeRemaining;
@@ -552,6 +612,7 @@ namespace AttackSkill.Enemy
         {
             ResolveRefs();
             _teleported = false;
+            _introGateClosed = false;
             ClearAliveRouge();
             if (introSpawnGroup != null)
             {
@@ -577,7 +638,8 @@ namespace AttackSkill.Enemy
             ResolveRefs();
             ClearAliveRouge();
             _teleported = true;
-            _nextSpawnAt = Time.time + 1.5f;
+            _introGateClosed = true;
+            _nextSpawnAt = Time.time + Mathf.Max(0.1f, postTeleportSpawnDelay);
 
             var cam = GameServices.ResolveCamera();
             if (cam != null)
@@ -615,7 +677,10 @@ namespace AttackSkill.Enemy
             return Instance != null && Instance.ContainsPoint(worldPos);
         }
 
-        public bool ContainsPoint(Vector3 worldPos)
+        public bool ContainsPoint(Vector3 worldPos) => ContainsPoint(worldPos, restoreMargin: 0f);
+
+        /// <param name="restoreMargin">读档时额外放宽半宽（米），避免边缘坐标判区外。</param>
+        public bool ContainsPoint(Vector3 worldPos, float restoreMargin)
         {
             if (planeRoot == null)
             {
@@ -623,7 +688,7 @@ namespace AttackSkill.Enemy
             }
 
             Vector3 local = planeRoot.InverseTransformPoint(worldPos);
-            float half = Mathf.Max(0.5f, planeHalfExtent);
+            float half = Mathf.Max(0.5f, planeHalfExtent) + Mathf.Max(0f, restoreMargin);
             if (Mathf.Abs(local.x) > half || Mathf.Abs(local.z) > half)
             {
                 return false;
