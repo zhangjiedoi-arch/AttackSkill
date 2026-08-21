@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 2385714094164448774}
   - component: {fileID: 5931581203880972589}
   - component: {fileID: 7693248420097143637}
+  - component: {fileID: 1798661307481142011}
   m_Layer: 5
   m_HasEditorInfo: 1
   m_Name: txtName
@@ -206,4 +207,24 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u7EA2\u6E29\u5C11\u5E74\u8FDB\u5165\u4E86\u6E38\u620F"
+  m_Text: '#UI/join_game_tip'
+--- !u!114 &1798661307481142011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7252217120854746583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c8963d0afb63ab4abe0d884c70f93da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  table: 1
+  key: join_game_tip
+  directText: 
+  bindMode: 0
+  overrideLocale: 0
+  localeOverride: 0
+  bindOnEnable: 1
+  previewInEditMode: 1

@@ -1,6 +1,6 @@
 # AttackSkill
 
-第三人称动作探索 Demo，基于**团结引擎（Tuanjie）**开发。聚焦角色操控、战斗出伤、探索工具与小队切换，适合作为动作 / 开放世界玩法原型与管线实验项目。
+第三人称动作探索 Demo，基于**团结引擎（Tuanjie）**开发。涵盖角色 HSM 操控、小队切人、统一出伤管线、探索工具、敌人 AI，以及**肉鸽刷怪升级**闭环；适合作为动作 / 开放世界玩法原型与管线实验项目。
 
 ## 演示
 
@@ -10,64 +10,81 @@
 
 | 项 | 说明 |
 |----|------|
-| 引擎 | 团结引擎 **1.9.0**（`2022.3.62t8`） |
+| 引擎 | 团结引擎 **1.9.0**（Unity `2022.3.62t8`） |
 | 渲染 | Built-in Render Pipeline |
 | 产品名 | AttackSkill |
-| 主场景 | `Assets/Scenes/GameScene.scene` |
-| 登录 / 入口 | `Assets/Scenes/OpenScene.scene` |
-| 脚本规模 | `Assets/Scripts` 下约 **150+** C# 文件 |
+| 开场 / 登录 | `Assets/Scenes/OpenScene.scene` |
+| 主玩法 | `Assets/Scenes/GameScene.scene` |
+| 脚本根 | `Assets/Scripts/`（Character / Combat / Enemy / Rouge / UI / Game / …） |
 
 > 请使用与 `ProjectSettings/ProjectVersion.txt` 一致的团结引擎版本打开工程，避免序列化与包版本不匹配。
 
-## 玩法概览
+## 玩法闭环
+
+```text
+OpenScene（登录 / 选性别）
+    → GameScene（探索 + 战斗 + 小队）
+        → 海滩清波 intro
+            → 传送 RouGeLikePlane（肉鸽）
+                → 刷怪升级三选一 + 3 分钟获救倒计时
+                    → 全灭 / 倒计时归零结算
+                        → 读档续玩或回海滩重开
+```
+
+## 功能概览
 
 ### 角色与操控
 
-- **HSM（分层状态机）** 驱动移动、跳跃、下落、攀爬、普攻连段、闪避与 **E 技能**
-- 小队切人：前台角色切换（含技能残留等规则）
-- Avatar 挂点装配：武器、翅膀、御剑、摩托等工具 Prefab 运行时挂接
-- 第三人称轨道相机：跟随、环视、滚轮缩放、切人跟拍
+- **HSM（分层状态机）**：移动、跳跃、下落、攀爬、普攻连段、闪避、E / R 技能、探索工具薄壳状态
+- **小队切人**：性别阵容（漂泊者男女 + 千咲 + 柯莱塔）；新角立刻可控，旧角 Residual 播完再回收
+- **Avatar 挂点**：武器 / 翅膀 / 御剑 / 摩托等 Prefab 运行时装配
+- **第三人称轨道相机**：跟随、环视、滚轮缩放、切人 Snap、墙体防穿
 
-### 战斗
+### 战斗出伤
 
-- 普攻：扇形判定 + 刀光 / 挥砍音效
-- **E 技能**：动画 Event 驱动多段出伤（左右拳 + 砸地 AOE）
-- 出伤配置化：`SkillHitProfile`（挂点、形状、伤害、特效、音效）
-- 敌人：感知 → 追击 → 交战；数据走 `EnemyDefinition`；出伤经动画 Event → `HitResolver`
+- 普攻扇形判定；技能多段走 `TimedHitProfile` / `SkillHitProfile`（挂点、形状、伤害、VFX/SFX）
+- 统一结算：`AttackHitRelay` → 形状检测 → `HitResolver`（过滤去重）→ `CombatStats` 伤害公式
+- VFX 对象池；世界跳字订阅 `HitResolver.Applied`
 
-### 敌人死亡表现
+### 敌人
 
-死亡后由 `EnemyDeathDirector` 按 `EnemyDefinition.echoChance` 分流（可用 `deathForceMode` 强制）：
+- 数据驱动：`EnemyDefinition` + `EnemyBrain`（Idle → Alert → Chase → Combat → Return / Dead）
+- 刷怪：`EnemySpawnGroup` / `SpawnPoint`（海滩 intro 距离激活）
+- 死亡分流：`EnemyDeathDirector`
+  - **Echo（声骸）**：金色半透明残影
+  - **Dissolve（飘散）**：噪声溶解；**肉鸽区域强制溶解**
+- 掉落：约 30% 治疗圈；肉鸽区另掉经验球
 
-| 结果 | 表现 | 尸体 |
-|------|------|------|
-| **声骸（Echo）** | 金色半透明残影（`EnemyDeathGold`） | 默认约 20s 后销毁 |
-| **飘散（Dissolve）** | 噪声溶解 + 上浮（`EnemyDeathDissolve`） | 特效结束立即销毁 |
+### 肉鸽（RouGeLike）
 
-- 死亡立刻关闭碰撞，不再挡路
-- 声骸附近（约 1m）显示获取提示；**F** 暂为占位 Tip（`echo_obtain_wip`），并优先于滑翔
+| 项 | 说明 |
+|----|------|
+| 流程 | 清海滩 intro → 传送 `PlayerSpawn` → 平面内批量刷怪 |
+| 场上上限 | `30 + 5 × (等级 - 1)`，封顶 **100**（Inspector 可调） |
+| 成长 | 经验升级 → 三选一被动；攻防血 **每级 +10%**（玩家与敌同乘） |
+| 倒计时 | **3 分钟**获救；剩余秒写入存档（`-1` 未开表，`0` 已结算） |
+| 结算 | 全灭 / 倒计时归零 → `UIGameOverDialog`（救援标题可区分） |
+| 数据 | `PartyRougeProgress` + `Resources/Rouge/*.json` + 等级解锁刷怪表 |
 
-### 世界 UI
-
-- 敌人头顶血条（等级 + 血量）：玩家约 **20m** 内显示，遮挡时隐藏
-- 伤害跳字：低伤白 / 中伤黄 / 高伤红，字号随档位变化
-- **Screen Space Overlay** 投影（`WorldUiService`），不用 World Space Billboard
-
-### 探索工具（Tab 轮盘 + T 键）
+### 探索工具（Tab 轮盘 + T）
 
 | 工具 | 说明 |
 |------|------|
-| 翅膀飞行 | 滑翔移动，左右气流特效 |
-| 御剑飞行 | 御剑姿态空中移动，居中气流特效 |
+| 翅膀 | 飞行移动 + 气流特效 |
+| 御剑 | 御剑姿态空中移动 |
 | 摩托 | 骑乘移动与音效 |
+
+未实现槽位为 Stub，确认时 Tip 提示。
 
 ### UI / 系统
 
-- 战斗 HUD：血条、小队、技能键位、探索工具轮盘
-- 世界挂点 UI：敌人血条、伤害跳字、声骸获取提示
-- 开场登录 / 选性别、设置、本地化（多语言）
-- 场景 BGM、角色移动 / 探索 / 战斗音效
-- 存档：小队、装备工具等进度读写；暂停与玩法输入闸
+- 战斗 HUD：编队头像、生存、技能键、系统、任务；进肉鸽后再开倒计时面板
+- 对话框：暂停、设置、技能轮盘、三选一、GameOver、登录 / 选性别等
+- 世界 UI：头顶血条、伤害跳字（Screen Overlay 投影，非 World Billboard）
+- 本地化：中 / 英（`LocalizationService` + Json Bundle）
+- 账号资料（`LocalAccountStore`）与进度档（`GameSaveData` JSON）分离
+- 硬暂停 `GamePause` ≠ 轮盘软阻塞 `GameplayInputGate.SoftBlock`
+- 场景 BGM（海滩 / 肉鸽 drone）+ 角色 SFX
 
 ## 操作（默认）
 
@@ -79,59 +96,79 @@
 | 鼠标左键 | 普攻 |
 | 鼠标右键 | 闪避 |
 | **E** | 技能 |
-| **Tab** | 探索工具轮盘 |
+| **R** | 大招（若角色配置） |
+| **1 / 2 / 3** | 切人 |
+| **Tab** | 探索工具轮盘（按住选扇区） |
 | **T** | 切换当前装备的探索工具 |
 | **F** | 滑翔；靠近声骸时优先为获取交互 |
+| **Esc** | 暂停菜单 |
+| **F5** | 快速存档 |
+| **F6** | 删除本地进度档（调试） |
 
-战斗 HUD 上的 E 按钮与键盘 E 均可释放技能。
+战斗 HUD 打开时 **Tab 优先给技能轮盘**，不占用切人。
 
 ## 工程结构
 
 ```text
 AttackSkill/
 ├── Assets/
-│   ├── Scripts/           # 玩法与框架代码
-│   │   ├── Character/     # HSM、小队、探索工具、音效、Avatar
-│   │   ├── Combat/        # 出伤、HitProfile、判定、对象池
-│   │   ├── Enemy/         # 敌人 AI、生成、定义、死亡表现
-│   │   ├── UI/            # HUD / 对话框 / 世界 UI
-│   │   ├── Localization/  # 本地化
-│   │   ├── Audio/         # 场景 BGM 等
+│   ├── Scripts/
+│   │   ├── Character/     # HSM、小队、探索工具、Avatar、音效
+│   │   ├── Combat/        # 出伤、HitProfile、Stats、VFX 池
+│   │   ├── Enemy/         # AI、刷怪、死亡、肉鸽 Flow
+│   │   ├── Rouge/         # 等级 / 被动 / 经验球 / 环绕刃等
+│   │   ├── UI/            # HUD、Dialog、世界 UI、开场流程
+│   │   ├── Localization/  # 多语言
+│   │   ├── Audio/         # 场景 BGM
 │   │   ├── Camera/        # 第三人称相机
-│   │   ├── Game/          # 暂停、存档、输入门控
-│   │   └── Core/          # 通用服务
-│   ├── Shaders/           # 刀光、死亡金透 / 飘散等
-│   ├── Resources/         # RuntimeSettings、SkillHit、WorldUI、死亡材质等
-│   ├── Prefabs/           # 角色、工具、VFX、WorldUI
+│   │   ├── Game/          # 存档、暂停、Boot、输入闸
+│   │   └── Core/          # GameServices、SceneSingleton、GameInput
+│   ├── Resources/         # RuntimeSettings、Combat、Rouge、WorldUI、Localization…
 │   ├── ScriptableObjects/ # 敌人定义、刷怪组等
-│   ├── Audio/             # 音效 / BGM
+│   ├── Prefabs/           # 角色、工具、UI、VFX
 │   ├── Scenes/            # OpenScene / GameScene
-│   └── ...
+│   └── Shaders/           # 刀光、死亡金透 / 溶解等
 ├── Packages/
 ├── ProjectSettings/
-└── .cursor/skills/        # 各玩法管线说明（Agent Skill）
+├── Output/                # 本地 PC 构建输出（gitignore）
+└── .cursor/skills/        # 各玩法管线说明（给 Agent / 开发者）
 ```
 
 ## 关键配置入口
 
-多数运行时资源通过 ScriptableObject / Resources 装配，避免运行时 `AssetDatabase`：
+运行时优先走 **Resources / ScriptableObject**，禁止运行时 `AssetDatabase`。
 
 | 资源 | 路径 / 说明 |
 |------|-------------|
 | `CharacterRuntimeSettings` | `Assets/Resources/CharacterRuntimeSettings.asset` |
-| `SkillHit_Player_E` | `Assets/Resources/Combat/SkillHit_Player_E.asset` |
-| `ExplorationToolCatalog` | 探索工具目录 |
-| `EnemyDefinition_*` | `Assets/ScriptableObjects/Enemy/`（含声骸概率、溶解参数等） |
-| 死亡材质 / Shader Refs | `Assets/Resources/Enemy/` |
+| 探索工具目录 | `Assets/Resources/` 下 `ExplorationToolCatalog` 等 |
+| 玩家技能出伤 | `Assets/Resources/Combat/` |
+| 肉鸽表 | `Assets/Resources/Rouge/`（被动、等级、刷怪目录） |
+| 敌人定义 | `Assets/ScriptableObjects/Enemy/` |
+| 死亡材质 | `Assets/Resources/Enemy/` |
 | WorldUI Prefab | `Assets/Resources/UI/WorldUI/` |
+| 本地化 | `Assets/Resources/Localization/Json/` |
 
 编辑器菜单（示例）：
 
 - `工具/敌人/重建死亡特效材质`
-- `GameObject/AttackSkill/...`（刷怪组、训练木桩等）
-- `Assets/Create/AttackSkill/...`（敌人定义等）
+- `工具/Rouge/重建肉鸽刷怪等级表`
+- `工具/UI/刷新场景 UIManager 条目`
+- `GameObject/AttackSkill/...`、`Assets/Create/AttackSkill/...`
 
-更细的管线说明见仓库内 `.cursor/skills/`（如 `enemy-ai`、`world-ui`、`combat-hit`）。
+更细的管线说明见 `.cursor/skills/`（总览：`attackskill-overview`）。
+
+## 存档说明（进度 v5）
+
+| 内容 | 说明 |
+|------|------|
+| 账号 / 性别 | `LocalAccountStore`（不进进度 JSON） |
+| 进度文件 | 持久化目录下 `game_progress.json` |
+| 含字段 | 场景、位姿、队员、HP、轮盘技能下标、肉鸽局状态 |
+| 肉鸽字段 | 等级 / 经验 / 被动 / 是否已进平面 / 阵亡槽 / **倒计时剩余秒** |
+
+- **NewGame**：清 Pending + 重置轮盘与肉鸽进度  
+- **Continue**：`GameProgress` Awake 挂 Pending → 先 `ApplyRestoredEntry` 再生成，避免 intro 清场把进度 `ResetRun` 掉  
 
 ## 主要依赖（节选）
 
@@ -141,7 +178,7 @@ AttackSkill/
 - Animation Rigging
 - TextMesh Pro / uGUI
 - Visual Effect Graph
-- 团结相关：AI Graph、Codely Bridge 等（见 `Packages/manifest.json`）
+- 团结相关包（见 `Packages/manifest.json`）
 
 ## 如何运行
 
@@ -153,7 +190,13 @@ AttackSkill/
 
 本地 PC 构建产物默认输出到 `Output/`（已在 `.gitignore` 中忽略）。
 
-仓库已按 **PC Demo 必需资源** 精简历史：不含 `The Courtyard` 示例包、MagicaCloth 示例、MMD 非 Windows 原生库 / PMX 导入工具、KCC Walkthrough 等。本地若自行拷回这些目录，请勿再提交（见 `.gitignore`）。
+## 开发约定（简）
+
+1. 改功能先查 `.cursor/skills/attackskill-overview`，再进对应子 Skill  
+2. 改数据优先动 SO / Resources，再改代码  
+3. 阻塞玩法输入用 `GameplayInputGate`，勿随意改 `timeScale`  
+4. 出伤统一进 `HitResolver`；世界跳字订 `HitResolver.Applied`  
+5. 去重键用单位 / `EnemyAgent`，勿用共父节点的 `transform.root`
 
 ## 参考素材
 
@@ -165,11 +208,11 @@ AttackSkill/
 | 角色动作 | [Mixamo](https://www.mixamo.com/) |
 | 模型 / 动作包 | [Quaternius](https://quaternius.com/) |
 | 音效 | [Freesound](https://freesound.org/) |
-| 引擎插件 / 官方素材文档 | [Unity 文档](https://docs.unity3d.com/) |
+| 引擎文档 | [Unity 文档](https://docs.unity3d.com/) |
 
 ## 状态说明
 
-当前为**可玩 Demo / 原型**：核心战斗、探索、世界 UI 与敌人死亡分流已接通。声骸 **F 获取**仍为占位提示；部分 HUD 技能键与工具轮盘槽位也可能仅为展示、尚未实现。
+当前为**可玩 Demo / 原型**：核心战斗、探索、小队、存档、肉鸽循环与结算已接通。声骸 **F 获取**仍可能为占位提示；部分轮盘槽位为 Stub 展示。
 
 ## 许可证
 

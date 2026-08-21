@@ -576,6 +576,12 @@
       "zhHans": "御剑",
       "en": "Sword Flight",
       "ja": "御剣"
+    },
+    {
+      "key": "join_game_tip",
+      "zhHans": "红温少年进入了游戏",
+      "en": "红温少年 entered the game.",
+      "ja": "红温少年がゲームに入場した"
     }
   ]
 }
