@@ -16,7 +16,6 @@ namespace AttackSkill.Character.HSM
         public ICharacterInputSource InputSource;
         public AttackHitRelay AttackHits;
         public CharacterAudio Audio;
-        public CharacterSkillPlayer SkillPlayer;
 
         public CharacterInput Input;
         public bool CanGlide = true;

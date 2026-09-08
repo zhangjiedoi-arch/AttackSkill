@@ -94,6 +94,13 @@ namespace AttackSkill.UI
 
         void OnClickReset()
         {
+            var progress = GameProgressController.Instance;
+            if (progress != null)
+            {
+                progress.RequestRestartRouge();
+                return;
+            }
+
             PartyController.Instance?.RestartRougeRun();
         }
 

@@ -17,6 +17,7 @@ namespace AttackSkill.Enemy
     /// 仅当玩家在 RouGeLikePlane 内时，在玩家 10m 半径内随机刷怪。
     /// PlayerSpawn 与 RouGeLikePlane 同级（场景根下）。
     /// </summary>
+    [DefaultExecutionOrder(-50)]
     public class RouGeLikeFlowController : MonoBehaviour
     {
         [Header("Refs（可空，运行时按名称回退）")]
@@ -232,22 +233,45 @@ namespace AttackSkill.Enemy
 
         void OnIntroWaveCleared()
         {
-            if (_teleported || _introGateClosed || GameSaveService.HasPendingRestore)
+            if (_teleported || _introGateClosed)
+            {
+                return;
+            }
+
+            var progress = GameProgressController.Instance;
+            if (progress != null &&
+                (progress.Phase == RunPhase.Transition || progress.Phase == RunPhase.GameOver))
+            {
+                return;
+            }
+
+            var party = PartyController.Instance;
+            if (party == null || !party.PlayStarted)
             {
                 return;
             }
 
             // 读档已有进度却未关闸时：只关 intro，禁止 ResetRun
-            if (PartyRougeProgress.Level > 1 ||
-                PartyRougeProgress.Exp > 0 ||
-                PartyRougeProgress.Passives.Count > 0)
+            if (PartyRougeProgress.HasProgressBeyondFreshStart)
             {
                 Debug.LogWarning("[RouGeLike] intro 清场时已有肉鸽进度，跳过 ResetRun，仅关闭海滩闸。", this);
                 CloseIntroGate();
                 return;
             }
 
+            if (progress != null)
+            {
+                progress.RequestEnterRougeFromIntro();
+                return;
+            }
+
             EnterRougeCombat(resetProgress: true, teleportPlayer: true, showTip: true);
+        }
+
+        /// <summary>海滩 intro 清场后进入肉鸽（由 GameProgress 调用）。失败时不改传送标记。</summary>
+        public bool EnterFromIntro()
+        {
+            return EnterRougeCombat(resetProgress: true, teleportPlayer: true, showTip: true);
         }
 
         /// <summary>读档：若本局已进过肉鸽区（或坐标已在平面内），开刷怪闸且不 ResetRun。</summary>
@@ -302,18 +326,19 @@ namespace AttackSkill.Enemy
             }
         }
 
-        void EnterRougeCombat(
+        bool EnterRougeCombat(
             bool resetProgress,
             bool teleportPlayer,
             bool showTip,
             float battleTimeRemaining = -1f)
         {
+            ResolveRefs();
             if (teleportPlayer)
             {
                 if (playerSpawn == null)
                 {
                     Debug.LogError("[RouGeLike] 缺少 PlayerSpawn。", this);
-                    return;
+                    return false;
                 }
 
                 Vector3 pos = playerSpawn.position;
@@ -366,6 +391,7 @@ namespace AttackSkill.Enemy
                     ? "[RouGeLike] 初始波次已清，传送至 RouGeLikePlane。"
                     : "[RouGeLike] 读档恢复肉鸽区，跳过海滩闸门。",
                 this);
+            return true;
         }
 
         void PrewarmEnemyPool()

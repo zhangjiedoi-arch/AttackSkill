@@ -44,9 +44,11 @@ namespace AttackSkill.Rouge
             RougeOrbitWeaponDriver.SyncFromProgress();
         }
 
+        public static float LevelStatMulFor(int level) =>
+            1f + LevelStatBonusPerLevel * Mathf.Max(0, level - 1);
+
         /// <summary>1 级 = 100%；2 级 = 110%，以此类推。</summary>
-        public static float LevelStatMul =>
-            1f + LevelStatBonusPerLevel * Mathf.Max(0, PartyRougeProgress.Level - 1);
+        public static float LevelStatMul => LevelStatMulFor(PartyRougeProgress.Level);
 
         public static float AttackDamageMul => 1f + PartyRougeProgress.SumMod("attackDamageMul");
         public static float AttackMul => 1f + PartyRougeProgress.SumMod("attackMul");

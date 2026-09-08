@@ -467,7 +467,6 @@ namespace AttackSkill.UI
             // 连接是进 GameScene 的唯一入口。有档则 Continue，否则 F5/退出写的档会被整局丢掉。
             bool continueSave = GameSaveService.Exists();
             GameBoot.SetIntent(continueSave ? GameBootIntent.Continue : GameBootIntent.NewGame);
-            GameSaveService.ClearPendingRestore();
             Debug.Log($"[OpenSceneFlow] EnterGame → 加载 {gameSceneName} intent={(continueSave ? "Continue" : "NewGame")} exists={continueSave} path={GameSaveService.SavePath}");
 
             UIChangeScenePanel loading = null;
@@ -502,8 +501,7 @@ namespace AttackSkill.UI
             }
 
             ui?.Close(UIId.ChangeScene);
-            ui?.OpenBattlePartyHud();
-            // 性别锁定改由 Party 开局成功后统一执行
+            // HUD / 性别锁定由 GameProgress Boot 统一开
 
             // 卸载开场 Flow，避免 DDOL UIRoot 上残留逻辑
             if (UIBootstrap.Instance != null)

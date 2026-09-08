@@ -45,4 +45,4 @@ OnDestroy → Unregister
 | GameProgressController | -100 |
 | WorldUiService | -80 |
 
-`GameServices.Party` / `UI` 只是别名，真正生命周期在各自 `Instance`。
+`GameServices.Party` / `UI` 只是别名，真正生命周期在各自 `Instance`。`GameProgressController` 用自己的 `Instance`，**不要**挂进 `GameServices`（会循环依赖）。

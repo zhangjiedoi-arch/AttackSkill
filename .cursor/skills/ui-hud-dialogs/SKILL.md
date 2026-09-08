@@ -39,7 +39,7 @@ Tab 轮盘 → SoftBlock + Commit 装备索引
 5. 阻塞玩法 UI：配对 `GameplayInputGate` Push/Pop（参考轮盘 / GameOver）。
 6. **勿手改** Generated Bindings；走生成管线。
 7. Tip 用独立层，避免被 Dialog 盖住。
-8. 暂停：`UIPauseMenuDialog` + `GamePause`。`btnReset` → `Party.ResetToBeachRun`（回海滩、删档重写、任务回到海滩清波）。全灭：`UIGameOverDialog`（`UIId.GameOver`），ESC 不关。肉鸽 3 分钟倒计时归零同样弹 GameOver，标题 key `game_over_rescue_title`（派蒙拯救了你！）。
+8. 暂停：`UIPauseMenuDialog` + `GamePause`。`btnReset` → `GameProgress.RequestBeach`（回海滩、删档重写、任务回到海滩清波）。全灭：`UIGameOverDialog`（`UIId.GameOver`）`btnReset` → `RequestRestartRouge`，ESC 不关。肉鸽 3 分钟倒计时归零 → `RequestGameOver(rescue)`，标题 key `game_over_rescue_title`（派蒙拯救了你！）。
 9. HUD E/R 按钮走 `CombatSkillInput` / `CombatSkillRInput`；T/Q/E/R 冷却见 `PartySkillCooldown` + `CombatStats`；`imgFill`：0=进 CD、1=可用；`txtFill` 显示剩余秒（&lt;1s 为 0.x）。
 10. 占位技能键可能只 Tip（README 已说明），加功能时接真实输入。
 
@@ -48,5 +48,5 @@ Tab 轮盘 → SoftBlock + Commit 装备索引
 - Panel 互斥；Dialog 可叠。
 - 运行时文案主源：`Resources/Localization/Json/LocalizationBundle`。
 - 肉鸽被动名/描述：`RougePassiveTable.json` 只写 `nameKey`/`descKey`，正文在 `Story.json`（并同步进 Bundle 的 Story 表）。`RougePassiveText` 走 `LocalizationTableType.Story`。三选一描述下追加 `rouge_skill_current_stack`（当前层/上限）。
-- 肉鸽倒计时：`UI_BattleTime_Panel` / `UIBattleTimePanel`；`EnterRougeCombat` / `ResetEncounterForRestart` 开，`ResetToCamp` 用 `EndRougeTimer` 清成 -1；结算用 `MarkExpiredAndClose` 保持 0。`txtTime`=`battle_time_rescue`（即将获救：mm:ss），&lt;60s 变红。剩余秒写入 `rougeRun.battleTimeRemaining`（存档 v5），读档续跑。Boot 末 `TryOpenPendingAfterBoot` + `TryOpenSkillSelectIfPending`。
+- 肉鸽倒计时：`UI_BattleTime_Panel` / `UIBattleTimePanel`；`EnterRougeCombat` / `ResetEncounterForRestart` 开，`ResetToCamp` 用 `EndRougeTimer` 清成 -1；结算用 `MarkExpiredAndClose` 保持 0。`txtTime`=`battle_time_rescue`（即将获救：mm:ss），&lt;60s 变红。剩余秒写入 `rougeRun.battleTimeRemaining`（存档 v5），读档续跑。HUD 由 Progress Boot 末打开后再补倒计时 / 三选一。
 - Battle HUD 打开时 Tab 给轮盘，不给切人。

@@ -25,7 +25,7 @@ description: >-
 Scene1 → 2 → 3(+Timeline_Open) → 4
 → 登录门闩 → 性别门闩 → Link
 → Timeline_Select_Female|Male
-→ 有档 Continue / 无档 NewGame + Load GameScene
+→ GameBoot.Continue / NewGame + Load GameScene（HUD 由 GameProgress 开）
 ```
 
 ## 实现步骤
@@ -45,3 +45,4 @@ Scene1 → 2 → 3(+Timeline_Open) → 4
 
 - 开场允许改性别；局内锁定。
 - Flow 与 Link 协程互斥，防重入。
+- 进游戏后不要 `OpenBattleHud`；留给 GameScene 的 Progress Boot。`GameBoot` 必须保留（Progress 此时还不存在）。

@@ -23,12 +23,12 @@ description: >-
 | 用途 | 节点名 |
 |------|--------|
 | 摩托 | `Motorcycle_pos` |
-| 御剑 | `Sword_pos` |
+| 御剑 | `Sword_pos` + RuntimeSettings `swordPrefab`（脆刃；探索工具，不是 R 技能） |
 | 翅膀 | `wings_pos`（小写 w） |
 | 出伤 | `Hit_Chest_R` / `Hit_Chest_L` / `Hit_Root` 等 |
-| R 技能 AOE | `R_Hit_Root`（`HitSocketId.R_Hit_Root`） |
+| R 技能 AOE | `R_Hit_Root`（`HitSocketId.R_Hit_Root`）；TimedHit phase `Skill_R` 出伤/VFX |
 | 肉鸽环绕刃 | 挂到 Active 的 `R_Hit_Root`；切人时先改挂再销毁旧角色（`RougeOrbitWeaponDriver.BindToActiveImmediate`） |
-| 普攻可见武器 | `Weapon_Pos`（`AttackHitRelay.SetWeaponVisible`） |
+| 普攻可见武器 | `Weapon_Pos`（`AttackHitRelay.SetWeaponVisible`）；**不是** R 技能脆刃挂点 |
 
 ## 数据流
 
@@ -55,5 +55,6 @@ Assembler / OnValidate AutoBind
 ## 约定与坑
 
 - 挂点名大小写敏感。
-- `Weapon_Pos` 默认隐藏，普攻 `BeginSwing` 显示，`EndCombat` / 闪避隐藏；R 技能不再往该挂点生成脆刃。
+- `Weapon_Pos` 默认隐藏，普攻 `BeginSwing` 显示，`EndCombat` / 闪避 / E / R 隐藏。R 技能 **不** 在该挂点生成脆刃；脆刃只用于御剑飞行（`Sword_pos`）。
+- R 出伤与特效走 `TimedHitProfile` phase `Skill_R`，形状原点用 `R_Hit_Root`。
 - 工具网格不要拷进 Resources 重复一份。

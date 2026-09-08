@@ -42,8 +42,6 @@ namespace AttackSkill.Character
         [SerializeField] Vector3 spawnPosition = new Vector3(35f, 0f, 15f);
         [Tooltip("开局时把 PartyController 物体也移到 spawnPosition")]
         [SerializeField] bool syncTransformToSpawn = true;
-        [Tooltip("有 GameProgress 时由进度系统驱动开局生成，避免与读档抢跑")]
-        [SerializeField] bool deferBootToGameProgress = true;
 
         [Header("Camera")]
         [SerializeField] ThirdPersonCamera thirdPersonCamera;
@@ -86,6 +84,7 @@ namespace AttackSkill.Character
         public GenshinLikeCharacter Active => _active;
         public int ActiveIndex { get; private set; } = -1;
         public int MemberCount => characterPrefabs != null ? characterPrefabs.Length : 0;
+        /// <summary>Progress 已调过 <see cref="BeginPlay"/>，海滩 intro 才允许清场传送。</summary>
         public bool PlayStarted => _playStarted;
         public bool IsGameOverShown => _gameOverShown;
 
@@ -269,32 +268,6 @@ namespace AttackSkill.Character
                    component.GetComponentInParent<GenshinLikeCharacter>() == _active;
         }
 
-        void Start()
-        {
-            if (ShouldDeferBoot())
-            {
-                return;
-            }
-
-            BeginPlayFromSaveOrDefault();
-        }
-
-        bool ShouldDeferBoot()
-        {
-            if (GameSaveService.HasPendingRestore)
-            {
-                return true;
-            }
-
-            if (!deferBootToGameProgress)
-            {
-                return false;
-            }
-
-            var progress = GameProgressController.Instance;
-            return progress != null && !progress.BootFinished;
-        }
-
         /// <summary>
         /// 按已选性别组装队伍：漂泊者(男/女) + 千咲 + 柯莱塔。
         /// </summary>
@@ -405,10 +378,10 @@ namespace AttackSkill.Character
             }
         }
 
-        /// <summary>读档复位或默认出生点开局。由 GameProgress 在场景就绪后调用。</summary>
-        public void BeginPlayFromSaveOrDefault()
+        /// <summary>读档复位或默认出生点开局。仅由 <see cref="GameProgressController"/> 在场景就绪后调用一次。</summary>
+        public void BeginPlay(GameSaveData save)
         {
-            SyncGenderFromPendingIfNeeded();
+            SyncGenderFromSaveIfNeeded(save);
             EnsureGenderRoster();
 
             if (characterPrefabs == null || characterPrefabs.Length == 0)
@@ -417,7 +390,7 @@ namespace AttackSkill.Character
                 return;
             }
 
-            if (GameSaveService.TryPeekPendingRestore(out GameSaveData save))
+            if (save != null)
             {
                 ClearFallen(notify: false);
                 if (_residual != null)
@@ -434,7 +407,6 @@ namespace AttackSkill.Character
                 _playStarted = false;
                 if (TryApplyRestore(save))
                 {
-                    GameSaveService.TryConsumePendingRestore(out _);
                     _playStarted = true;
                     LocalAccountStore.LockGender();
                     RouGeLikeFlowController.Instance?.NotifyPlayerReady();
@@ -442,7 +414,7 @@ namespace AttackSkill.Character
                 }
 
                 Debug.LogError(
-                    "[PartyController] 读档生成失败，保留 Pending；回退默认出生点。",
+                    "[PartyController] 读档生成失败，回退默认出生点。",
                     this);
             }
 
@@ -466,9 +438,9 @@ namespace AttackSkill.Character
         /// <summary>
         /// 组队前：未锁定则用存档性别补齐；已锁定且与存档不一致只打日志。
         /// </summary>
-        void SyncGenderFromPendingIfNeeded()
+        void SyncGenderFromSaveIfNeeded(GameSaveData save)
         {
-            if (!GameSaveService.TryPeekPendingRestore(out GameSaveData save))
+            if (save == null)
             {
                 return;
             }
@@ -1018,7 +990,6 @@ namespace AttackSkill.Character
                 ClearFallen(notify: false);
                 PartyRougeProgress.ResetRun();
                 BattleSkillWheelState.ResetToDefault();
-                GameSaveService.ClearPendingRestore();
                 GameSaveService.Delete();
 
                 if (_residual != null)
@@ -1156,10 +1127,11 @@ namespace AttackSkill.Character
             }
         }
 
-        void ShowGameOver()
+        public void ShowGameOver()
         {
             if (_gameOverShown)
             {
+                GameProgressController.Instance?.NotifyGameOver();
                 return;
             }
 
@@ -1172,6 +1144,7 @@ namespace AttackSkill.Character
             if (ui == null)
             {
                 Debug.LogError("[PartyController] 全灭但无 UIManager，无法打开结算。", this);
+                GameProgressController.Instance?.NotifyGameOver();
                 return;
             }
 
@@ -1179,6 +1152,8 @@ namespace AttackSkill.Character
             {
                 Debug.LogError("[PartyController] 无法打开 UI_GameOver_Dialog。", this);
             }
+
+            GameProgressController.Instance?.NotifyGameOver();
         }
 
         /// <summary>肉鸽倒计时归零：派蒙救援结算（同 GameOver 交互）。</summary>
@@ -1186,6 +1161,7 @@ namespace AttackSkill.Character
         {
             if (_gameOverShown)
             {
+                GameProgressController.Instance?.NotifyGameOver();
                 return;
             }
 
@@ -1197,6 +1173,7 @@ namespace AttackSkill.Character
             if (ui == null)
             {
                 Debug.LogError("[PartyController] 救援结算但无 UIManager。", this);
+                GameProgressController.Instance?.NotifyGameOver();
                 return;
             }
 
@@ -1207,6 +1184,8 @@ namespace AttackSkill.Character
             {
                 Debug.LogError("[PartyController] 无法打开救援结算 UI_GameOver_Dialog。", this);
             }
+
+            GameProgressController.Instance?.NotifyGameOver();
         }
 
         void MarkFallen(int index)
@@ -1387,12 +1366,6 @@ namespace AttackSkill.Character
             if (_residual == character)
             {
                 _residual = null;
-            }
-
-            // 超时强制停技能再删
-            if (character.SkillPlayer != null && character.SkillPlayer.IsPlaying)
-            {
-                character.SkillPlayer.Stop();
             }
 
             DespawnCharacter(character);

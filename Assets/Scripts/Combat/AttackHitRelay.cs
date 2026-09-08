@@ -110,7 +110,7 @@ namespace AttackSkill.Combat
         /// <summary>当前是否处于 E 技能出伤（余火等被动用）。</summary>
         public bool IsSkillEActive => _isSkillEPhase;
 
-        /// <summary>大招由 SkillHitWindow 出伤时打开，避免动画 Event 重复结算。</summary>
+        /// <summary>为 true 时 TimedTick 不出伤（调试或互斥窗口用）。</summary>
         public bool SuppressAnimHits
         {
             get => _suppressAnimHits;

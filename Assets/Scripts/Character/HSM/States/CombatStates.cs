@@ -203,11 +203,6 @@ namespace AttackSkill.Character.HSM
             _durationSynced = false;
             _duration = Mathf.Max(0.1f, Ctx.Settings.SkillDuration);
 
-            if (Ctx.SkillPlayer != null && Ctx.SkillPlayer.IsPlaying)
-            {
-                Ctx.SkillPlayer.Stop();
-            }
-
             Ctx.AttackHits?.BeginTimedPhase("skill");
             Ctx.AttackHits?.SetWeaponVisible(false);
             CombatStats.Find(Ctx.Transform)?.BeginSkillECooldown();
@@ -328,12 +323,7 @@ namespace AttackSkill.Character.HSM
             _enteredSkillRAnim = false;
             _fallbackDuration = Mathf.Max(0.5f, Ctx.Settings != null ? Ctx.Settings.SkillRDuration : 2.5f);
 
-            if (Ctx.SkillPlayer != null && Ctx.SkillPlayer.IsPlaying)
-            {
-                Ctx.SkillPlayer.Stop();
-            }
-
-            // AoE / 出伤由 TimedHitProfile「Skill_R」驱动，不再走 SkillRVisual
+            // AoE / 出伤由 TimedHitProfile「Skill_R」驱动
             Ctx.AttackHits?.BeginTimedPhase("Skill_R");
             Ctx.AttackHits?.SetWeaponVisible(false);
             CombatStats.Find(Ctx.Transform)?.BeginSkillRCooldown();

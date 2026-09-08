@@ -7,7 +7,7 @@ namespace AttackSkill.Game
         Unspecified = 0,
         /// <summary>新开一局：不加载进度档。磁盘无档，或玩家已 F6 删档。</summary>
         NewGame = 1,
-        /// <summary>继续：加载进度档并 PendingRestore。</summary>
+        /// <summary>继续：GameProgress 读盘后 <c>BeginPlay(save)</c>。</summary>
         Continue = 2
     }
 

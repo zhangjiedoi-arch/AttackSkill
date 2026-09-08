@@ -44,7 +44,6 @@ namespace AttackSkill.Character.HSM
         CharacterContext _ctx;
         CharacterMotor _motor;
         CharacterControlMode _mode = CharacterControlMode.Active;
-        CharacterSkillPlayer _skillPlayer;
         CharacterExplorationTools _explorationTools;
         bool _residualFinishRaised;
         bool _dead;
@@ -52,7 +51,6 @@ namespace AttackSkill.Character.HSM
         public CharacterStateTree States { get; private set; }
         public string CurrentStatePath => _fsm != null ? _fsm.CurrentPath : string.Empty;
         public CharacterControlMode ControlMode => _mode;
-        public CharacterSkillPlayer SkillPlayer => _skillPlayer;
         public CharacterContext Context => _ctx;
         public CharacterExplorationTools ExplorationTools => _explorationTools;
         public Health Health => _health;
@@ -346,11 +344,6 @@ namespace AttackSkill.Character.HSM
                 return false;
             }
 
-            if (_skillPlayer != null && _skillPlayer.IsPlaying)
-            {
-                return false;
-            }
-
             return true;
         }
 
@@ -541,12 +534,6 @@ namespace AttackSkill.Character.HSM
             _health.ConfigureDefense(enableIFrames: true, iFrames: 0.5f, stun: 0.18f, enableHitStun: true);
             _health.Died += OnHealthDied;
 
-            _skillPlayer = GetComponent<CharacterSkillPlayer>();
-            if (_skillPlayer == null)
-            {
-                _skillPlayer = gameObject.AddComponent<CharacterSkillPlayer>();
-            }
-
             _ctx = new CharacterContext
             {
                 Transform = transform,
@@ -557,7 +544,6 @@ namespace AttackSkill.Character.HSM
                 InputSource = new LegacyCharacterInputSource(),
                 AttackHits = hitRelay,
                 Audio = audio,
-                SkillPlayer = _skillPlayer,
                 Owner = this
             };
 
@@ -643,18 +629,6 @@ namespace AttackSkill.Character.HSM
             if (_ctx != null)
             {
                 _ctx.InputSource = new NullCharacterInputSource();
-            }
-
-            if (_skillPlayer != null)
-            {
-                if (_skillPlayer.IsPlaying)
-                {
-                    _skillPlayer.Stop();
-                }
-                else
-                {
-                    _skillPlayer.ReleaseGameplayCamera();
-                }
             }
 
             if (_controller != null)
@@ -798,11 +772,6 @@ namespace AttackSkill.Character.HSM
                 _motor?.ResetMotion();
             }
 
-            if (_skillPlayer != null)
-            {
-                _skillPlayer.AllowCameraTakeover = true;
-            }
-
             _ctx.InputSource = new LegacyCharacterInputSource();
 
             if (camera != null)
@@ -831,7 +800,7 @@ namespace AttackSkill.Character.HSM
         }
 
         /// <summary>
-        /// 切人残留：不吃输入、不抢相机，技能/Timeline 继续，结束后抛 ResidualFinished。
+        /// 切人残留：不吃输入、不抢相机，HSM 技能继续播完后抛 ResidualFinished。
         /// </summary>
         public void BecomeResidual()
         {
@@ -840,12 +809,7 @@ namespace AttackSkill.Character.HSM
             drawDebugState = false;
             _ctx.InputSource = new NullCharacterInputSource();
 
-            if (_skillPlayer != null)
-            {
-                _skillPlayer.ReleaseGameplayCamera();
-            }
-
-            // 技能 Timeline 期间本就不依赖 CC 位移；关掉避免顶开新角色
+            // 技能期间关掉 CC，避免顶开新角色
             if (_controller != null)
             {
                 _controller.enabled = false;

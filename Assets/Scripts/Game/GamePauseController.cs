@@ -143,7 +143,15 @@ namespace AttackSkill.Game
                 onReset = () =>
                 {
                     EndPauseSession(closeUi: true);
-                    PartyController.Instance?.ResetToBeachRun();
+                    var progress = GameProgressController.Instance;
+                    if (progress != null)
+                    {
+                        progress.RequestBeach();
+                    }
+                    else
+                    {
+                        PartyController.Instance?.ResetToBeachRun();
+                    }
                 },
                 onQuit = QuitGame
             });

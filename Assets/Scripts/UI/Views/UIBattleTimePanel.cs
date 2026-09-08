@@ -1,4 +1,5 @@
 using AttackSkill.Character;
+using AttackSkill.Game;
 using AttackSkill.Localization;
 using UnityEngine;
 using UnityEngine.UI;
@@ -204,6 +205,13 @@ namespace AttackSkill.UI
             _finished = true;
             _running = false;
             MarkExpiredAndClose();
+            var progress = GameProgressController.Instance;
+            if (progress != null)
+            {
+                progress.RequestGameOver(rescue: true);
+                return;
+            }
+
             PartyController.Instance?.ShowRescueGameOver();
         }
 

@@ -208,50 +208,12 @@ namespace AttackSkill.Game
         }
     }
 
-    /// <summary>JSON 进度存档读写 + 启动时 PendingRestore。不含账号密码。</summary>
+    /// <summary>JSON 进度存档磁盘读写。不含账号密码。开局档由 <see cref="GameProgressController"/> 持有。</summary>
     public static class GameSaveService
     {
         const string FileName = "game_progress.json";
 
-        static GameSaveData _pendingRestore;
-
         public static string SavePath => Path.Combine(Application.persistentDataPath, FileName);
-
-        public static bool HasPendingRestore => _pendingRestore != null;
-
-        /// <summary>仅清内存 Pending，不删磁盘档。</summary>
-        public static void ClearPendingRestore()
-        {
-            _pendingRestore = null;
-        }
-
-        public static void SetPendingRestore(GameSaveData data)
-        {
-            if (data != null)
-            {
-                data.MigrateToCurrent();
-            }
-
-            _pendingRestore = data;
-        }
-
-        public static bool TryConsumePendingRestore(out GameSaveData data)
-        {
-            data = _pendingRestore;
-            _pendingRestore = null;
-            if (data != null)
-            {
-                data.MigrateToCurrent();
-            }
-
-            return data != null && !string.IsNullOrEmpty(data.sceneName);
-        }
-
-        public static bool TryPeekPendingRestore(out GameSaveData data)
-        {
-            data = _pendingRestore;
-            return data != null && !string.IsNullOrEmpty(data.sceneName);
-        }
 
         public static bool Exists()
         {
@@ -326,7 +288,6 @@ namespace AttackSkill.Game
                     File.Delete(SavePath);
                 }
 
-                _pendingRestore = null;
                 return true;
             }
             catch (Exception e)

@@ -2,7 +2,7 @@
 name: third-person-camera
 description: >-
   AttackSkill 第三人称轨道相机（ThirdPersonCamera、YawTransform、锁鼠、防穿模）。
-  在改跟随、环视、滚轮缩放、切人跟拍、技能接管相机或 Cursor 锁定时使用。
+  在改跟随、环视、滚轮缩放、切人跟拍、Cursor 锁定时使用。
 ---
 
 # 第三人称相机
@@ -22,7 +22,7 @@ description: >-
 Party 设 FollowTarget
 → LateUpdate：更新 yaw/pitch/pivot → ApplyRigTransforms
 → 角色 CharacterContext.cameraYaw = YawTransform
-大招/演出 → SetGameplayControlEnabled(false) → 结束后恢复
+R 技能不接管相机；切人只换 FollowTarget
 ```
 
 ## 实现步骤
@@ -30,7 +30,7 @@ Party 设 FollowTarget
 1. 调参：`pivotOffset`、distance 范围、pitch 限制、灵敏度。
 2. `collisionMask` 排除 UI / 特效 / 玩家层。
 3. 锁鼠：`lockCursorOnPlay`；Alt 解锁；UI 关闭后 `RestoreDesiredCursorLock`。
-4. 技能 Timeline 接管后务必重新 `enabled` / 恢复控制。
+4. 关闭玩法相机控制后务必 `SetGameplayControlEnabled(true)` / 恢复锁鼠（切人 Residual、暂停 UI 关闭后）。
 5. 解析相机：`GameServices.ResolveCamera()`，少 Find。
 6. Rig（Yaw/Pitch/Camera）可空，Awake `EnsureRigHierarchy` 自动建。
 7. 切人只换 `FollowTarget` + 必要时 `SnapToFollowTarget`，勿重建相机。

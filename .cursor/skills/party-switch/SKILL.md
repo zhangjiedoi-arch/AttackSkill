@@ -9,7 +9,7 @@ description: >-
 
 ## 方案
 
-鸣潮式切人：新角色立刻 Active；旧角色若在放大招则 Residual 播完再销毁。阵容按 `LocalAccountStore` 性别组装。
+鸣潮式切人：新角色立刻 Active；旧角色若在放 E/R 则 Residual 等 HSM 技能播完再销毁。阵容按 `LocalAccountStore` 性别组装。
 
 ## 关键文件
 
@@ -22,7 +22,7 @@ description: >-
 ## 数据流
 
 ```text
-GameProgress（可 defer）→ Party 按性别组装 [漂泊者, 千咲, 柯莱塔]
+GameProgress.BeginPlay(save) → Party 按性别组装 [漂泊者, 千咲, 柯莱塔]
 → Assembler Spawn → 绑定 ThirdPersonCamera
 1/2/3 或 HUD → Residual 规则 → 相机跟 Active
 ```
@@ -33,12 +33,12 @@ GameProgress（可 defer）→ Party 按性别组装 [漂泊者, 千咲, 柯莱�
 2. 新角色：Prefab + `CharacterAvatar` 挂点，确保 Assembler 可 Spawn。
 3. 头像：`PartyPortraitId` + Settings 四个 Sprite + `UIBattlePartyPanel`。
 4. 调 `switchCooldown` / `residualTimeout` / 继承坐标（无横向偏移）。
-5. 单局死亡：槽位 `fallen` 后不可切回、头像置灰；全灭弹出 `UI_GameOver_Dialog`。重新开始肉鸽：等级/被动重置、全员复活、传送 `PlayerSpawn`。暂停返回海滩：`ResetToBeachRun` 回 `spawnPosition`、删档重写。
-6. 读档：Awake 挂 Pending；`BeginPlayFromSaveOrDefault` 即使已出生也强制恢复。先 `ApplyRestoredEntry` 再 `SwitchTo(..., useRequestedPose)`。
+5. 单局死亡：槽位 `fallen` 后不可切回、头像置灰；全灭走 `Progress.RequestGameOver` / `Party.ShowGameOver`。重新开始肉鸽：`Progress.RequestRestartRouge`。暂停返回海滩：`Progress.RequestBeach` → `ResetToBeachRun` 回 `spawnPosition`、删档重写。
+6. 读档：仅 Progress 调 `BeginPlay(save)`。先 `ApplyRestoredEntry` 再 `SwitchTo(..., useRequestedPose)`。Party **不要**在 `Start` 里开局。
 7. 实现/保持 `IPlayerTargetProvider` 供敌人索敌。
 8. 切人时探索工具注意 `SuppressEnterSfx`。
 9. 验证：技能中切人 Residual 不抢相机；`SnapToFollowTarget`。
-10. `deferBootToGameProgress` 避免与读档抢跑。
+10. `PlayStarted` 为 true 后海滩 intro 才允许清场传送。
 
 ## 约定与坑
 

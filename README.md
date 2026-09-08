@@ -64,7 +64,7 @@ OpenScene（登录 / 选性别）
 | 成长 | 经验升级 → 三选一被动；攻防血 **每级 +10%**（玩家与敌同乘） |
 | 倒计时 | **3 分钟**获救；剩余秒写入存档（`-1` 未开表，`0` 已结算） |
 | 结算 | 全灭 / 倒计时归零 → `UIGameOverDialog`（救援标题可区分） |
-| 数据 | `PartyRougeProgress` + `Resources/Rouge/*.json` + 等级解锁刷怪表 |
+| 数据 | `RougeRun`（`PartyRougeProgress` 门面）+ `Resources/Rouge/*.json` + 等级解锁刷怪表 |
 
 ### 探索工具（Tab 轮盘 + T）
 
@@ -121,7 +121,7 @@ AttackSkill/
 │   │   ├── Localization/  # 多语言
 │   │   ├── Audio/         # 场景 BGM
 │   │   ├── Camera/        # 第三人称相机
-│   │   ├── Game/          # 存档、暂停、Boot、输入闸
+│   │   ├── Game/          # 存档、暂停、Boot、RunPhase 导演、输入闸
 │   │   └── Core/          # GameServices、SceneSingleton、GameInput
 │   ├── Resources/         # RuntimeSettings、Combat、Rouge、WorldUI、Localization…
 │   ├── ScriptableObjects/ # 敌人定义、刷怪组等
@@ -167,8 +167,9 @@ AttackSkill/
 | 含字段 | 场景、位姿、队员、HP、轮盘技能下标、肉鸽局状态 |
 | 肉鸽字段 | 等级 / 经验 / 被动 / 是否已进平面 / 阵亡槽 / **倒计时剩余秒** |
 
-- **NewGame**：清 Pending + 重置轮盘与肉鸽进度  
-- **Continue**：`GameProgress` Awake 挂 Pending → 先 `ApplyRestoredEntry` 再生成，避免 intro 清场把进度 `ResetRun` 掉  
+- **NewGame**：重置轮盘与肉鸽进度，不读档  
+- **Continue**：`GameProgress` Awake `Bind RougeRun` + 读盘 → `Party.BeginPlay(save)`（已进平面则先 `ApplyRestoredEntry`）
+- **阶段**：`RunPhase`（海滩 / 肉鸽 / 结算）；回海滩、进肉鸽、重开、GameOver 走 `GameProgress.Request*`  
 
 ## 主要依赖（节选）
 

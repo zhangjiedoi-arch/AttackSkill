@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using AttackSkill.Character;
+using AttackSkill.Game;
 using AttackSkill.Localization;
 
 namespace AttackSkill.UI
@@ -63,6 +64,13 @@ namespace AttackSkill.UI
             if (cb != null)
             {
                 cb.Invoke();
+                return;
+            }
+
+            var progress = GameProgressController.Instance;
+            if (progress != null)
+            {
+                progress.RequestBeach();
                 return;
             }
 

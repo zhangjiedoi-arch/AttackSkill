@@ -147,7 +147,6 @@ namespace AttackSkill.Editor
         {
             // 从根上移除玩法组件；AttackHitRelay 可能在 Animator 子物体上
             RemoveComponent<GenshinLikeCharacter>(root, report);
-            RemoveComponent<CharacterSkillPlayer>(root, report);
             RemoveComponent<CharacterAudio>(root, report);
             RemoveComponent<Health>(root, report);
             RemoveComponent<CharacterController>(root, report);

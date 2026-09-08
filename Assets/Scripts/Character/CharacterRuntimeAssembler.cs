@@ -1,8 +1,6 @@
 using UnityEngine;
-using AttackSkill.CameraSystem;
 using AttackSkill.Character.HSM;
 using AttackSkill.Combat;
-using AttackSkill.Core;
 
 namespace AttackSkill.Character
 {
@@ -147,19 +145,6 @@ namespace AttackSkill.Character
             }
 
             WireHitRelay(hitRelay, actorRoot.transform, avatar);
-
-            var skill = actorRoot.GetComponent<CharacterSkillPlayer>();
-            if (skill == null)
-            {
-                skill = actorRoot.AddComponent<CharacterSkillPlayer>();
-            }
-
-            skill.ConfigureRuntime(
-                animator,
-                null,
-                null,
-                null,
-                GameServices.ResolveCamera());
 
             var character = actorRoot.GetComponent<GenshinLikeCharacter>();
             if (character == null)

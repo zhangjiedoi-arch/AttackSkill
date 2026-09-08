@@ -9,9 +9,9 @@ description: >-
 
 ## 方案
 
-统一：触发（**TimedHit normalizedTime** / 遗留窗口）→ 形状检测 → `HitResolver` 过滤去重 → `IDamageable.TakeDamage` → VFX/SFX。
+统一：触发（**TimedHit normalizedTime**）→ 形状检测 → `HitResolver` 过滤去重 → `IDamageable.TakeDamage` → VFX/SFX。
 
-玩家普攻 / E / R：**不依赖 Animation Event**。HSM `BeginSwing` / `BeginTimedPhase` → `AttackHitRelay` 按 `TimedHitProfile` 采样。
+玩家普攻 / E / R：**不依赖 Animation Event / Timeline**。HSM `BeginSwing` / `BeginTimedPhase` → `AttackHitRelay` 按 `TimedHitProfile` 采样。
 
 ## 关键文件
 
@@ -30,7 +30,7 @@ description: >-
 ```text
 普攻：AttackState.BeginSwing(combo) → phase attack1/2/3 → TimedTick → SkillHitExecutor
 E：SkillState → BeginTimedPhase("skill")
-R：SkillRState → BeginTimedPhase("Skill_R")
+R：SkillRState → BeginTimedPhase("Skill_R")（AoE 挂点 R_Hit_Root，不生成脆刃）
 属性：CombatStats.ATK × segment.damage(倍率%) → 防御 × 元素 → 暴击
 ```
 
@@ -41,8 +41,8 @@ R：SkillRState → BeginTimedPhase("Skill_R")
 3. 新挂点：扩 `HitSocketId` + Avatar + Resolver。
 4. 层级：玩家打 `PlayerOffenseHurtboxMask`；敌人打 `DefaultPlayerHurtboxMask`（玩家需 `PlayerHurtbox` Trigger；诱敌之树也可受击）。
 5. 同段去重：`HitSession`（每次 BeginSwing/BeginTimedPhase 重置）；键为 `EnemyAgent` / 角色单位 Id，**勿用** `transform.root`（肉鸽怪共挂 EnemyGroup 时会一刀只能打一只）。
-6. Timeline 大招窗口仍可用 `SuppressAnimHits` 抑制 TimedTick。
-7. Relay 与 Animator 同物体（读 `normalizedTime`）。
+6. Relay 与 Animator 同物体（读 `normalizedTime`）。
+7. R 只改 `TimedHitProfile` phase `Skill_R`；不要接 Timeline 或往 `Weapon_Pos` 挂脆刃。
 
 ## 约定与坑
 

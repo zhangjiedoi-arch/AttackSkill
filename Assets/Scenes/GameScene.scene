@@ -1222,7 +1222,6 @@ MonoBehaviour:
     type: 3}
   spawnPosition: {x: 35, y: 0, z: 15}
   syncTransformToSpawn: 1
-  deferBootToGameProgress: 1
   thirdPersonCamera: {fileID: 1994461886}
   autoFindCamera: 1
   nextMemberKey: 9
