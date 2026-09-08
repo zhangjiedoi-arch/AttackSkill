@@ -39,6 +39,8 @@ namespace AttackSkill.Character.HSM
         public float DodgeSpeed = 14f;
         [Tooltip("闪避冷却（秒）。")]
         public float DodgeCooldown = 0.55f;
+        [Tooltip("普攻/闪避/E/R 边沿输入保留时长（秒），约 6 帧@60。")]
+        public float CombatBufferLifetime = 0.1f;
 
         [Header("Wing Flight")]
         [Tooltip("翅膀/御剑基础飞行速度。")]

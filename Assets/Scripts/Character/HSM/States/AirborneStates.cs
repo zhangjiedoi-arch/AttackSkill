@@ -63,12 +63,13 @@ namespace AttackSkill.Character.HSM
                 return;
             }
 
-            // 空中也可放技能（简化：仅技能）
-            if (Ctx.Input.SkillPressed)
+            // 空中也可放技能（简化：仅技能）；CD 未好则留在缓冲
+            if (HasBuffered(CombatBufferAction.Skill))
             {
                 var stats = CombatStats.Find(Ctx.Transform);
                 if (stats == null || stats.IsSkillEReady)
                 {
+                    ConsumeBuffered(CombatBufferAction.Skill);
                     GoTo(Ctx.Owner.States.Combat.Skill);
                 }
             }

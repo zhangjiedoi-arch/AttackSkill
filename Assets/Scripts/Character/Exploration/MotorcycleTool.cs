@@ -126,6 +126,7 @@ namespace AttackSkill.Character.Exploration
             // 鼠标左键跳跃（不用空格）；冷却内忽略
             if (ctx.Input.AttackPressed && Time.time >= _nextJumpTime)
             {
+                ctx.Character.ConsumeBuffered(CombatBufferAction.Attack);
                 _jumpQueued = true;
             }
 

@@ -5,6 +5,7 @@ using AttackSkill.Combat;
 using AttackSkill.Character;
 using AttackSkill.Character.Exploration;
 using AttackSkill.Core;
+using AttackSkill.Game;
 
 namespace AttackSkill.Character.HSM
 {
@@ -344,6 +345,15 @@ namespace AttackSkill.Character.HSM
                 return false;
             }
 
+            HState current = _fsm.Current;
+            if (current == States.Combat.Skill ||
+                current == States.Combat.SkillR ||
+                current == States.Combat.Attack ||
+                current == States.Grounded.Dodge)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -629,6 +639,7 @@ namespace AttackSkill.Character.HSM
             if (_ctx != null)
             {
                 _ctx.InputSource = new NullCharacterInputSource();
+                _ctx.CombatBuffer.Clear();
             }
 
             if (_controller != null)
@@ -654,9 +665,19 @@ namespace AttackSkill.Character.HSM
             }
 
             _ctx.RefreshInput();
-            if (_mode == CharacterControlMode.Active && _health != null && _health.IsHitStunned)
+            if (GameplayInputGate.IsBlocked)
+            {
+                _ctx.CombatBuffer.Clear();
+            }
+            else if (_mode == CharacterControlMode.Active && _health != null && _health.IsHitStunned)
             {
                 ApplyHitStunInputLock();
+                _ctx.CombatBuffer.Clear();
+            }
+            else
+            {
+                float life = settings != null ? settings.CombatBufferLifetime : CombatInputBuffer.DefaultLifetime;
+                _ctx.CombatBuffer.Capture(_ctx.Input, Time.unscaledTime, life);
             }
 
             if (_mode == CharacterControlMode.Active)
@@ -808,6 +829,7 @@ namespace AttackSkill.Character.HSM
             _residualFinishRaised = false;
             drawDebugState = false;
             _ctx.InputSource = new NullCharacterInputSource();
+            _ctx.CombatBuffer.Clear();
 
             // 技能期间关掉 CC，避免顶开新角色
             if (_controller != null)
@@ -828,6 +850,7 @@ namespace AttackSkill.Character.HSM
             ForceStopExplorationTools();
             _mode = CharacterControlMode.Disabled;
             _ctx.InputSource = new NullCharacterInputSource();
+            _ctx.CombatBuffer.Clear();
             if (_controller != null)
             {
                 _controller.enabled = false;

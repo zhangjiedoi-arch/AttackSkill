@@ -13,5 +13,11 @@ namespace AttackSkill.Character.HSM
         }
 
         protected void GoTo(HState next) => Machine.ChangeState(next);
+
+        protected bool ConsumeBuffered(CombatBufferAction action) =>
+            Ctx != null && Ctx.ConsumeBuffered(action);
+
+        protected bool HasBuffered(CombatBufferAction action) =>
+            Ctx != null && Ctx.HasBuffered(action);
     }
 }

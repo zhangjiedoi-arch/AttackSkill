@@ -18,6 +18,7 @@ namespace AttackSkill.Character.HSM
         public CharacterAudio Audio;
 
         public CharacterInput Input;
+        public readonly CombatInputBuffer CombatBuffer = new CombatInputBuffer();
         public bool CanGlide = true;
         public bool IsInWater;
         public bool IsNearClimbable;
@@ -33,6 +34,14 @@ namespace AttackSkill.Character.HSM
 
         public bool CanDodge =>
             Settings != null && Time.time >= LastDodgeTime + Settings.DodgeCooldown;
+
+        public float BufferNow => Time.unscaledTime;
+
+        public bool HasBuffered(CombatBufferAction action) =>
+            CombatBuffer.IsPending(action, BufferNow);
+
+        public bool ConsumeBuffered(CombatBufferAction action) =>
+            CombatBuffer.TryConsume(action, BufferNow);
 
         public void RefreshInput()
         {

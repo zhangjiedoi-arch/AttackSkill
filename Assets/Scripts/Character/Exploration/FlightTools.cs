@@ -155,8 +155,20 @@ namespace AttackSkill.Character.Exploration
             tilt?.ResetTilt(immediate: true, settings, 0f);
         }
 
-        public static bool WantsExitByAttack(in ExplorationToolContext ctx) =>
-            ctx.Character != null && ctx.Input.AttackPressed;
+        public static bool WantsExitByAttack(in ExplorationToolContext ctx)
+        {
+            if (ctx.Character == null)
+            {
+                return false;
+            }
+
+            if (ctx.Character.ConsumeBuffered(CombatBufferAction.Attack))
+            {
+                return true;
+            }
+
+            return ctx.Input.AttackPressed;
+        }
     }
 
     /// <summary>翅膀飞行：挂点 + glide 动画 + 气流 + 空中移动。</summary>

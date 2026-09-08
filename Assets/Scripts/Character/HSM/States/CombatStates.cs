@@ -87,7 +87,7 @@ namespace AttackSkill.Character.HSM
         public override void OnUpdate(float deltaTime)
         {
             // 普攻可被右键闪避取消
-            if (Ctx.Input.DodgePressed && Ctx.CanDodge)
+            if (Ctx.CanDodge && ConsumeBuffered(CombatBufferAction.Dodge))
             {
                 GoTo(Ctx.Owner.States.Grounded.Dodge);
                 return;
@@ -96,7 +96,7 @@ namespace AttackSkill.Character.HSM
             TrySyncDurationFromAnimator();
 
             // 攻击过程中按左键只缓存，本段完整结束后再衔接下一段
-            if (Ctx.Input.AttackPressed)
+            if (ConsumeBuffered(CombatBufferAction.Attack))
             {
                 _comboQueued = true;
             }

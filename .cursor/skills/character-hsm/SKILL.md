@@ -17,7 +17,7 @@ description: >-
 
 - `Assets/Scripts/Character/HSM/GenshinLikeCharacter.cs`
 - `HStateMachine.cs` / `HState.cs` / `CharacterStateTree.cs`
-- `CharacterContext.cs` / `CharacterMotor.cs` / `CharacterAnimParams.cs` / `CharacterInput.cs`
+- `CharacterContext.cs` / `CombatInputBuffer.cs` / `CharacterMotor.cs` / `CharacterAnimParams.cs` / `CharacterInput.cs`
 - States：`GroundedStates` / `AirborneStates` / `ClimbSwimStates` / `CombatStates` / `DodgeState` / `MotorcycleState`
 - 出伤：`AttackHitRelay` + 角色 `TimedHitProfile`（见 [combat-hit](../combat-hit/SKILL.md)）
 - 装配：`CharacterRuntimeAssembler.cs`
@@ -26,8 +26,8 @@ description: >-
 
 ```text
 GameInput（受 GameplayInputGate）
-→ GenshinLikeCharacter 写 Context
-→ HSM Update/FixedUpdate
+→ GenshinLikeCharacter 写 Context + CombatInputBuffer（攻击/闪避/E/R 约 0.1s）
+→ HSM Update 从缓冲消费
 → Motor + Animator
 
 普攻 AttackState → AttackHitRelay.BeginSwing(combo) → phase attack1/2/3
@@ -51,6 +51,8 @@ R → SkillRState：Trigger SkillR + BeginTimedPhase("Skill_R")
 
 ## 约定与坑
 
+- 普攻 / 闪避 / E/R：边沿进 `CombatInputBuffer`（默认 0.1s），状态用 `ConsumeBuffered`；技能 CD 未好不消费。
+- 普攻 / 闪避 / E/R 中 T 不能进探索工具；工具内 T 退出仍允许。
 - 同叶重进需 `allowReenter`。
 - 连段索引在 `Attack.OnEnter` 预写下一段；勿在进入时用 ComboReset 误清。
 - F = 滑翔 `Glide`；翅膀起飞是 T 工具，不是 F。

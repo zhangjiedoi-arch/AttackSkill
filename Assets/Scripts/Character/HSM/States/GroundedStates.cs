@@ -65,7 +65,7 @@ namespace AttackSkill.Character.HSM
                 return;
             }
 
-            if (Ctx.Input.DodgePressed && Ctx.CanDodge)
+            if (Ctx.CanDodge && ConsumeBuffered(CombatBufferAction.Dodge))
             {
                 GoTo(Dodge);
                 return;
@@ -83,28 +83,29 @@ namespace AttackSkill.Character.HSM
                 return;
             }
 
-            if (Ctx.Input.AttackPressed)
+            if (ConsumeBuffered(CombatBufferAction.Attack))
             {
                 GoTo(Ctx.Owner.States.Combat.Attack);
                 return;
             }
 
-            if (Ctx.Input.SkillPressed)
+            if (HasBuffered(CombatBufferAction.Skill))
             {
                 var stats = CombatStats.Find(Ctx.Transform);
                 if (stats == null || stats.IsSkillEReady)
                 {
+                    ConsumeBuffered(CombatBufferAction.Skill);
                     GoTo(Ctx.Owner.States.Combat.Skill);
+                    return;
                 }
-
-                return;
             }
 
-            if (Ctx.Input.SkillRPressed)
+            if (HasBuffered(CombatBufferAction.SkillR))
             {
                 var stats = CombatStats.Find(Ctx.Transform);
                 if (stats == null || stats.IsSkillRReady)
                 {
+                    ConsumeBuffered(CombatBufferAction.SkillR);
                     GoTo(Ctx.Owner.States.Combat.SkillR);
                 }
             }
