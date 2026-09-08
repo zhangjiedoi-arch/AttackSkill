@@ -175,34 +175,8 @@ namespace AttackSkill.Rouge
         }
 
         const float GroundHover = 0.28f;
-        const float GroundRayUp = 2f;
-        const float GroundRayDown = 24f;
 
-        static Vector3 SnapToGround(Vector3 pos)
-        {
-            int mask = CombatLayers.DefaultCameraCollisionMask;
-            int enemy = CombatLayers.EnemyLayer;
-            if (enemy >= 0)
-            {
-                mask &= ~(1 << enemy);
-            }
-
-            Vector3 origin = pos + Vector3.up * GroundRayUp;
-            if (Physics.Raycast(
-                    origin,
-                    Vector3.down,
-                    out RaycastHit hit,
-                    GroundRayUp + GroundRayDown,
-                    mask,
-                    QueryTriggerInteraction.Ignore))
-            {
-                Vector3 grounded = hit.point;
-                grounded.y += GroundHover;
-                return grounded;
-            }
-
-            pos.y += GroundHover;
-            return pos;
-        }
+        static Vector3 SnapToGround(Vector3 pos) =>
+            WorldGroundSnap.Snap(pos, GroundHover);
     }
 }

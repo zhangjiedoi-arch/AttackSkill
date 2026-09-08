@@ -54,6 +54,7 @@ namespace AttackSkill.Combat
                 return null;
             }
 
+            worldPos = WorldGroundSnap.Snap(worldPos, hover: 0.02f);
             GameObject go = VfxObjectPool.Spawn(circlePrefab, worldPos, Quaternion.identity);
             if (go == null)
             {

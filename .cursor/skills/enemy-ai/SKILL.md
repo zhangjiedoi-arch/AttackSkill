@@ -63,7 +63,7 @@ SpawnGroup 距玩家激活 → SpawnPoint 生成
 - **海滩 intro 刷怪**：按**最近 SpawnPoint** 20m 激活（`SpawnGroup_Wild.activateRadius`）；`Start` / 重置后立刻 `EvaluateActivation`，玩家已在范围内也会生成。
 - **肉鸽刷怪池按角色等级解锁**（`RougeEnemySpawnCatalog` / `Resources/Rouge/RougeEnemySpawnCatalog`）：  
   1–3 云海妖精/铲子布偶/流放者女/流放者男；4+ 卡迪安特；5+ 朔雷之麟；6+ 荣耀狮像；7+ 踏光兽；8+ 鳞人。菜单：`工具/Rouge/重建肉鸽刷怪等级表`。
-- **肉鸽批量刷怪**：每波在玩家 10m 半径内随机落点同时生成（默认 8–16）。场上上限 `30 + 5*(Level-1)`，封顶 100（`RouGeLikeFlowController.MaxAliveNow`）。走 `EnemyObjectPool`；点会夹在平面内，并避开贴身/已有怪。传送后 BGM 切 `drone`，并打开 `UIBattleTimePanel` 3 分钟获救倒计时（剩余写入存档；结算后为 0）。场上上限 Inspector 可调（默认 30+5/级 cap100）。Progress 找不到 `RouGeLikePlane` 会打 Error。
+- **肉鸽批量刷怪**：每波在玩家 10m 半径 **XZ** 内随机落点，**射线贴地**（不使用玩家滞空高度）。场上上限 `30 + 5*(Level-1)`，封顶 100。走 `EnemyObjectPool`；点夹在平面内，避开贴身/已有怪。传送后 BGM 切 `drone`，并打开 `UIBattleTimePanel` 3 分钟获救倒计时（剩余写入存档；结算后为 0）。场上上限 Inspector 可调（默认 30+5/级 cap100）。Progress 找不到 `RouGeLikePlane` 会打 Error。
 - **等级缩放**：敌人 `CombatStats` 攻/防/血与玩家相同，乘 `RougePassiveEffects.LevelStatMul`（每级 +10%）。`EnemyDefinition.maxHp` / `attackDamage` 是 1 级表内值（当前表内 HP 已按一倍加强，如云海妖精 400、鳞人 1800）。升级时 `CombatStats.RefreshAllHealthForRougeLevel` 同步场上血量。
 - **掉落**：死亡 30% 掉 `Healing circle`（`EnemyDeathLoot`）；圈内 Active 玩家每秒回 100；`Hit_Root` 挂池化 `Healing` 特效，离圈回收。经验球仅肉鸽区域 / `IsRougeEncounter` 敌人掉落。生成时向下射线贴地（略抬 0.28m），不持续上浮。`PartyRougeProgress.ResetRun` → `OnRunReset` 会 `ExpOrbPickup.ClearAll` + `HealingCircleZone.ClearAll`（重开/回海滩一并清掉落）。
 - **死亡表现分流**：`EnemyDeathDirector` 按 `EnemyDefinition.echoChance` 掷骰  
@@ -72,6 +72,6 @@ SpawnGroup 距玩家激活 → SpawnPoint 生成
   - 调试：`deathForceMode` 强制 Echo / Dissolve（肉鸽区域仍强制溶解）  
   - 材质：`Resources/Enemy/Mat_EnemyDeathGold|Dissolve` + Always Included Shaders；贴图兼容 `_MainTex/_BaseMap`  
   - 死亡立即关碰撞；金透 `Play()` 失败不挂 F 交互，改溶解/短销毁  
-- **肉鸽生成物**：`RougeConstructDriver` 不跟身。冰之哀伤/火之高兴/雪之哀霜在角色 5–10m 随机落点，持续 2/5/4 秒后换点，按 Prefab 碰撞体每秒 120% ATK 元素伤（每层 +10%，满 5）。诱敌之树在 10–20m 随机生成，10m 嘲讽、2000 血（每层 +10%），死后 5 秒在新位置重生。
+- **肉鸽生成物**：`RougeConstructDriver` 不跟身。冰/火/霜在角色 5–10m XZ 圆环贴地，持续 2/5/4 秒后换点。诱敌之树 10–20m 贴地，10m 嘲讽。
 - 初始化后挂 `WorldUiService.AttachEnemyBlood`。
 - 尸体生命周期由 `EnemyDeathDirector`：声骸 `echoCorpseLifetime`（默认 20s）；飘散结束立刻回收/销毁。

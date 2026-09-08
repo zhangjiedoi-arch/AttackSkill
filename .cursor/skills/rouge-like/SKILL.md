@@ -55,13 +55,13 @@ description: >-
 | 项 | 说明 |
 |----|------|
 | 场上上限 | `MaxAliveNow`；Inspector 可覆盖基数/每级/封顶 |
-| 刷怪 | 仅 `IsPlayerInArea`；每波默认 8–16，避开贴身与已有怪 |
+| 刷怪 | 仅 `IsPlayerInArea`；每波默认 8–16，**落点贴地**（不跟玩家滞空 Y），避开贴身与已有怪 |
 | 解锁 | 1–3 基础怪；4+ 卡迪安特 … 8+ 鳞人（详见 enemy-ai） |
 | 缩放 | 敌我攻防血 × `LevelStatMul`（内部 `LevelStatMulFor(level)`）；升级 `CombatStats.RefreshAllHealthForRougeLevel` |
 | 导演 | `RunPhase` 在 Progress；intro 传送失败保持 `BeachExplore`。不要再加与 Progress 平级的 DDOL 循环管理器 |
 | 死亡 | 肉鸽区域强制 Dissolve，不走 Echo |
 | 经验球 | 仅肉鸽区域 / `IsRougeEncounter` 掉落 |
 | 倒计时存档 | `<0` 未开表，`0` 已结算（勿回填满时长） |
-| 生成物 | 冰/火/霜光环不跟身；诱敌之树可嘲讽、可受击 |
+| 生成物 | 冰/火/霜光环与诱敌之树在角色 XZ 圆环随机后贴地，不跟身；树可嘲讽、可受击 |
 
 去重键用 `EnemyAgent`，勿用 `transform.root`（怪共挂 `EnemyGroup`）。

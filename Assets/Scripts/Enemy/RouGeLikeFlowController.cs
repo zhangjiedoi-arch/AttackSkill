@@ -3,6 +3,7 @@ using AttackSkill.Audio;
 using AttackSkill.CameraSystem;
 using AttackSkill.Character;
 using AttackSkill.Character.HSM;
+using AttackSkill.Combat;
 using AttackSkill.Core;
 using AttackSkill.Game;
 using AttackSkill.Localization;
@@ -498,7 +499,7 @@ namespace AttackSkill.Enemy
                 candidate.x += Mathf.Cos(ang) * r;
                 candidate.z += Mathf.Sin(ang) * r;
                 candidate = ClampToPlane(candidate);
-                candidate.y = player.position.y;
+                candidate = WorldGroundSnap.Snap(candidate);
 
                 Vector3 planar = candidate - player.position;
                 planar.y = 0f;

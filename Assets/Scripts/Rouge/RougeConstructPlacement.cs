@@ -1,8 +1,9 @@
+using AttackSkill.Combat;
 using UnityEngine;
 
 namespace AttackSkill.Rouge
 {
-    /// <summary>在角色周围圆环上随机落点（水平 XZ）。</summary>
+    /// <summary>在角色周围圆环上随机落点（水平 XZ），再贴地。</summary>
     public static class RougeConstructPlacement
     {
         public static Vector3 PickRing(Vector3 origin, float minRadius, float maxRadius)
@@ -17,7 +18,6 @@ namespace AttackSkill.Rouge
                 Vector3 candidate = origin;
                 candidate.x += Mathf.Cos(ang) * r;
                 candidate.z += Mathf.Sin(ang) * r;
-                candidate.y = origin.y;
 
                 Vector3 planar = candidate - origin;
                 planar.y = 0f;
@@ -27,12 +27,12 @@ namespace AttackSkill.Rouge
                     continue;
                 }
 
-                return candidate;
+                return WorldGroundSnap.Snap(candidate);
             }
 
             float fallback = (minR + maxR) * 0.5f;
             pos.x += fallback;
-            return pos;
+            return WorldGroundSnap.Snap(pos);
         }
     }
 }
