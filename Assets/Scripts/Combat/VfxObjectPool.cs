@@ -5,14 +5,16 @@ using UnityEngine.SceneManagement;
 namespace AttackSkill.Combat
 {
     /// <summary>
-    /// 轻量特效对象池：按 Prefab 复用。池根挂在当前场景（非 DDOL），切场景随场景销毁。
-    /// 场景卸载 / OnDisable 路径禁止新建根节点，改 Destroy，避免 IsActive 断言与残留 GO。
+    /// 轻量特效对象池：按 Prefab 复用。池根优先用场景 <see cref="VfxObjectPoolHost"/>（GameScene/VfxObjectPool），
+    /// 没有时才新建 <c>[VfxObjectPool]</c>。切场景随场景销毁；卸载路径禁止新建根节点。
     /// </summary>
     public static class VfxObjectPool
     {
         const string RootName = "[VfxObjectPool]";
+        const string SceneRootName = "VfxObjectPool";
 
         static Transform _root;
+        static bool _ownsRoot;
         static readonly Dictionary<int, Stack<VfxPoolMember>> Pools = new Dictionary<int, Stack<VfxPoolMember>>(64);
         static readonly List<VfxPoolMember> DeferredHierarchy = new List<VfxPoolMember>(32);
         static VfxPoolPump _pump;
@@ -23,6 +25,7 @@ namespace AttackSkill.Combat
         static void ResetStatics()
         {
             _root = null;
+            _ownsRoot = false;
             _pump = null;
             _quitting = false;
             Pools.Clear();
@@ -52,6 +55,7 @@ namespace AttackSkill.Combat
         {
             // 池根若在被卸场景内，引用已失效；勿在卸载回调里 new GO
             _root = null;
+            _ownsRoot = false;
             _pump = null;
             Pools.Clear();
             DeferredHierarchy.Clear();
@@ -59,12 +63,13 @@ namespace AttackSkill.Combat
 
         static void TearDownRoot(bool destroyObjects)
         {
-            if (destroyObjects && _root)
+            if (destroyObjects && _root && _ownsRoot)
             {
                 Object.Destroy(_root.gameObject);
             }
 
             _root = null;
+            _ownsRoot = false;
             _pump = null;
             Pools.Clear();
             DeferredHierarchy.Clear();
@@ -132,7 +137,16 @@ namespace AttackSkill.Combat
             }
             else
             {
-                t.SetParent(null, false);
+                // 无指定父节点时仍挂在池根下，避免激活实例散落到场景根。
+                Transform poolRoot = GetOrCreateRoot();
+                if (poolRoot != null)
+                {
+                    t.SetParent(poolRoot, false);
+                }
+                else if (t.parent != null)
+                {
+                    t.SetParent(null, false);
+                }
             }
 
             t.SetPositionAndRotation(position, rotation);
@@ -426,6 +440,39 @@ namespace AttackSkill.Combat
             }
         }
 
+        /// <summary>场景 <see cref="VfxObjectPoolHost"/> 就绪时绑定，并拆掉运行时新建的 <c>[VfxObjectPool]</c>。</summary>
+        public static void BindSceneRoot(Transform sceneRoot)
+        {
+            if (sceneRoot == null || !CanUsePool)
+            {
+                return;
+            }
+
+            if (_root && _ownsRoot && _root != sceneRoot)
+            {
+                Object.Destroy(_root.gameObject);
+            }
+
+            BindRoot(sceneRoot, owned: false);
+        }
+
+        public static void UnbindSceneRoot(Transform sceneRoot)
+        {
+            if (_root == sceneRoot)
+            {
+                _root = null;
+                _ownsRoot = false;
+                _pump = null;
+            }
+        }
+
+        static void BindRoot(Transform t, bool owned)
+        {
+            _root = t;
+            _ownsRoot = owned;
+            EnsurePump(t);
+        }
+
         static Transform TryGetRoot()
         {
             return _root ? _root : null;
@@ -443,17 +490,29 @@ namespace AttackSkill.Combat
                 return null;
             }
 
-            // 卸载中 activeScene 可能已不可用，此时新建会触发 IsActive 断言与残留警告
             Scene scene = SceneManager.GetActiveScene();
             if (!scene.IsValid() || !scene.isLoaded)
             {
                 return null;
             }
 
-            // 场景内根：随场景销毁，避免退出 Play 残留 DDOL
+            var host = Object.FindObjectOfType<VfxObjectPoolHost>();
+            if (host != null)
+            {
+                BindRoot(host.transform, owned: false);
+                return _root;
+            }
+
+            GameObject named = GameObject.Find(SceneRootName);
+            if (named != null)
+            {
+                BindRoot(named.transform, owned: false);
+                return _root;
+            }
+
             var go = new GameObject(RootName);
             SceneManager.MoveGameObjectToScene(go, scene);
-            _root = go.transform;
+            BindRoot(go.transform, owned: true);
             return _root;
         }
 
@@ -488,6 +547,7 @@ namespace AttackSkill.Combat
                 if (_root != null && _root.gameObject == gameObject)
                 {
                     _root = null;
+                    _ownsRoot = false;
                 }
             }
         }

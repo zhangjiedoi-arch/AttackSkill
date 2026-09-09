@@ -14,7 +14,7 @@ description: >-
 ## 关键文件
 
 - `Assets/Scripts/Enemy/Data/EnemyDefinition.cs` / `SpawnGroupDefinition.cs`
-- Runtime：`EnemyAgent` / `EnemySensor` / `EnemyAggro` / `EnemyCombat` / `EnemyMotor` / `EnemyHitbox` / `EnemyAttackHitRelay` / `EnemyDeathDirector` / `EnemyDeathGoldVisual` / `EnemyDeathDissolveVisual` / `EnemyDeathLoot`
+- Runtime：`EnemyAgent` / `EnemyAgentRegistry` / `EnemySensor` / `EnemyAggro` / `EnemyCombat` / `EnemyMotor` / `EnemyHitbox` / `EnemyAttackHitRelay` / `EnemyDeathDirector` / `EnemyDeathGoldVisual` / `EnemyDeathDissolveVisual` / `EnemyDeathLoot`
 - 治疗圈：`HealingCircleZone.cs`（`CharacterRuntimeSettings` 配 Prefab / 概率）
 - Shader：`EnemyDeathGold.shader`、`EnemyDeathDissolve.shader`
 - AI：`EnemyBrain.cs`
@@ -46,14 +46,14 @@ SpawnGroup 距玩家激活 → SpawnPoint 生成
 5. 调 `disengageRange` / `returnHomeRange`（leash ≥ disengage）。
 6. 交战中组不得强制休眠（看 `IsInCombat`）。
 7. 血条等级读 `definition.level`。
-8. 索敌只用 `PlayerTargetLocator`，勿乱 Find。
+8. 索敌只用 `PlayerTargetLocator`，勿乱 Find。场上怪列表用 `EnemyAgentRegistry.Live`（Agent OnEnable 登记），小地图等勿每帧 `FindObjectsOfType<EnemyAgent>`。
 9. 动画参数与 Brain 一致（`EnemySpeed` / `InCombat` 等）。
 10. Override：Agent `definitionOverride`、Relay damageOverride。
 11. 肉鸽平面：`RouGeLikePlane` / `PlayerSpawn` / `EnemyGroup`（同级）；流程见 `RouGeLikeFlowController`（Boot 自动挂）。
 
 ## 约定与坑
 
-- Agent 会递归设 Enemy 层。
+- Agent 会递归设 Enemy 层。`EnemyAgentRegistry.Live` 随 Agent Enable/Disable 增减；休眠 `enabled=false` 会出表。
 - 本帧感知结果缓存，Brain 内勿重复 Raycast。
 - 发现范围：`sightRange` 20m（扇形）+ `hearRange` 20m（全向），20m 内即可发现角色。
 - Profile 空则运行时默认球形出伤。
@@ -65,7 +65,7 @@ SpawnGroup 距玩家激活 → SpawnPoint 生成
   1–3 云海妖精/铲子布偶/流放者女/流放者男；4+ 卡迪安特；5+ 朔雷之麟；6+ 荣耀狮像；7+ 踏光兽；8+ 鳞人。菜单：`工具/Rouge/重建肉鸽刷怪等级表`。
 - **肉鸽批量刷怪**：每波在玩家 10m 半径 **XZ** 内随机落点，**射线贴地**（不使用玩家滞空高度）。场上上限 `30 + 5*(Level-1)`，封顶 100。走 `EnemyObjectPool`；点夹在平面内，避开贴身/已有怪。传送后 BGM 切 `drone`，并打开 `UIBattleTimePanel` 3 分钟获救倒计时（剩余写入存档；结算后为 0）。场上上限 Inspector 可调（默认 30+5/级 cap100）。Progress 找不到 `RouGeLikePlane` 会打 Error。
 - **等级缩放**：敌人 `CombatStats` 攻/防/血与玩家相同，乘 `RougePassiveEffects.LevelStatMul`（每级 +10%）。`EnemyDefinition.maxHp` / `attackDamage` 是 1 级表内值（当前表内 HP 已按一倍加强，如云海妖精 400、鳞人 1800）。升级时 `CombatStats.RefreshAllHealthForRougeLevel` 同步场上血量。
-- **掉落**：死亡 30% 掉 `Healing circle`（`EnemyDeathLoot`）；圈内 Active 玩家每秒回 100；`Hit_Root` 挂池化 `Healing` 特效，离圈回收。经验球仅肉鸽区域 / `IsRougeEncounter` 敌人掉落。生成时向下射线贴地（略抬 0.28m），不持续上浮。`PartyRougeProgress.ResetRun` → `OnRunReset` 会 `ExpOrbPickup.ClearAll` + `HealingCircleZone.ClearAll`（重开/回海滩一并清掉落）。
+- **掉落**：死亡 30% 掉 `Healing circle`（`EnemyDeathLoot`）；圈内 Active 玩家每秒回 100；`Hit_Root` 挂池化 `Healing` 特效，离圈回收。经验球仅肉鸽区域 / `IsRougeEncounter` 敌人掉落，Prefab 走 `VfxObjectPool`（与治疗圈同池）。生成时向下射线贴地（略抬 0.28m），不持续上浮。`PartyRougeProgress.ResetRun` → `OnRunReset` 会 `ExpOrbPickup.ClearAll` + `HealingCircleZone.ClearAll`（回收/销毁场上掉落）。
 - **死亡表现分流**：`EnemyDeathDirector` 按 `EnemyDefinition.echoChance` 掷骰  
   - **Echo**：`EnemyDeathGoldVisual` 金色透明残留（后续 F 吸收）；肉鸽区域强制不走此分支  
   - **Dissolve**：`EnemyDeathDissolveVisual` 噪声溶解 + 上浮后隐藏网格；肉鸽敌人一律溶解  

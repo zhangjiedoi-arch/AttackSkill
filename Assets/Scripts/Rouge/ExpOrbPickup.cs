@@ -15,6 +15,7 @@ namespace AttackSkill.Rouge
         float _expireAt;
         bool _collected;
         bool _configured;
+        bool _ownedByPool;
 
         static readonly List<ExpOrbPickup> Live = new List<ExpOrbPickup>(64);
 
@@ -31,7 +32,7 @@ namespace AttackSkill.Rouge
             {
                 if (snap[i] != null)
                 {
-                    Destroy(snap[i].gameObject);
+                    snap[i].DespawnSelf();
                 }
             }
         }
@@ -74,7 +75,7 @@ namespace AttackSkill.Rouge
 
             if (Time.time >= _expireAt)
             {
-                Destroy(gameObject);
+                DespawnSelf();
                 return;
             }
 
@@ -105,7 +106,19 @@ namespace AttackSkill.Rouge
 
             _collected = true;
             PartyRougeProgress.AddExp(expAmount);
-            Destroy(gameObject);
+            DespawnSelf();
+        }
+
+        void DespawnSelf()
+        {
+            if (_ownedByPool)
+            {
+                VfxObjectPool.RecycleNow(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         public static ExpOrbPickup Spawn(Vector3 worldPos, GameObject prefab)
@@ -115,9 +128,16 @@ namespace AttackSkill.Rouge
                 return SpawnFallback(worldPos);
             }
 
+            VfxObjectPool.Prewarm(prefab, 8);
+
             var cfg = RougeCatalog.ExpOrb;
             Vector3 pos = SnapToGround(worldPos);
-            var go = Object.Instantiate(prefab, pos, Quaternion.identity);
+            GameObject go = VfxObjectPool.Spawn(prefab, pos, Quaternion.identity);
+            if (go == null)
+            {
+                go = Object.Instantiate(prefab, pos, Quaternion.identity);
+            }
+
             go.name = "ExpOrb";
             go.SetActive(true);
             return FinalizeOrb(go, cfg);
@@ -170,6 +190,7 @@ namespace AttackSkill.Rouge
 
             col.isTrigger = true;
             col.radius = Mathf.Max(col.radius, 0.35f);
+            orb._ownedByPool = go.GetComponent<VfxPoolMember>() != null;
             orb.Configure(cfg.expAmount, cfg.lifetime, cfg.pickRadius);
             return orb;
         }

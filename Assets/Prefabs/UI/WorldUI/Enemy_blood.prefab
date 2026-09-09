@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 7
   m_Component:
   - component: {fileID: 8768582607551832044}
-  m_Layer: 0
+  m_Layer: 5
   m_HasEditorInfo: 1
   m_Name: Enemy_blood
   m_TagString: Untagged

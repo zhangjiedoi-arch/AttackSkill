@@ -4854,7 +4854,7 @@ GameObject:
   - component: {fileID: 2709260329031824560}
   - component: {fileID: 1242583586189434016}
   - component: {fileID: 5095654145389052000}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Buff
   m_TagString: Untagged

@@ -19588,7 +19588,7 @@ GameObject:
   - component: {fileID: 1772719154805980932}
   - component: {fileID: 6866884000741931466}
   - component: {fileID: 2157948491048831901}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Laser AOE
   m_TagString: Untagged

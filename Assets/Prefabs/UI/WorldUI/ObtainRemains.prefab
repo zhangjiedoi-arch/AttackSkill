@@ -210,7 +210,7 @@ GameObject:
   serializedVersion: 7
   m_Component:
   - component: {fileID: 1453963370880414661}
-  m_Layer: 0
+  m_Layer: 5
   m_HasEditorInfo: 1
   m_Name: ObtainRemains
   m_TagString: Untagged

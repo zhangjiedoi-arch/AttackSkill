@@ -486,7 +486,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2169014033387015120}
   - component: {fileID: 9189332284878438716}
-  m_Layer: 0
+  m_Layer: 5
   m_HasEditorInfo: 1
   m_Name: UI_BattleCombat_Panel
   m_TagString: Untagged

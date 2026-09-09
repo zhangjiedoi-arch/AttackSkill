@@ -14589,7 +14589,7 @@ GameObject:
   - component: {fileID: 7766203685036851836}
   - component: {fileID: 7963840765264207458}
   - component: {fileID: 470012747946541268}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Portal yellow
   m_TagString: Untagged

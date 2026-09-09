@@ -107,8 +107,19 @@ namespace AttackSkill.Enemy
             _health.Died += OnHealthDied;
         }
 
+        void OnEnable()
+        {
+            EnemyAgentRegistry.Register(this);
+        }
+
+        void OnDisable()
+        {
+            EnemyAgentRegistry.Unregister(this);
+        }
+
         void OnDestroy()
         {
+            EnemyAgentRegistry.Unregister(this);
             if (_health != null)
             {
                 _health.Died -= OnHealthDied;

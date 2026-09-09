@@ -86,7 +86,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8825912957918690023}
   - component: {fileID: 7088986758941047419}
-  m_Layer: 0
+  m_Layer: 5
   m_HasEditorInfo: 1
   m_Name: UI_Task_Panel
   m_TagString: Untagged
@@ -101,7 +101,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7088986758941047418}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -112,7 +112,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -250}
+  m_AnchoredPosition: {x: 0, y: -420}
   m_SizeDelta: {x: 260, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7088986758941047419

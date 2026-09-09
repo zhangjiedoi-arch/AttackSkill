@@ -19,7 +19,7 @@ description: >-
 - 导演：`GameProgressController`（`RunPhase`；intro 清场走 `RequestEnterRougeFromIntro`）
 - 被动效果：`RougePassiveEffects.cs` / `RougeOrbitWeaponDriver.cs` / `OrbitingBlade.cs`
 - 生成物：`RougeConstructDriver.cs` / `RougeAuraZone.cs` / `RougeDecoyTree.cs`
-- 掉落：`ExpOrbPickup.cs`；治疗圈见 `HealingCircleZone`（`EnemyDeathLoot`）
+- 掉落：`ExpOrbPickup.cs`（`VfxObjectPool`）；治疗圈见 `HealingCircleZone`（`EnemyDeathLoot`）
 - 刷怪池：`RougeEnemySpawnCatalog`（`Resources/Rouge/`）
 - UI：`UISkillSelectPanel` / `UIBattleTimePanel` / `UIGameOverDialog`
 - 表：`Resources/Rouge/*.json`（被动、等级、刷怪目录）
@@ -60,7 +60,7 @@ description: >-
 | 缩放 | 敌我攻防血 × `LevelStatMul`（内部 `LevelStatMulFor(level)`）；升级 `CombatStats.RefreshAllHealthForRougeLevel` |
 | 导演 | `RunPhase` 在 Progress；intro 传送失败保持 `BeachExplore`。不要再加与 Progress 平级的 DDOL 循环管理器 |
 | 死亡 | 肉鸽区域强制 Dissolve，不走 Echo |
-| 经验球 | 仅肉鸽区域 / `IsRougeEncounter` 掉落 |
+| 经验球 | 仅肉鸽区域 / `IsRougeEncounter` 掉落；Prefab 走 `VfxObjectPool`（拾取/过期/`ClearAll` 回收）。无 Prefab 的 Sphere 兜底仍 Instantiate/Destroy。池根优先 `GameScene/VfxObjectPool`（`VfxObjectPoolHost`），无节点才新建 `[VfxObjectPool]`。`Spawn` 无 parent 时仍挂池根，用世界坐标摆位置 |
 | 倒计时存档 | `<0` 未开表，`0` 已结算（勿回填满时长） |
 | 生成物 | 冰/火/霜光环与诱敌之树在角色 XZ 圆环随机后贴地，不跟身；树可嘲讽、可受击 |
 

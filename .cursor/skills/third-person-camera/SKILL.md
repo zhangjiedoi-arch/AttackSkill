@@ -14,6 +14,7 @@ description: >-
 ## 关键文件
 
 - `Assets/Scripts/Camera/ThirdPersonCamera.cs`（命名空间 `AttackSkill.CameraSystem`）
+- 小地图：`UISmallMapUvPanel` 用 `MapBakeData_Beach` / `MapBakeData_Rouge` 滚图；玩家钉圆心，`PlayerMapIcon` 整预制体随 `ThirdPersonCamera.YawTransform` 转。`SmallMapCameraFollow` RT 方案已不用。
 - 注册：`GameServices.Register` / `ResolveCamera`
 
 ## 数据流

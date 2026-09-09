@@ -9697,7 +9697,7 @@ GameObject:
   - component: {fileID: 7660140759994712418}
   - component: {fileID: 5258450585301397496}
   - component: {fileID: 9063660396922321686}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Healing
   m_TagString: Untagged

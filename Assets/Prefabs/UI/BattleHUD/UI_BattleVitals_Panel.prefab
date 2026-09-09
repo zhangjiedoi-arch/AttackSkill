@@ -712,7 +712,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3959131369887802289}
   - component: {fileID: 9142560806826295025}
-  m_Layer: 0
+  m_Layer: 5
   m_HasEditorInfo: 1
   m_Name: UI_BattleVitals_Panel
   m_TagString: Untagged

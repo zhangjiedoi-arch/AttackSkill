@@ -14696,7 +14696,7 @@ GameObject:
   - component: {fileID: 5109658683520400501}
   - component: {fileID: 1536992021615524237}
   - component: {fileID: 2331279982215271456}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Holy hit
   m_TagString: Untagged

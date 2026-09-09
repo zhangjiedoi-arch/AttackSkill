@@ -292,6 +292,17 @@ namespace AttackSkill.Editor.UIBinding
                     new UIBindingField("txtDesc", typeof(UnityEngine.UI.Text)),
                 }
             },
+            new UIBindingViewSpec
+            {
+                ClassName = "UISmallMapUvPanel",
+                PrefabName = "UI_SmallMapUV_Panel",
+                PrefabPath = "Assets/Prefabs/UI/SmallMap/UI_SmallMapUV_Panel.prefab",
+                Fields = new[]
+                {
+                    new UIBindingField("textureMap", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("imgBg", typeof(RectTransform)),
+                }
+            },
         };
     }
 }

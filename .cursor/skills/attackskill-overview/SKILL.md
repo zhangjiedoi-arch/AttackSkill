@@ -42,7 +42,7 @@ OpenScene（登录 / 选性别）
 | [enemy-ai](../enemy-ai/SKILL.md) | 敌人 AI / 海滩刷怪 |
 | [rouge-like](../rouge-like/SKILL.md) | 肉鸽传送、刷怪升级、被动、倒计时结算 |
 | [third-person-camera](../third-person-camera/SKILL.md) | 第三人称相机 |
-| [ui-hud-dialogs](../ui-hud-dialogs/SKILL.md) | HUD / 对话框 / 本地化 |
+| [ui-hud-dialogs](../ui-hud-dialogs/SKILL.md) | HUD / 对话框 / 本地化 / 小地图 |
 | [world-ui](../world-ui/SKILL.md) | 头顶血条 / 伤害跳字 |
 | [audio-bgm](../audio-bgm/SKILL.md) | BGM / 角色音效 |
 

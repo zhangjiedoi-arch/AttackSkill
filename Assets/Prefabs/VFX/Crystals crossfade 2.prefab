@@ -29534,7 +29534,7 @@ GameObject:
   - component: {fileID: 5652124091410295408}
   - component: {fileID: 5370706033703952929}
   - component: {fileID: 9098101948880975254}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Crystals crossfade 2
   m_TagString: Untagged

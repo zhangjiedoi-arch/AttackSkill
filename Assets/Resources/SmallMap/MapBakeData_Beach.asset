@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9c7b882b685784f9cced89e7add08e, type: 3}
+  m_Name: MapBakeData_Beach
+  m_EditorClassIdentifier: 
+  origin: {x: -52.77156, y: 0, z: 24.58319}
+  extentX: 254.36038
+  extentZ: 328.5437
+  flipY: 0
+  pixelsPerMeter: 4
+  texture: {fileID: 2800000, guid: 8efedf6cc46b9ac439615016dad0df8a, type: 3}
+  sprite: {fileID: 21300000, guid: 8efedf6cc46b9ac439615016dad0df8a, type: 3}

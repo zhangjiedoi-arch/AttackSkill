@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7247588373855350696}
   - component: {fileID: 7086301477045438162}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: "\u706B\u4E4B\u5203"
   m_TagString: Untagged

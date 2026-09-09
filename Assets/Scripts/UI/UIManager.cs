@@ -65,7 +65,7 @@ namespace AttackSkill.UI
 #endif
         }
 
-        /// <summary>进游戏后打开战斗 HUD（编队 / 系统 / 战斗键）。</summary>
+        /// <summary>进游戏后打开战斗 HUD（编队 / 系统 / 战斗键 / 生存 / 任务 / 小地图）。</summary>
         public void OpenBattleHud()
         {
 #if UNITY_EDITOR
@@ -77,6 +77,7 @@ namespace AttackSkill.UI
             Open(UIId.BattleCombat);
             Open(UIId.BattleVitals);
             Open(UIId.BattleTask);
+            Open(UIId.SmallMap);
         }
 
         /// <summary>兼容旧调用：打开完整战斗 HUD。</summary>
@@ -159,6 +160,34 @@ namespace AttackSkill.UI
                 "BattleHUD/UI_BattleTime_Panel",
                 stretchToParent: false,
                 closesOtherPanels: false);
+            EnsureEntry(
+                UIId.SmallMap,
+                UILayer.Panel,
+                "SmallMap/UI_SmallMapUV_Panel",
+                stretchToParent: false,
+                closesOtherPanels: false);
+            ForceSmallMapUvPrefab();
+        }
+
+        void ForceSmallMapUvPrefab()
+        {
+            var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Prefabs/UI/SmallMap/UI_SmallMapUV_Panel.prefab");
+            if (prefab == null || entries == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < entries.Count; i++)
+            {
+                if (entries[i] != null && entries[i].id == UIId.SmallMap)
+                {
+                    entries[i].prefab = prefab;
+                    entries[i].stretchToParent = false;
+                    entries[i].closesOtherPanels = false;
+                    return;
+                }
+            }
         }
 
         void EnsureEntry(
@@ -492,6 +521,7 @@ namespace AttackSkill.UI
                 case UIId.BattleVitals: return typeof(UIBattleVitalsPanel);
                 case UIId.BattleTask: return typeof(UITaskPanel);
                 case UIId.BattleTime: return typeof(UIBattleTimePanel);
+                case UIId.SmallMap: return typeof(UISmallMapUvPanel);
                 default: return typeof(UIGenericView);
             }
         }

@@ -4912,7 +4912,7 @@ GameObject:
   - component: {fileID: 5022478309268236666}
   - component: {fileID: 1722456188715615959}
   - component: {fileID: 5447025864281987928}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Love hit
   m_TagString: Untagged

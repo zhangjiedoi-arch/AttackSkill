@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7643796087076526248}
   - component: {fileID: 5742639227661905076}
   - component: {fileID: 7898544185856947157}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Debuff
   m_TagString: Untagged

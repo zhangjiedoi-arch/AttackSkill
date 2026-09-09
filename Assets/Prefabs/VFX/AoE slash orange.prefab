@@ -4912,7 +4912,7 @@ GameObject:
   - component: {fileID: 6075085087044425112}
   - component: {fileID: 3122463563044553316}
   - component: {fileID: 536372753309115342}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: AoE slash orange
   m_TagString: Untagged

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 921579256374208250}
   - component: {fileID: 6099406329428257121}
   - component: {fileID: 5339766520127782036}
-  m_Layer: 0
+  m_Layer: 20
   m_HasEditorInfo: 1
   m_Name: Ground AOE explosion
   m_TagString: Untagged
