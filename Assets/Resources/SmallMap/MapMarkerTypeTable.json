@@ -1,0 +1,74 @@
+{
+  "types": [
+    {
+      "id": "chest",
+      "icon": "chest",
+      "nameKey": "map_marker_chest",
+      "descKey": "map_marker_chest_desc",
+      "layer": "loot",
+      "size": 32,
+      "rotateWithView": false,
+      "showOffscreen": false,
+      "priority": 50,
+      "visibleRadius": 80,
+      "canFinish": true,
+      "enabled": true
+    },
+    {
+      "id": "teleporter",
+      "icon": "teleporter",
+      "nameKey": "map_marker_teleporter",
+      "descKey": "map_marker_teleporter_desc",
+      "layer": "poi",
+      "size": 36,
+      "rotateWithView": false,
+      "showOffscreen": true,
+      "priority": 100,
+      "visibleRadius": 0,
+      "canFinish": false,
+      "enabled": true
+    },
+    {
+      "id": "grocery_store",
+      "icon": "grocery_store",
+      "nameKey": "map_marker_grocery_store",
+      "descKey": "map_marker_grocery_store_desc",
+      "layer": "npc",
+      "size": 32,
+      "rotateWithView": false,
+      "showOffscreen": false,
+      "priority": 60,
+      "visibleRadius": 70,
+      "canFinish": false,
+      "enabled": true
+    },
+    {
+      "id": "canteen",
+      "icon": "canteen",
+      "nameKey": "map_marker_canteen",
+      "descKey": "map_marker_canteen_desc",
+      "layer": "npc",
+      "size": 32,
+      "rotateWithView": false,
+      "showOffscreen": false,
+      "priority": 55,
+      "visibleRadius": 70,
+      "canFinish": false,
+      "enabled": true
+    },
+    {
+      "id": "observation_tower",
+      "icon": "observation_tower",
+      "nameKey": "map_marker_observation_tower",
+      "descKey": "map_marker_observation_tower_desc",
+      "layer": "poi",
+      "size": 34,
+      "rotateWithView": false,
+      "showOffscreen": true,
+      "priority": 80,
+      "visibleRadius": 0,
+      "canFinish": true,
+      "enabled": true
+    }
+  ]
+}

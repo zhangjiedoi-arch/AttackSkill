@@ -21,6 +21,7 @@ namespace AttackSkill.UI
         [SerializeField] MapBakeData rougeBake;
         [SerializeField] GameObject playerIconPrefab;
         [SerializeField] GameObject enemyIconPrefab;
+        [SerializeField] GameObject markerIconPrefab;
         [SerializeField] float visibleRadiusMeters = 50f;
 
         RectTransform _mapRt;
@@ -32,26 +33,34 @@ namespace AttackSkill.UI
 
         readonly Dictionary<int, SmallMapIconView> _enemyIcons = new Dictionary<int, SmallMapIconView>(32);
         readonly Stack<SmallMapIconView> _enemyPool = new Stack<SmallMapIconView>(16);
+        readonly Dictionary<string, SmallMapIconView> _markerIcons = new Dictionary<string, SmallMapIconView>(16);
+        readonly Stack<SmallMapIconView> _markerPool = new Stack<SmallMapIconView>(8);
         readonly List<int> _staleKeys = new List<int>(16);
+        readonly List<string> _staleMarkerKeys = new List<string>(16);
         readonly HashSet<int> _visibleKeys = new HashSet<int>();
+        readonly HashSet<string> _visibleMarkerKeys = new HashSet<string>();
 
         public override void OnOpen(object args)
         {
             EnsureBound();
+            EnsureOpenWorldMapHit();
             EnsureBakes();
             EnsurePrefabs();
             EnsurePlayerIcon();
             PrewarmEnemyIcons(8);
+            PrewarmMarkerIcons(6);
         }
 
         public override void OnClose()
         {
             RecycleAllEnemies();
+            RecycleAllMarkers();
         }
 
         void OnDisable()
         {
             RecycleAllEnemies();
+            RecycleAllMarkers();
         }
 
         void LateUpdate()
@@ -83,6 +92,7 @@ namespace AttackSkill.UI
             if (bake != _activeBake)
             {
                 RecycleAllEnemies();
+                RecycleAllMarkers();
                 ApplyBake(bake);
             }
 
@@ -92,8 +102,10 @@ namespace AttackSkill.UI
             }
 
             ScrollMap(player.transform.position);
-            UpdatePlayerIcon(party, player);
             UpdateEnemyIcons(player.transform.position);
+            UpdateMarkerIcons(player.transform.position);
+            UpdatePlayerIcon(party, player);
+            HandleWorldMapHotkey();
         }
 
         void EnsureBound()
@@ -122,6 +134,39 @@ namespace AttackSkill.UI
                 textureMap.raycastTarget = false;
                 textureMap.preserveAspect = false;
             }
+        }
+
+        void EnsureOpenWorldMapHit()
+        {
+            if (imgBg == null)
+            {
+                return;
+            }
+
+            var img = imgBg.GetComponent<Image>();
+            if (img != null)
+            {
+                img.raycastTarget = true;
+            }
+
+            var btn = imgBg.GetComponent<Button>();
+            if (btn == null)
+            {
+                btn = imgBg.gameObject.AddComponent<Button>();
+                btn.transition = Selectable.Transition.None;
+            }
+
+            BindClick(btn, UIWorldMapDialog.OpenFromHud);
+        }
+
+        void HandleWorldMapHotkey()
+        {
+            if (!GameInput.GetKeyDown(KeyCode.M))
+            {
+                return;
+            }
+
+            UIWorldMapDialog.OpenFromHud();
         }
 
         void EnsureBakes()
@@ -163,6 +208,11 @@ namespace AttackSkill.UI
             if (enemyIconPrefab == null)
             {
                 enemyIconPrefab = LoadUiPrefab("EnemyMapIcon");
+            }
+
+            if (markerIconPrefab == null)
+            {
+                markerIconPrefab = LoadUiPrefab("MarketMapIcon");
             }
         }
 
@@ -498,6 +548,205 @@ namespace AttackSkill.UI
 
             _enemyIcons.Clear();
             _visibleKeys.Clear();
+        }
+
+        void UpdateMarkerIcons(Vector3 playerPos)
+        {
+            if (markerIconPrefab == null || imgBg == null)
+            {
+                return;
+            }
+
+            MapMarkerCatalog.EnsureLoaded();
+            string mapId = IsRougeMap(playerPos) ? "rouge" : "beach";
+            float circlePx = imgBg.rect.width * 0.5f - 8f;
+            float circleSq = Mathf.Max(16f, circlePx * circlePx);
+
+            _visibleMarkerKeys.Clear();
+            IReadOnlyList<MapMarkerPlacementRow> places = MapMarkerCatalog.Placements;
+            for (int i = 0; i < places.Count; i++)
+            {
+                MapMarkerPlacementRow row = places[i];
+                if (row == null || !row.enabled || string.IsNullOrEmpty(row.uid))
+                {
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(row.mapId) && row.mapId != mapId)
+                {
+                    continue;
+                }
+
+                TryShowMarker(
+                    row.uid,
+                    row.typeId,
+                    new Vector3(row.x, 0f, row.z),
+                    playerPos,
+                    circlePx,
+                    circleSq,
+                    MapMarkerCatalog.IsFinished(row.uid, row.finished));
+            }
+
+            IReadOnlyList<MapMarkerBinder> live = MapMarkerRegistry.Live;
+            for (int i = 0; i < live.Count; i++)
+            {
+                MapMarkerBinder binder = live[i];
+                if (binder == null || !binder.isActiveAndEnabled)
+                {
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(binder.MapId) && binder.MapId != mapId)
+                {
+                    continue;
+                }
+
+                TryShowMarker(
+                    binder.Uid,
+                    binder.TypeId,
+                    binder.transform.position,
+                    playerPos,
+                    circlePx,
+                    circleSq,
+                    MapMarkerCatalog.IsFinished(binder.Uid, binder.Finished));
+            }
+
+            _staleMarkerKeys.Clear();
+            foreach (var kv in _markerIcons)
+            {
+                if (!_visibleMarkerKeys.Contains(kv.Key))
+                {
+                    _staleMarkerKeys.Add(kv.Key);
+                }
+            }
+
+            for (int i = 0; i < _staleMarkerKeys.Count; i++)
+            {
+                string key = _staleMarkerKeys[i];
+                if (_markerIcons.TryGetValue(key, out SmallMapIconView view))
+                {
+                    ReturnMarkerIcon(view);
+                }
+
+                _markerIcons.Remove(key);
+            }
+        }
+
+        void TryShowMarker(
+            string uid,
+            string typeId,
+            Vector3 world,
+            Vector3 playerPos,
+            float circlePx,
+            float circleSq,
+            bool tableFinished)
+        {
+            MapMarkerTypeRow type = MapMarkerCatalog.GetType(typeId);
+            if (!MapMarkerCatalog.IsTypeEnabled(type))
+            {
+                return;
+            }
+
+            Vector2 pos = WorldDeltaToMap(playerPos, world);
+            if (type.visibleRadius > 0.01f)
+            {
+                float maxPx = type.visibleRadius * _ppm;
+                if (pos.sqrMagnitude > maxPx * maxPx && !type.showOffscreen)
+                {
+                    return;
+                }
+            }
+
+            if (pos.sqrMagnitude > circleSq)
+            {
+                if (!type.showOffscreen)
+                {
+                    return;
+                }
+
+                pos = pos.normalized * circlePx;
+            }
+
+            _visibleMarkerKeys.Add(uid);
+            if (!_markerIcons.TryGetValue(uid, out SmallMapIconView view) || view == null)
+            {
+                view = RentMarkerIcon();
+                _markerIcons[uid] = view;
+            }
+
+            if (!view.gameObject.activeSelf)
+            {
+                view.gameObject.SetActive(true);
+            }
+
+            bool finished = type.canFinish && tableFinished;
+            view.BindMarker(SmallMapIconCatalog.ForMarker(type.icon), finished);
+            view.SetPixelSize(type.size);
+
+            float z = type.rotateWithView ? -ResolveViewYaw() : 0f;
+            view.Place(pos, z);
+        }
+
+        void PrewarmMarkerIcons(int count)
+        {
+            if (markerIconPrefab == null || imgBg == null)
+            {
+                return;
+            }
+
+            int need = count - _markerPool.Count;
+            for (int i = 0; i < need; i++)
+            {
+                var go = Instantiate(markerIconPrefab, imgBg, false);
+                go.name = "MarketMapIcon";
+                var view = go.GetComponent<SmallMapIconView>() ?? go.AddComponent<SmallMapIconView>();
+                view.EnsureBound();
+                view.Recycle();
+                _markerPool.Push(view);
+            }
+        }
+
+        SmallMapIconView RentMarkerIcon()
+        {
+            SmallMapIconView view = null;
+            while (_markerPool.Count > 0 && view == null)
+            {
+                view = _markerPool.Pop();
+            }
+
+            if (view == null)
+            {
+                var go = Instantiate(markerIconPrefab, imgBg, false);
+                go.name = "MarketMapIcon";
+                view = go.GetComponent<SmallMapIconView>() ?? go.AddComponent<SmallMapIconView>();
+                view.EnsureBound();
+            }
+
+            view.transform.SetParent(imgBg, false);
+            view.gameObject.SetActive(true);
+            return view;
+        }
+
+        void ReturnMarkerIcon(SmallMapIconView view)
+        {
+            if (view == null)
+            {
+                return;
+            }
+
+            view.Recycle();
+            _markerPool.Push(view);
+        }
+
+        void RecycleAllMarkers()
+        {
+            foreach (var kv in _markerIcons)
+            {
+                ReturnMarkerIcon(kv.Value);
+            }
+
+            _markerIcons.Clear();
+            _visibleMarkerKeys.Clear();
         }
 
         static Transform FindNamed(Transform root, string name)

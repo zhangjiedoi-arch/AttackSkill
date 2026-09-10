@@ -692,6 +692,210 @@
           "zhHans": "红温少年进入了游戏",
           "en": "红温少年 entered the game.",
           "ja": "红温少年がゲームに入場した"
+        },
+        {
+          "key": "map_marker_chest",
+          "zhHans": "宝箱",
+          "en": "Chest",
+          "ja": "宝箱"
+        },
+        {
+          "key": "map_marker_teleporter",
+          "zhHans": "传送点",
+          "en": "Teleporter",
+          "ja": "転送ポイント"
+        },
+        {
+          "key": "map_marker_shop",
+          "zhHans": "商店",
+          "en": "Shop",
+          "ja": "ショップ"
+        },
+        {
+          "key": "map_marker_grocery_store",
+          "zhHans": "杂货店",
+          "en": "Grocery",
+          "ja": "雑貨店"
+        },
+        {
+          "key": "map_marker_canteen",
+          "zhHans": "食堂",
+          "en": "Canteen",
+          "ja": "食堂"
+        },
+        {
+          "key": "map_marker_observation_tower",
+          "zhHans": "瞭望塔",
+          "en": "Watchtower",
+          "ja": "展望塔"
+        },
+        {
+          "key": "map_marker_chest_desc",
+          "zhHans": "散落在野外的补给箱，打开可获得物资。",
+          "en": "A supply chest. Open it for materials.",
+          "ja": "野外の補給箱。開けると物資が入手できる。"
+        },
+        {
+          "key": "map_marker_teleporter_desc",
+          "zhHans": "解锁后可在大地图传送至此。",
+          "en": "Unlock to teleport here from the map.",
+          "ja": "解除後、マップからここに転送できる。"
+        },
+        {
+          "key": "map_marker_grocery_store_desc",
+          "zhHans": "采购日常用品的杂货铺。",
+          "en": "A shop for everyday supplies.",
+          "ja": "日用品を扱う雑貨店。"
+        },
+        {
+          "key": "map_marker_canteen_desc",
+          "zhHans": "可以休息、补给的食堂。",
+          "en": "A canteen to rest and resupply.",
+          "ja": "休憩と補給ができる食堂。"
+        },
+        {
+          "key": "map_marker_observation_tower_desc",
+          "zhHans": "登塔可揭示附近区域。",
+          "en": "Climb to reveal the nearby area.",
+          "ja": "登ると周辺エリアが解放される。"
+        },
+        {
+          "key": "world_map_poi_close",
+          "zhHans": "关闭",
+          "en": "Close",
+          "ja": "閉じる"
+        },
+        {
+          "key": "map_poi_beach_chest_01",
+          "zhHans": "半埋在沙滩里的木箱，潮水拍打时会发出轻响。",
+          "en": "A crate half-buried in the sand, clicking as the tide hits it.",
+          "ja": "砂に半分埋まった木箱。潮が当たると軽く鳴る。"
+        },
+        {
+          "key": "map_poi_beach_grocery_01",
+          "zhHans": "海岸边的小铺，货架上摆着晒干的海货。",
+          "en": "A shore stall stacked with dried seafood.",
+          "ja": "海岸の小さな店。干した海産物が並ぶ。"
+        },
+        {
+          "key": "map_poi_beach_canteen_01",
+          "zhHans": "渔民歇脚的食堂，炉子整天温着汤。",
+          "en": "A fishermen's canteen. The pot stays warm all day.",
+          "ja": "漁師が休む食堂。鍋は一日中温かい。"
+        },
+        {
+          "key": "map_poi_beach_portal_01",
+          "zhHans": "海滩锚点。解锁后可从大地图回到此处。",
+          "en": "Beach anchor. Unlock to return here from the map.",
+          "ja": "ビーチの転送点。解除後マップから戻れる。"
+        },
+        {
+          "key": "map_poi_beach_tower_01",
+          "zhHans": "已点亮的瞭望塔，附近海滩已收入视野。",
+          "en": "A lit watchtower. The nearby beach is already revealed.",
+          "ja": "点灯済みの展望塔。近くの海岸は見えている。"
+        },
+        {
+          "key": "map_poi_rouge_chest_01",
+          "zhHans": "深渊边缘的铁箱，锁扣还带着余温。",
+          "en": "An iron chest at the abyss edge. The latch is still warm.",
+          "ja": "深淵の縁の鉄箱。留め具はまだ温かい。"
+        },
+        {
+          "key": "map_poi_rouge_grocery_01",
+          "zhHans": "不知谁留下的补给摊，货物已经所剩无几。",
+          "en": "An abandoned stall with little stock left.",
+          "ja": "誰かが残した補給屋。品物はもう少ない。"
+        },
+        {
+          "key": "map_poi_rouge_canteen_01",
+          "zhHans": "临时搭起的伙房，桌上还有没喝完的热水。",
+          "en": "A makeshift kitchen. A cup of hot water still sits on the table.",
+          "ja": "仮設の炊事場。テーブルに湯が残っている。"
+        },
+        {
+          "key": "map_poi_rouge_portal_01",
+          "zhHans": "肉鸽平面锚点。解锁后可在大地图传送至此。",
+          "en": "Rogue-plane anchor. Unlock to teleport here from the map.",
+          "ja": "ローグ平面の転送点。解除後マップから移動できる。"
+        },
+        {
+          "key": "map_poi_rouge_tower_01",
+          "zhHans": "俯瞰深渊入口的塔。登顶可看清刷怪区轮廓。",
+          "en": "A tower over the abyss gate. The spawn field is visible from the top.",
+          "ja": "深淵の入口を見下ろす塔。頂上から出現域が見える。"
+        },
+        {
+          "key": "world_map_beach",
+          "zhHans": "海滩",
+          "en": "Beach",
+          "ja": "ビーチ"
+        },
+        {
+          "key": "world_map_rouge",
+          "zhHans": "肉鸽平面",
+          "en": "Rogue Plane",
+          "ja": "ローグ平面"
+        },
+        {
+          "key": "world_map_explore",
+          "zhHans": "探索度 {0}",
+          "en": "Exploration {0}",
+          "ja": "探索度 {0}"
+        },
+        {
+          "key": "world_map_switch",
+          "zhHans": "切换地图",
+          "en": "Switch Map",
+          "ja": "マップ切替"
+        },
+        {
+          "key": "world_map_settings",
+          "zhHans": "地图设置",
+          "en": "Map Settings",
+          "ja": "マップ設定"
+        },
+        {
+          "key": "world_map_zoom_in",
+          "zhHans": "+",
+          "en": "+",
+          "ja": "+"
+        },
+        {
+          "key": "world_map_zoom_out",
+          "zhHans": "-",
+          "en": "-",
+          "ja": "-"
+        },
+        {
+          "key": "world_map_region_qiqiu",
+          "zhHans": "七丘",
+          "en": "Septimont",
+          "ja": "セブンヒルズ"
+        },
+        {
+          "key": "world_map_region_black_shores",
+          "zhHans": "黑海岸",
+          "en": "Black Shores",
+          "ja": "黒海岸"
+        },
+        {
+          "key": "world_map_marker_tip",
+          "zhHans": "标记",
+          "en": "Markers",
+          "ja": "マーカー"
+        },
+        {
+          "key": "world_map_marker_custom",
+          "zhHans": "自定义标记",
+          "en": "Custom Markers",
+          "ja": "カスタムマーカー"
+        },
+        {
+          "key": "world_map_marker_finished",
+          "zhHans": "已完成挑战标记",
+          "en": "Completed Challenges",
+          "ja": "完了した挑戦マーカー"
         }
       ]
     },

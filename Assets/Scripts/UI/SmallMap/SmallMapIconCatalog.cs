@@ -10,6 +10,7 @@ namespace AttackSkill.UI
     {
         const string PlayerFolder = "Assets/Sprites/SmallMap/PlayerIcon";
         const string EnemyFolder = "Assets/Sprites/SmallMap/EnemyIcon";
+        const string MarkerFolder = "Assets/Sprites/SmallMap/MarkerIcon";
 
         static readonly Dictionary<string, Sprite> Cache = new Dictionary<string, Sprite>(32);
 
@@ -62,6 +63,16 @@ namespace AttackSkill.UI
             return null;
         }
 
+        public static Sprite ForMarker(string iconFile)
+        {
+            if (string.IsNullOrEmpty(iconFile))
+            {
+                return null;
+            }
+
+            return Load(MarkerFolder, iconFile);
+        }
+
         static Sprite TryLoadEnemy(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
@@ -99,7 +110,16 @@ namespace AttackSkill.UI
 #endif
             if (sprite == null)
             {
-                string resFolder = folder.EndsWith("PlayerIcon") ? "PlayerIcon" : "EnemyIcon";
+                string resFolder = "EnemyIcon";
+                if (folder.EndsWith("PlayerIcon"))
+                {
+                    resFolder = "PlayerIcon";
+                }
+                else if (folder.EndsWith("MarkerIcon"))
+                {
+                    resFolder = "MarkerIcon";
+                }
+
                 sprite = Resources.Load<Sprite>($"SmallMap/{resFolder}/{fileName}");
             }
             if (sprite != null)

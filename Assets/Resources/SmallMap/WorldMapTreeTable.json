@@ -1,0 +1,16 @@
+{
+  "regions": [
+    {
+      "id": "qiqiu",
+      "nameKey": "world_map_region_qiqiu",
+      "maps": [],
+      "children": [
+        {
+          "id": "black_shores",
+          "nameKey": "world_map_region_black_shores",
+          "maps": [ "beach", "rouge" ]
+        }
+      ]
+    }
+  ]
+}

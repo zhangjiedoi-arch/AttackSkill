@@ -26,6 +26,7 @@ namespace AttackSkill.UI
         BattleVitals = 33,
         BattleTask = 34,
         BattleTime = 35,
-        SmallMap = 36
+        SmallMap = 36,
+        WorldMap = 37
     }
 }

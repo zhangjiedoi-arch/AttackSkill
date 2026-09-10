@@ -41,6 +41,11 @@ namespace AttackSkill.CameraSystem
             return sprite;
         }
 
+        public float MinX => origin.x - extentX * 0.5f;
+        public float MaxX => origin.x + extentX * 0.5f;
+        public float MinZ => origin.z - extentZ * 0.5f;
+        public float MaxZ => origin.z + extentZ * 0.5f;
+
         public bool ContainsXZ(Vector3 world, float padMeters = 0f)
         {
             if (extentX < 0.01f || extentZ < 0.01f)

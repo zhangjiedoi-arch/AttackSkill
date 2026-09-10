@@ -303,6 +303,29 @@ namespace AttackSkill.Editor.UIBinding
                     new UIBindingField("imgBg", typeof(RectTransform)),
                 }
             },
+            new UIBindingViewSpec
+            {
+                ClassName = "UIWorldMapDialog",
+                PrefabName = "UI_WorldMap_Dialog",
+                PrefabPath = "Assets/Prefabs/UI/SmallMap/UI_WorldMap_Dialog.prefab",
+                Fields = new[]
+                {
+                    new UIBindingField("viewport", typeof(RectTransform)),
+                    new UIBindingField("content", typeof(RectTransform)),
+                    new UIBindingField("textureMap", typeof(UnityEngine.UI.Image)),
+                    new UIBindingField("pal_MainSet", typeof(RectTransform)),
+                    new UIBindingField("pal_MapSelect", typeof(RectTransform)),
+                    new UIBindingField("pal_MapSet", typeof(RectTransform)),
+                    new UIBindingField("txtTitle", typeof(UnityEngine.UI.Text)),
+                    new UIBindingField("txtSearch", typeof(UnityEngine.UI.Text)),
+                    new UIBindingField("btnSwitch", typeof(UnityEngine.UI.Button)),
+                    new UIBindingField("btnSst", typeof(UnityEngine.UI.Button)),
+                    new UIBindingField("sliderZoom", typeof(UnityEngine.UI.Slider)),
+                    new UIBindingField("btnEnlarge", typeof(UnityEngine.UI.Button)),
+                    new UIBindingField("btnReduce", typeof(UnityEngine.UI.Button)),
+                    new UIBindingField("btnClose", typeof(UnityEngine.UI.Button)),
+                }
+            },
         };
     }
 }

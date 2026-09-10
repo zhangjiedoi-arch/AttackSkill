@@ -232,6 +232,68 @@ namespace AttackSkill.UI
         }
 #endif
 
+        /// <summary>无 Prefab 时用运行时模板注册全屏大地图。</summary>
+        public void EnsureWorldMapRegistered()
+        {
+            if (_entryMap.TryGetValue(UIId.WorldMap, out UIPrefabEntry existing) && existing != null && existing.prefab != null)
+            {
+                return;
+            }
+
+            if (entries == null)
+            {
+                entries = new List<UIPrefabEntry>();
+            }
+
+            for (int i = 0; i < entries.Count; i++)
+            {
+                if (entries[i] != null && entries[i].id == UIId.WorldMap && entries[i].prefab != null)
+                {
+                    RebuildEntryMap();
+                    return;
+                }
+            }
+
+#if UNITY_EDITOR
+            var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Prefabs/UI/SmallMap/UI_WorldMap_Dialog.prefab");
+            if (prefab != null)
+            {
+                entries.Add(new UIPrefabEntry
+                {
+                    id = UIId.WorldMap,
+                    layer = UILayer.Dialog,
+                    prefab = prefab,
+                    singleton = true,
+                    stretchToParent = true,
+                    closesOtherPanels = false
+                });
+                RebuildEntryMap();
+                return;
+            }
+#endif
+
+            var template = UIWorldMapDialog.CreateRuntimeTemplate();
+            template.name = "UI_WorldMap_Dialog";
+            template.hideFlags = HideFlags.None;
+            if (Instance != null)
+            {
+                template.transform.SetParent(Instance.transform, false);
+            }
+
+            template.SetActive(false);
+            entries.Add(new UIPrefabEntry
+            {
+                id = UIId.WorldMap,
+                layer = UILayer.Dialog,
+                prefab = template,
+                singleton = true,
+                stretchToParent = true,
+                closesOtherPanels = false
+            });
+            RebuildEntryMap();
+        }
+
         void OnDestroy()
         {
             if (Instance == this)
@@ -468,6 +530,7 @@ namespace AttackSkill.UI
 
             var go = Instantiate(entry.prefab, parent, false);
             go.name = entry.prefab.name;
+            ClearHideFlags(go.transform);
             if (entry.stretchToParent)
             {
                 StretchFull(go.transform as RectTransform);
@@ -522,6 +585,7 @@ namespace AttackSkill.UI
                 case UIId.BattleTask: return typeof(UITaskPanel);
                 case UIId.BattleTime: return typeof(UIBattleTimePanel);
                 case UIId.SmallMap: return typeof(UISmallMapUvPanel);
+                case UIId.WorldMap: return typeof(UIWorldMapDialog);
                 default: return typeof(UIGenericView);
             }
         }
@@ -548,6 +612,20 @@ namespace AttackSkill.UI
 
             _openPanels.Remove(ui.Id);
             _openDialogs.Remove(ui.Id);
+        }
+
+        static void ClearHideFlags(Transform root)
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            root.gameObject.hideFlags = HideFlags.None;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                ClearHideFlags(root.GetChild(i));
+            }
         }
 
         static void StretchFull(RectTransform rt)

@@ -7,6 +7,7 @@ namespace AttackSkill.UI
     public sealed class SmallMapIconView : MonoBehaviour
     {
         [SerializeField] Image imgIcon;
+        [SerializeField] Image imgFinish;
 
         RectTransform _rt;
         Enemy.EnemyAgent _enemy;
@@ -29,9 +30,32 @@ namespace AttackSkill.UI
                     imgIcon = t.GetComponent<Image>();
                 }
             }
+
+            if (imgFinish == null)
+            {
+                Transform t = FindNamed(transform, "imgFinish");
+                if (t != null)
+                {
+                    imgFinish = t.GetComponent<Image>();
+                }
+            }
         }
 
         public bool HasIcon => imgIcon != null && imgIcon.sprite != null;
+
+        public void SetIconRaycast(bool enabled)
+        {
+            EnsureBound();
+            if (imgIcon != null)
+            {
+                imgIcon.raycastTarget = enabled;
+            }
+
+            if (imgFinish != null)
+            {
+                imgFinish.raycastTarget = false;
+            }
+        }
 
         public void BindEnemy(Enemy.EnemyAgent agent, Sprite icon)
         {
@@ -63,6 +87,59 @@ namespace AttackSkill.UI
             }
 
             imgIcon.preserveAspect = true;
+        }
+
+        public void BindMarker(Sprite icon, bool finished)
+        {
+            EnsureBound();
+            _enemy = null;
+            ApplyIcon(icon);
+            SetFinished(finished);
+        }
+
+        public void SetFinished(bool finished)
+        {
+            EnsureBound();
+            if (imgFinish == null)
+            {
+                return;
+            }
+
+            if (finished)
+            {
+                Sprite badge = SmallMapIconCatalog.ForMarker("map_finished");
+                if (badge != null)
+                {
+                    imgFinish.sprite = badge;
+                }
+
+                imgFinish.preserveAspect = true;
+                imgFinish.enabled = imgFinish.sprite != null;
+                if (!imgFinish.gameObject.activeSelf)
+                {
+                    imgFinish.gameObject.SetActive(true);
+                }
+            }
+            else if (imgFinish.gameObject.activeSelf)
+            {
+                imgFinish.gameObject.SetActive(false);
+            }
+        }
+
+        public void SetPixelSize(float pixels)
+        {
+            EnsureBound();
+            if (_rt == null)
+            {
+                return;
+            }
+
+            float size = Mathf.Max(8f, pixels);
+            _rt.sizeDelta = new Vector2(size, size);
+            if (imgIcon != null)
+            {
+                imgIcon.rectTransform.sizeDelta = new Vector2(size, size);
+            }
         }
 
         static Transform FindNamed(Transform root, string name)
@@ -103,6 +180,7 @@ namespace AttackSkill.UI
         public void Recycle()
         {
             _enemy = null;
+            SetFinished(false);
             if (gameObject.activeSelf)
             {
                 gameObject.SetActive(false);

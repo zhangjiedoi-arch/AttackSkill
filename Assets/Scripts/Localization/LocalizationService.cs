@@ -236,6 +236,34 @@ namespace AttackSkill.Localization
                 "在深渊的怒火中活下去",
                 "Survive the wrath of the Abyss",
                 "深淵の怒りを生き抜け");
+            Add(LocalizationTableType.UI, "world_map_beach", "海滩", "Beach", "ビーチ");
+            Add(LocalizationTableType.UI, "world_map_rouge", "肉鸽平面", "Rogue Plane", "ローグ平面");
+            Add(LocalizationTableType.UI, "world_map_explore", "探索度 {0}", "Exploration {0}", "探索度 {0}");
+            Add(LocalizationTableType.UI, "world_map_switch", "切换地图", "Switch Map", "マップ切替");
+            Add(LocalizationTableType.UI, "world_map_settings", "地图设置", "Map Settings", "マップ設定");
+            Add(LocalizationTableType.UI, "world_map_zoom_in", "+", "+", "+");
+            Add(LocalizationTableType.UI, "world_map_zoom_out", "-", "-", "-");
+            Add(LocalizationTableType.UI, "world_map_region_qiqiu", "七丘", "Septimont", "セブンヒルズ");
+            Add(LocalizationTableType.UI, "world_map_region_black_shores", "黑海岸", "Black Shores", "黒海岸");
+            Add(LocalizationTableType.UI, "world_map_marker_tip", "标记", "Markers", "マーカー");
+            Add(LocalizationTableType.UI, "world_map_marker_custom", "自定义标记", "Custom Markers", "カスタムマーカー");
+            Add(LocalizationTableType.UI, "world_map_marker_finished", "已完成挑战标记", "Completed Challenges", "完了した挑戦マーカー");
+            Add(LocalizationTableType.UI, "map_marker_chest_desc", "散落在野外的补给箱，打开可获得物资。", "A supply chest. Open it for materials.", "野外の補給箱。開けると物資が入手できる。");
+            Add(LocalizationTableType.UI, "map_marker_teleporter_desc", "解锁后可在大地图传送至此。", "Unlock to teleport here from the map.", "解除後、マップからここに転送できる。");
+            Add(LocalizationTableType.UI, "map_marker_grocery_store_desc", "采购日常用品的杂货铺。", "A shop for everyday supplies.", "日用品を扱う雑貨店。");
+            Add(LocalizationTableType.UI, "map_marker_canteen_desc", "可以休息、补给的食堂。", "A canteen to rest and resupply.", "休憩と補給ができる食堂。");
+            Add(LocalizationTableType.UI, "map_marker_observation_tower_desc", "登塔可揭示附近区域。", "Climb to reveal the nearby area.", "登ると周辺エリアが解放される。");
+            Add(LocalizationTableType.UI, "world_map_poi_close", "关闭", "Close", "閉じる");
+            Add(LocalizationTableType.UI, "map_poi_beach_chest_01", "半埋在沙滩里的木箱，潮水拍打时会发出轻响。", "A crate half-buried in the sand, clicking as the tide hits it.", "砂に半分埋まった木箱。潮が当たると軽く鳴る。");
+            Add(LocalizationTableType.UI, "map_poi_beach_grocery_01", "海岸边的小铺，货架上摆着晒干的海货。", "A shore stall stacked with dried seafood.", "海岸の小さな店。干した海産物が並ぶ。");
+            Add(LocalizationTableType.UI, "map_poi_beach_canteen_01", "渔民歇脚的食堂，炉子整天温着汤。", "A fishermen's canteen. The pot stays warm all day.", "漁師が休む食堂。鍋は一日中温かい。");
+            Add(LocalizationTableType.UI, "map_poi_beach_portal_01", "海滩锚点。解锁后可从大地图回到此处。", "Beach anchor. Unlock to return here from the map.", "ビーチの転送点。解除後マップから戻れる。");
+            Add(LocalizationTableType.UI, "map_poi_beach_tower_01", "已点亮的瞭望塔，附近海滩已收入视野。", "A lit watchtower. The nearby beach is already revealed.", "点灯済みの展望塔。近くの海岸は見えている。");
+            Add(LocalizationTableType.UI, "map_poi_rouge_chest_01", "深渊边缘的铁箱，锁扣还带着余温。", "An iron chest at the abyss edge. The latch is still warm.", "深淵の縁の鉄箱。留め具はまだ温かい。");
+            Add(LocalizationTableType.UI, "map_poi_rouge_grocery_01", "不知谁留下的补给摊，货物已经所剩无几。", "An abandoned stall with little stock left.", "誰かが残した補給屋。品物はもう少ない。");
+            Add(LocalizationTableType.UI, "map_poi_rouge_canteen_01", "临时搭起的伙房，桌上还有没喝完的热水。", "A makeshift kitchen. A cup of hot water still sits on the table.", "仮設の炊事場。テーブルに湯が残っている。");
+            Add(LocalizationTableType.UI, "map_poi_rouge_portal_01", "肉鸽平面锚点。解锁后可在大地图传送至此。", "Rogue-plane anchor. Unlock to teleport here from the map.", "ローグ平面の転送点。解除後マップから移動できる。");
+            Add(LocalizationTableType.UI, "map_poi_rouge_tower_01", "俯瞰深渊入口的塔。登顶可看清刷怪区轮廓。", "A tower over the abyss gate. The spawn field is visible from the top.", "深淵の入口を見下ろす塔。頂上から出現域が見える。");
             Add(LocalizationTableType.Common, "ok", "确定", "OK", "OK");
             Add(LocalizationTableType.Common, "cancel", "取消", "Cancel", "キャンセル");
             Add(LocalizationTableType.Common, "confirm", "确认", "Confirm", "確認");

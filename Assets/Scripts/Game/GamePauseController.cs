@@ -69,6 +69,17 @@ namespace AttackSkill.Game
                 return;
             }
 
+            if (ui.IsOpen(UIId.WorldMap))
+            {
+                if (UIWorldMapDialog.TryHandleEscape())
+                {
+                    return;
+                }
+
+                ui.Close(UIId.WorldMap);
+                return;
+            }
+
             // 技能轮盘优先关闭（不进入暂停菜单）
             if (ui.IsOpen(UIId.SkillWheel))
             {
